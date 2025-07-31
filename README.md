@@ -39,4 +39,5 @@ This project is used by the following companies:
 ## Authors
 
 - Julio Villagra
+- Diego Wigodski
 
