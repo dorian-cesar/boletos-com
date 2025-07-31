@@ -197,7 +197,7 @@ export default function Header({ openNav, isBuyStage = false }: { openNav: any, 
               />
               ) : (
                 <ul className="nav nav-pills">
-                  <li className="nav-item dropdown">
+                  <li className="nav-item dropdown" style={{ display: "flex" }}>
                     <button
                       className="nav-link dropdown-toggle"
                       data-bs-toggle="dropdown"

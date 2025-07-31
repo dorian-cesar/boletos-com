@@ -53,14 +53,16 @@ const Login = (props) => {
     try {
       console.log("Iniciando sesión...");
       setIsLoading(true);
-      const res = await axios.post("/api/user/validar-login", { ...login });
-      const { token, usuario } = res.data.object;
+      // const res = await axios.post("/api/user/validar-login", { ...login });
+      // const { token, usuario } = res.data.object;
 
-      console.log(usuario, typeof usuario.fechaNacimiento);
+      // console.log(usuario, typeof usuario.fechaNacimiento);
 
-      Object.assign(usuario.wallet, { last_update: new Date() });
+      // Object.assign(usuario.wallet, { last_update: new Date() });
 
-      console.log("USUARIO:::", usuario);
+      // console.log("USUARIO:::", usuario);
+      const usuario = "prueba"
+      const token = "token_prueba"
 
       encryptData(usuario, LocalStorageEntities.user_auth);
       encryptData(token, LocalStorageEntities.user_token);
