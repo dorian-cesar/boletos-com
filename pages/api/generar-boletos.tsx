@@ -601,7 +601,7 @@ export async function generateTicketPDF(
               </div>
               <div class="detail-item">
                 <div class="detail-label">Precio</div>
-                <div class="detail-value">${seat.valorAsiento} Gs.</div>
+                <div class="detail-value">Gs. ${seat.valorAsiento}</div>
               </div>
             </div>
           </div>
