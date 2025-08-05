@@ -788,7 +788,7 @@ async function sendTicketsByEmail(options: {
 
     // 5. Configurar opciones del correo
     const mailOptions: Mail.Options = {
-      from: process.env.EMAIL_FROM || "no-reply@busexpress.com",
+      from: `"Boletos" <${process.env.EMAIL_FROM}>`,
       to: customerEmail,
       subject: emailSubject,
       html: emailHtml,
