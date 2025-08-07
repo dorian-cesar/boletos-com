@@ -147,16 +147,16 @@ export default function Layout({ children, isBuyStage = false }) {
             <span>Síguenos :</span>
             <div>
               <a target="_blank" href="https://www.facebook.com/Pullman.cl/">
-                <img src="img/icon/chat/logo-facebook-color.svg" alt="" />
+                <img src="../img/icon/chat/logo-facebook-color.svg" alt="" />
               </a>
               <a target="_blank" href="https://www.instagram.com/pullmanbus/">
-                <img src="img/icon/chat/logo-instagram-color.svg" alt="" />
+                <img src="../img/icon/chat/logo-instagram-color.svg" alt="" />
               </a>
               <a
                 target="_blank"
                 href="https://www.linkedin.com/company/pullman-bus/"
               >
-                <img src="img/icon/chat/logo-linkedin-color.svg" alt="" />
+                <img src="../img/icon/chat/logo-linkedin-color.svg" alt="" />
               </a>
             </div>
           </div>

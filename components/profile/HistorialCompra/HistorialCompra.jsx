@@ -49,6 +49,102 @@ const HistorialCompra = () => {
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [transaccion, setTransaccion] = useState("");
 
+  const dataHistorial = [
+    {
+      codigo: "TXN001",
+      estado: "ACTI",
+      fechaCompraFormato: "2025-08-01",
+      cantidadBoletos: 2,
+      monto: 5000,
+    },
+    {
+      codigo: "TXN002",
+      estado: "NUL",
+      fechaCompraFormato: "2025-08-02",
+      cantidadBoletos: 1,
+      monto: 2500,
+    },
+    {
+      codigo: "TXN003",
+      estado: "ACTI",
+      fechaCompraFormato: "2025-08-03",
+      cantidadBoletos: 3,
+      monto: 7500,
+    },
+    {
+      codigo: "TXN004",
+      estado: "ACTI",
+      fechaCompraFormato: "2025-08-04",
+      cantidadBoletos: 1,
+      monto: 2000,
+    },
+    {
+      codigo: "TXN005",
+      estado: "NUL",
+      fechaCompraFormato: "2025-08-05",
+      cantidadBoletos: 2,
+      monto: 4800,
+    },
+    {
+      codigo: "TXN006",
+      estado: "ACTI",
+      fechaCompraFormato: "2025-08-06",
+      cantidadBoletos: 4,
+      monto: 9600,
+    },
+    {
+      codigo: "TXN007",
+      estado: "NUL",
+      fechaCompraFormato: "2025-08-07",
+      cantidadBoletos: 1,
+      monto: 2200,
+    },
+    {
+      codigo: "TXN008",
+      estado: "ACTI",
+      fechaCompraFormato: "2025-08-07",
+      cantidadBoletos: 2,
+      monto: 5200,
+    },
+    {
+      codigo: "TXN009",
+      estado: "ACTI",
+      fechaCompraFormato: "2025-08-07",
+      cantidadBoletos: 5,
+      monto: 12500,
+    },
+    {
+      codigo: "TXN010",
+      estado: "NUL",
+      fechaCompraFormato: "2025-08-07",
+      cantidadBoletos: 1,
+      monto: 2000,
+    },
+  ];
+
+  const dataBoleto = [
+    {
+      boleto: "BOL001",
+      origen: "Santiago",
+      fechaEmbarcacion: "2025-08-10",
+      puedeImprimir: true,
+    },
+    {
+      boleto: "BOL002",
+      origen: "Valparaíso",
+      fechaEmbarcacion: "2025-08-12",
+      puedeImprimir: false,
+    },
+  ];
+
+  useEffect(() => {
+    setHistorial(dataHistorial);
+  }, []);
+
+  useEffect(() => {
+    setBoleto(dataBoleto);
+  }, []);
+
   const abrirPopup = () => {
     setMostrarPopup(true);
   };
@@ -88,27 +184,27 @@ const HistorialCompra = () => {
     data.fechaNacimiento = fechaNacimiento;
   }, [fechaNacimiento]);
 
-  useEffect(() => {
-    if (user) {
-      axios
-        .post("/api/user/historial-compra", {
-          email: user.mail,
-        })
-        .then(({ data }) => {
-          setHistorial(data.object);
-        })
-        .catch((error) => console.log("ERROR:::", error));
-    }
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     axios
+  //       .post("/api/user/historial-compra", {
+  //         email: user.mail,
+  //       })
+  //       .then(({ data }) => {
+  //         setHistorial(data.object);
+  //       })
+  //       .catch((error) => console.log("ERROR:::", error));
+  //   }
+  // }, [user]);
 
-  function retornarEstado(estado){
-    if(estado === 'NUL'){
-        return 'Transacción nula'
+  function retornarEstado(estado) {
+    if (estado === "NUL") {
+      return "Transacción nula";
     }
-    if(estado === 'ACTI'){
-      return 'Transacción activa'
+    if (estado === "ACTI") {
+      return "Transacción activa";
     }
-    return 'Sin descripción'
+    return "Sin descripción";
   }
 
   const MemoizedComponent = useMemo(
@@ -128,11 +224,15 @@ const HistorialCompra = () => {
             <td>{itemHistorial.cantidadBoletos}</td>
             <td>{clpFormat.format(itemHistorial.monto)}</td>
             <td className={styles["boton-descargar"]}>
-              {itemHistorial.estado === 'NUL' ?  ''   :   <img
-                width={24}
-                src="/img/icon/general/search-outline.svg"
-                onClick={()=> abrirPopTransaccion(itemHistorial.codigo)}
-              />   }            
+              {itemHistorial.estado === "NUL" ? (
+                ""
+              ) : (
+                <img
+                  width={24}
+                  src="/img/icon/general/search-outline.svg"
+                  onClick={() => abrirPopTransaccion(itemHistorial.codigo)}
+                />
+              )}
             </td>
           </tr>
         ));
@@ -238,7 +338,10 @@ const HistorialCompra = () => {
       1,
       currentPageBoleto - Math.floor(maxVisiblePages / 2)
     );
-    const endPage = Math.min(startPage + maxVisiblePages - 1, totalPagesBoletos);
+    const endPage = Math.min(
+      startPage + maxVisiblePages - 1,
+      totalPagesBoletos
+    );
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(
@@ -295,10 +398,14 @@ const HistorialCompra = () => {
             <td>{itemBoleto.origen}</td>
             <td>{itemBoleto.fechaEmbarcacion}</td>
             <td className={styles["boton-descargar"]}>
-              {itemBoleto.puedeImprimir ? <img
-                src="/img/icon/general/download-outline.svg"
-                onClick={ ()=> descargarBoleto(itemBoleto.boleto)}
-              /> : ""}
+              {itemBoleto.puedeImprimir ? (
+                <img
+                  src="/img/icon/general/download-outline.svg"
+                  onClick={() => descargarBoleto(itemBoleto.boleto)}
+                />
+              ) : (
+                ""
+              )}
             </td>
           </tr>
         ));
@@ -330,37 +437,38 @@ const HistorialCompra = () => {
 
   const abrirPopTransaccion = (transaccion) => {
     {
-      setTransaccion(transaccion)
-      axios
-        .post("/api/user/historial-compra-boletos", {
-          codigo: transaccion,
-        })
-        .then(({ data }) => {
-          setBoleto(data.object);
-          abrirPopup();
-        })
-        .catch((error) => console.log("ERROR:::", error));
+      // setTransaccion(transaccion);
+      // axios
+      //   .post("/api/user/historial-compra-boletos", {
+      //     codigo: transaccion,
+      //   })
+      //   .then(({ data }) => {
+      //     setBoleto(data.object);
+      //     abrirPopup();
+      //   })
+      //   .catch((error) => console.log("ERROR:::", error));
+      setBoleto(dataBoleto);
+      abrirPopup();
     }
   };
 
-  const descargarBoleto = async (boletoBuscar) =>{
+  const descargarBoleto = async (boletoBuscar) => {
     let boleto = {
       codigo: transaccion,
-      boleto: boletoBuscar
-    }
-        try {
-        const res = await axios.post("/api/voucher", boleto);
-        if (res.request.status) {
-           const linkSource = `data:application/pdf;base64,${res.data?.archivo}`;
-           const downloadLink = document.createElement("a");
-           const fileName = res.data.nombre;
-           downloadLink.href = linkSource;
-           downloadLink.download = fileName;
-           downloadLink.click();
-        }
-      } catch (e) {}
-
-  }
+      boleto: boletoBuscar,
+    };
+    try {
+      const res = await axios.post("/api/voucher", boleto);
+      if (res.request.status) {
+        const linkSource = `data:application/pdf;base64,${res.data?.archivo}`;
+        const downloadLink = document.createElement("a");
+        const fileName = res.data.nombre;
+        downloadLink.href = linkSource;
+        downloadLink.download = fileName;
+        downloadLink.click();
+      }
+    } catch (e) {}
+  };
 
   return (
     <>
@@ -370,7 +478,7 @@ const HistorialCompra = () => {
           Mantén un registro de todos los viajes realizados. Recuerda que solo
           podrás descargar tu pasaje mientras esté activo.
         </span>
-        <div className={ styles["table-responsive-custom"] }>
+        <div className={styles["table-responsive-custom"]}>
           <table className={`table ${styles["tabla-informacion"]}`}>
             <thead>
               <tr>
@@ -385,7 +493,10 @@ const HistorialCompra = () => {
             <tbody>{!isLoading ? MemoizedComponent : ""}</tbody>
           </table>
         </div>
-        <nav className={ styles["navigation"] } aria-label="Page navigation example">
+        <nav
+          className={styles["navigation"]}
+          aria-label="Page navigation example"
+        >
           <ul className={`pagination ${styles["pagination-css"]}`}>
             {renderPagination()}
           </ul>
