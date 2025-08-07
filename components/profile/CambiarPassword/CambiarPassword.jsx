@@ -154,19 +154,19 @@ const CambiarPassword = (props) => {
         </div>
       </div>
       <div className={"row"}>
-        {/* <div className={"col-6"}> */}
-          {/* <div className={styles["return"]}>
+        <div className={"col-6"}>
+          <div className={styles["return"]}>
             <a onClick={(e) => setVista("miPerfil")}>Regresar</a>
-          </div> */}
-          <div
+          </div>
+          {/* <div
             type="button"
             className={styles["return"]}
             onClick={(e) => setVista("miPerfil")}
           >
             Regresar
-          </div>
-        {/* </div> */}
-        {/* <div className={"col-6"}> */}
+          </div> */}
+        </div>
+        <div className={"col-6"}>
           <div
             type="button"
             className={
@@ -183,7 +183,7 @@ const CambiarPassword = (props) => {
           >
             Cambiar contraseña
           </div>
-        {/* </div> */}
+        </div>
       </div>
       {mostrarPopup && (
         <Popup
