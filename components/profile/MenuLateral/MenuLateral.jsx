@@ -6,7 +6,7 @@ import { useEffect, useState, forwardRef, useRef, useMemo } from "react";
 import styles from "./MenuLateral.module.css";
 
 const MenuLateral = (props) => {
-  const { vista , setVista , setNombreVista } = props;
+  const { vista, setVista, setNombreVista } = props;
   const [menu, setMenu] = useState([]);
   const { getItem, clear } = useLocalStorage();
   const router = useRouter();
@@ -26,11 +26,36 @@ const MenuLateral = (props) => {
   //   buscarMenu();
   // }, []);
 
+  const data = [
+    {
+      idMenu: 1,
+      opcionMenu: "miPerfil",
+      nombreMenu: "Mi Perfil",
+      classname: "item-texto-lateral",
+    },
+    {
+      idMenu: 2,
+      opcionMenu: "cambioContraseña",
+      nombreMenu: "Cambiar contraseña",
+      classname: "item-texto-lateral",
+    },
+    {
+      idMenu: 3,
+      opcionMenu: "historialCompra",
+      nombreMenu: "Historial de compras",
+      classname: "item-texto-lateral",
+    },
+  ];
+
+  useEffect(() => {
+    setMenu(data);
+  }, []);
+
   const cerrarSesion = () => {
-    router.push('/').then(() => {
+    router.push("/").then(() => {
       clear();
-    })
-  }
+    });
+  };
 
   const cambiarVista = (nuevaVista, nombreMenu) => {
     setVista(nuevaVista);
@@ -39,21 +64,29 @@ const MenuLateral = (props) => {
 
   return (
     <>
-      <div className={ `${styles["menu-lateral"]}`}>
-      {menu.map((opcion) => (
-        <div key={opcion.idMenu} className={ `${styles["item-menu-lateral"]}`} onClick={() => cambiarVista(opcion.opcionMenu, opcion.nombreMenu)}>
-          <div className="">
-            <a className={styles[opcion.classname]}>{opcion.nombreMenu}</a>
+      <div className={`${styles["menu-lateral"]}`}>
+        {menu.map((opcion) => (
+          <div
+            key={opcion.idMenu}
+            className={`${styles["item-menu-lateral"]}`}
+            onClick={() => cambiarVista(opcion.opcionMenu, opcion.nombreMenu)}
+          >
+            <div className="">
+              <a className={styles[opcion.classname]}>{opcion.nombreMenu}</a>
+            </div>
+            <div>
+              <img
+                src="../img/icon/profile/chevron-forward-circle-outline.svg"
+                alt=""
+              />
+            </div>
           </div>
-          <div>
-            <img
-              src="../img/icon/profile/chevron-forward-circle-outline.svg"
-              alt=""
-            />
-          </div>
-        </div>
-      ))}
-        <div key="cerrar-sesion" className={ `${styles["item-menu-lateral"]}`} onClick={cerrarSesion}>
+        ))}
+        <div
+          key="cerrar-sesion"
+          className={`${styles["item-menu-lateral"]}`}
+          onClick={cerrarSesion}
+        >
           <div className="">
             <a className={styles["item-texto-lateral-cerrar"]}>Cerrar sesión</a>
           </div>

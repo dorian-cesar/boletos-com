@@ -20,7 +20,8 @@ const changePasswordFormFields = {
 const CambiarPassword = (props) => {
   const { setVista } = props;
   const [mostrarPopup, setMostrarPopup] = useState(false);
-  const [mostrarPasswordIncorrectaPopup, setmostrarPasswordIncorrectaPopup] = useState(false);
+  const [mostrarPasswordIncorrectaPopup, setmostrarPasswordIncorrectaPopup] =
+    useState(false);
   const { formState: changePassword, onInputChange } = useForm(
     changePasswordFormFields
   );
@@ -53,7 +54,7 @@ const CambiarPassword = (props) => {
           changePassword.password = "";
           changePassword.newPassword = "";
           changePassword.newPassword2 = "";
-          abrirPopup()
+          abrirPopup();
         }
       } catch (e) {
         setIsLoading2(false);
@@ -74,10 +75,8 @@ const CambiarPassword = (props) => {
         changePassword.newPassword2 == ""
       ) {
         return resolve(false);
-      } else if (
-        changePassword.newPassword != changePassword.newPassword2
-      ) {
-        abrirPasswordIncorrectaPopup()
+      } else if (changePassword.newPassword != changePassword.newPassword2) {
+        abrirPasswordIncorrectaPopup();
         return resolve(false);
       } else {
         return resolve(true);
@@ -99,78 +98,100 @@ const CambiarPassword = (props) => {
     setmostrarPasswordIncorrectaPopup(false);
   };
 
-  const volverInicio = () =>{
-    setVista("miPerfil")
-  }
+  const volverInicio = () => {
+    setVista("miPerfil");
+  };
   return (
     <div className={styles["menu-central"]}>
-   
-        <div className={"row "}>
-          <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
-            <a className={styles["title-change-password"]}>Cambio contraseña</a>
-          </div>
+      <div className={"row "}>
+        <div
+          className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}
+        >
+          <a className={styles["title-change-password"]}>Cambio contraseña</a>
         </div>
+      </div>
 
-        <div className={"row"}>
-          <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
-            <label className={styles["title-data"]}>Contraseña actual</label>
-            <input
-              type="password"
-              className={styles["input-data"]}
-              name="password"
-              value={changePassword?.password}
-              onChange={onInputChange}
-            />
-          </div>
+      <div className={"row"}>
+        <div
+          className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}
+        >
+          <label className={styles["title-data"]}>Contraseña actual</label>
+          <input
+            type="password"
+            className={styles["input-data"]}
+            name="password"
+            value={changePassword?.password}
+            onChange={onInputChange}
+          />
         </div>
-        <div className={"row "}>
-          <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
-            <label className={styles["title-data"]}>Contraseña nueva</label>
-            <input
-              type="password"
-              className={styles["input-data"]}
-              name="newPassword"
-              value={changePassword?.newPassword}
-              onChange={onInputChange}
-            />
-          </div>
-          <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
-            <label className={styles["title-data"]}>
-              Repetir Contraseña nueva
-            </label>
-            <input
-              type="password"
-              className={styles["input-data"]}
-              name="newPassword2"
-              value={changePassword?.newPassword2}
-              onChange={onInputChange}
-            />
-          </div>
+      </div>
+      <div className={"row "}>
+        <div
+          className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}
+        >
+          <label className={styles["title-data"]}>Contraseña nueva</label>
+          <input
+            type="password"
+            className={styles["input-data"]}
+            name="newPassword"
+            value={changePassword?.newPassword}
+            onChange={onInputChange}
+          />
         </div>
-        <div className={"row"}>
-          <div className={"col-6"}>
-            <div className={styles["return"]}>
-              <a onClick={(e) => setVista("miPerfil")} >Regresar</a>
-            </div>
+        <div
+          className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}
+        >
+          <label className={styles["title-data"]}>
+            Repetir Contraseña nueva
+          </label>
+          <input
+            type="password"
+            className={styles["input-data"]}
+            name="newPassword2"
+            value={changePassword?.newPassword2}
+            onChange={onInputChange}
+          />
+        </div>
+      </div>
+      <div className={"row"}>
+        {/* <div className={"col-6"}> */}
+          {/* <div className={styles["return"]}>
+            <a onClick={(e) => setVista("miPerfil")}>Regresar</a>
+          </div> */}
+          <div
+            type="button"
+            className={styles["return"]}
+            onClick={(e) => setVista("miPerfil")}
+          >
+            Regresar
           </div>
-          <div className={"col-6"}>
-            <div
-              type="button"
-              className={ (changePassword.password && changePassword.newPassword) ? styles["button-update"] : styles["button-update-disabled"]}
-              onClick={(e) => (changePassword.password && changePassword.newPassword && changePassword.newPassword2) && cambiarPassword() }
-            >
-              Cambiar contraseña
-            </div>
+        {/* </div> */}
+        {/* <div className={"col-6"}> */}
+          <div
+            type="button"
+            className={
+              changePassword.password && changePassword.newPassword
+                ? styles["button-update"]
+                : styles["button-update-disabled"]
+            }
+            onClick={(e) =>
+              changePassword.password &&
+              changePassword.newPassword &&
+              changePassword.newPassword2 &&
+              cambiarPassword()
+            }
+          >
+            Cambiar contraseña
           </div>
-
+        {/* </div> */}
       </div>
       {mostrarPopup && (
-          <Popup
-            modalKey={ModalEntities.change_password}
-            modalClose={cerrarPopup}
-            modalMethods={volverInicio}
-          />
-        )}
+        <Popup
+          modalKey={ModalEntities.change_password}
+          modalClose={cerrarPopup}
+          modalMethods={volverInicio}
+        />
+      )}
       {mostrarPasswordIncorrectaPopup && (
         <Popup
           modalKey={ModalEntities.password_not_same}
