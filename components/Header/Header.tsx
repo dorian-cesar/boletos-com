@@ -22,14 +22,22 @@ import {
 import styles from "./Header.module.css";
 
 import { ResumenViaje } from "components/ticket_sale/ResumenViaje/ResumenViaje";
-import { liberarAsientos, limpiarListaCarrito } from "store/usuario/compra-slice";
+import {
+  liberarAsientos,
+  limpiarListaCarrito,
+} from "store/usuario/compra-slice";
 import Popup from "components/Popup/Popup";
 import ModalEntities from "entities/ModalEntities";
 import LocalStorageEntities from "entities/LocalStorageEntities";
 import { decryptData } from "utils/encrypt-data";
 
-
-export default function Header({ openNav, isBuyStage = false }: { openNav: any, isBuyStage:boolean }) {
+export default function Header({
+  openNav,
+  isBuyStage = false,
+}: {
+  openNav: any;
+  isBuyStage: boolean;
+}) {
   const [user, setUser] = useState();
   const router = useRouter();
   const { getItem, clear } = useLocalStorage();
@@ -136,27 +144,31 @@ export default function Header({ openNav, isBuyStage = false }: { openNav: any, 
     setData();
   }, []);
 
-
   useEffect(() => {
     setData();
     setCountdown();
   }, [data]);
 
- //cambiar icon de mobile a destokp 
- const [isMobile, setIsMobile] = useState(false);
- useEffect(() => {
-   const handleResize = () => {
-     setIsMobile(window.innerWidth < 768);
-   };
-   window.addEventListener('resize', handleResize);
-   handleResize();
-   return () => window.removeEventListener('resize', handleResize);
- }, []);
-
+  //cambiar icon de mobile a destokp
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <>
-      <header className={ isBuyStage ? `d-none d-md-block sticky-top bg-white ${styles["header"]}` : `sticky-top bg-white ${styles["header"]}` }>
+      <header
+        className={
+          isBuyStage
+            ? `d-none d-md-block sticky-top bg-white ${styles["header"]}`
+            : `sticky-top bg-white ${styles["header"]}`
+        }
+      >
         <div className="container">
           <div className="row">
             <div className="col-2 col-sm-1 justify-content-center d-flex align-items-center">
@@ -184,56 +196,69 @@ export default function Header({ openNav, isBuyStage = false }: { openNav: any, 
             </div>
             <div className="col-6 col-sm-9 d-flex align-items-center ">
               <a href="/">
-                <img src="../img/icon/logos/Logo.svg" width={ 300 } height={ 100 } className="img-fluid p-2" />
+                <img
+                  src="../img/icon/logos/Logo.svg"
+                  width={300}
+                  height={100}
+                  className="img-fluid p-2"
+                />
               </a>
             </div>
             <div className="col-4 col-sm-2 d-flex justify-content-end">
-              {user == null ? (
-                <img
-                src={isMobile ? "../img/icon-foto-mobile.svg" : "../img/icon/logos/cuenta.svg"}
-                className={`img-fluid cuenta-img ${styles.svgImage} ${styles.svgShadow}`}
-                data-bs-toggle="modal"
-                data-bs-target="#loginModal"
-              />
-              ) : (
-                <ul className="nav nav-pills">
-                  <li className="nav-item dropdown" style={{ display: "flex" }}>
-                    <button
-                      className="nav-link dropdown-toggle"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
+              {router.pathname !== "/respuesta-transaccion-v2" && router.pathname !== "/confirm-transaction" &&
+                (user == null ? (
+                  <img
+                    src={
+                      isMobile
+                        ? "../img/icon-foto-mobile.svg"
+                        : "../img/icon/logos/cuenta.svg"
+                    }
+                    className={`img-fluid cuenta-img ${styles.svgImage} ${styles.svgShadow}`}
+                    data-bs-toggle="modal"
+                    data-bs-target="#loginModal"
+                  />
+                ) : (
+                  <ul className="nav nav-pills">
+                    <li
+                      className="nav-item dropdown"
+                      style={{ display: "flex" }}
                     >
-                      <span className="text-login">Mi cuenta</span>
-                      <img
-                        src="../img/icon-user.svg"
-                        width={30}
-                        className="m-1"
-                      />
-                    </button>
-                    <ul className="dropdown-menu">
-                      <li>
-                        <Link href="/profile/home" legacyBehavior>
-                          <a className="dropdown-item" href="/profile/home">
-                            Mi perfil
-                          </a>
-                        </Link>
-                      </li>
-                      <li>
-                        <hr className="dropdown-divider" />
-                      </li>
-                      <li>
-                        <button
-                          type="button"
-                          className="dropdown-item"
-                          onClick={(e) => clear()}
-                        >
-                          Cerrar sesión
-                        </button>
-                      </li>
-                    </ul>
-                  </li>
-                </ul>
-              )}
+                      <button
+                        className="nav-link dropdown-toggle"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <span className="text-login">Mi cuenta</span>
+                        <img
+                          src="../img/icon-user.svg"
+                          width={30}
+                          className="m-1"
+                        />
+                      </button>
+                      <ul className="dropdown-menu">
+                        <li>
+                          <Link href="/profile/home" legacyBehavior>
+                            <a className="dropdown-item" href="/profile/home">
+                              Mi perfil
+                            </a>
+                          </Link>
+                        </li>
+                        <li>
+                          <hr className="dropdown-divider" />
+                        </li>
+                        <li>
+                          <button
+                            type="button"
+                            className="dropdown-item"
+                            onClick={(e) => clear()}
+                          >
+                            Cerrar sesión
+                          </button>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
+                ))}
               <a
                 className="d-flex align-items-center"
                 ref={refs.setReference}
@@ -244,7 +269,11 @@ export default function Header({ openNav, isBuyStage = false }: { openNav: any, 
                     {timeToEnd}
                   </span>
                 )}
-                <img src="../img/cart-outline.svg" width={30} className={`${styles.svgImage} ${styles.svgShadow}`} />
+                <img
+                  src="../img/cart-outline.svg"
+                  width={30}
+                  className={`${styles.svgImage} ${styles.svgShadow}`}
+                />
                 {carroCompras.length > 0 && (
                   <span className="badge bg-primary rounded-pill">
                     {carroCompras.length}
