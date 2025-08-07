@@ -78,7 +78,9 @@ const ActualizarDatos = () => {
     data.mail2 = user?.mail;
     data.rut = user?.rut;
     if (!!user?.fechaNacimiento) {
-      const fecha = new Date(user?.fechaNacimiento.toString().replace(/Z$/, ''));
+      const fecha = new Date(
+        user?.fechaNacimiento.toString().replace(/Z$/, "")
+      );
       setFechaNacimiento(fecha);
     }
   }, [user]);
@@ -115,7 +117,11 @@ const ActualizarDatos = () => {
           }, 5000);
         }
       } catch (error) {
-        setAlerta({ visible: true, msg: "Ocurrio un error al intentar actualizar la información", type: "alert-danger" })
+        setAlerta({
+          visible: true,
+          msg: "Ocurrio un error al intentar actualizar la información",
+          type: "alert-danger",
+        });
       }
       setIsLoading2(false);
     }
@@ -170,7 +176,11 @@ const ActualizarDatos = () => {
             ""
           )}
           <div className={"row"}>
-            <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
+            <div
+              className={
+                "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
+              }
+            >
               <label className={styles["title-data"]}>Nombre(s)</label>
               <input
                 type="text"
@@ -182,7 +192,11 @@ const ActualizarDatos = () => {
             </div>
           </div>
           <div className={"row "}>
-            <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
+            <div
+              className={
+                "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
+              }
+            >
               <label className={styles["title-data"]}>Apellido Paterno</label>
               <input
                 type="text"
@@ -192,7 +206,11 @@ const ActualizarDatos = () => {
                 onChange={onInputChange}
               />
             </div>
-            <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
+            <div
+              className={
+                "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
+              }
+            >
               <label className={styles["title-data"]}>Apellido Materno</label>
               <input
                 type="text"
@@ -204,7 +222,11 @@ const ActualizarDatos = () => {
             </div>
           </div>
           <div className={"row"}>
-            <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
+            <div
+              className={
+                "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
+              }
+            >
               <label className={styles["title-data"]}>Género</label>
               <select
                 name="sexo"
@@ -219,7 +241,11 @@ const ActualizarDatos = () => {
                 <option value={"OTRO"}>Otro</option>
               </select>
             </div>
-            <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
+            <div
+              className={
+                "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
+              }
+            >
               <label className={styles["title-data"]}>
                 Fecha de nacimiento
               </label>
@@ -277,7 +303,7 @@ const ActualizarDatos = () => {
                     </button>
                   </div>
                 )}
-                selected={ fechaNacimiento }
+                selected={fechaNacimiento}
                 onChange={(date) => setFechaNacimiento(date)}
                 dateFormat="dd/MM/yyyy"
                 locale={"es"}
@@ -287,7 +313,11 @@ const ActualizarDatos = () => {
             </div>
           </div>
           <div className={"row"}>
-            <div className={"col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"}>
+            <div
+              className={
+                "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
+              }
+            >
               <label className={styles["title-data"]}>Correo electrónico</label>
               <input
                 type="email"
@@ -299,10 +329,17 @@ const ActualizarDatos = () => {
             </div>
           </div>
           <div className={"row"}>
-            <div className={"col-6"}>
+            {/* <div className={"col-6"}>
               <div className={styles["return"]}>
                 <a href="/">Regresar</a>
               </div>
+            </div> */}
+            <div
+              type="button"
+              className={styles["return"]}
+              onClick={() => router.back()}
+            >
+              Regresar
             </div>
             <div className={"col-6"}>
               <div

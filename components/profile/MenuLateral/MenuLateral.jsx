@@ -11,20 +11,20 @@ const MenuLateral = (props) => {
   const { getItem, clear } = useLocalStorage();
   const router = useRouter();
 
-  useEffect(() => {
-    async function buscarMenu() {
-      try {
-        const data = await axios.post("/api/user/obtener-menu", "");
-        if (data.data.status) {
-          setMenu(data.data.object);
-        }
-      } catch ({ message }) {
-        console.error(`Error al obtener menú [${message}]`);
-      }
-    }
+  // useEffect(() => {
+  //   async function buscarMenu() {
+  //     try {
+  //       const data = await axios.post("/api/user/obtener-menu", "");
+  //       if (data.data.status) {
+  //         setMenu(data.data.object);
+  //       }
+  //     } catch ({ message }) {
+  //       console.error(`Error al obtener menú [${message}]`);
+  //     }
+  //   }
 
-    buscarMenu();
-  }, []);
+  //   buscarMenu();
+  // }, []);
 
   const cerrarSesion = () => {
     router.push('/').then(() => {

@@ -52,7 +52,8 @@ const DatosPasajero = (props) => {
     asientoTemporal["apellido"] = usuario?.apellidoPaterno || "";
     asientoTemporal["tipoDocumento"] = usuario?.tipoDocumento || "R";
     asientoTemporal["rut"] = usuario?.rut || "";
-    asientoTemporal["email"] = usuario?.email || "";
+    // asientoTemporal["email"] = usuario?.email || "";
+    asientoTemporal["email"] = usuario?.correo || "";
     asientoTemporal["cantidadEquipaje"] = usuario?.cantidadEquipaje || 0;
     return asientoTemporal;
   }
@@ -66,7 +67,8 @@ const DatosPasajero = (props) => {
     const infoToDispatch = {
       servicio,
       asiento: asientoTemporal,
-      email: usuario?.email || "",
+      // email: usuario?.email || "",
+      email: usuario?.correo || "",
     };
     if (servicio) {
       setInformacionAsiento(asientoTemporal);

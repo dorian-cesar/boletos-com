@@ -42,9 +42,9 @@ const Home = () => {
     setBuscarSaldo(!buscarSaldo);
   }, []);
 
-  useEffect(() => {
-    actualizarSaldoWallet().then();
-  }, [buscarSaldo])
+  // useEffect(() => {
+  //   actualizarSaldoWallet().then();
+  // }, [buscarSaldo])
 
   async function actualizarSaldoWallet() {
     if( !!user ) {
@@ -90,7 +90,7 @@ const Home = () => {
               <h2>{user?.nombres} {user?.apellidoPaterno}!</h2>
             </div>
           </div>
-          <div className={ styles['wallet-info'] }>
+          {/* <div className={ styles['wallet-info'] }>
             <div className={ styles['wallet-title'] }>
               <img
                 className={ styles["imagen-monedero"] }
@@ -105,7 +105,7 @@ const Home = () => {
             <h2 className={ styles['wallet-mount'] }>
               { clpFormat.format(user?.wallet?.saldoContable || 0) }
             </h2>
-          </div>
+          </div> */}
         </section>
         <section className={ `container ${ styles['profile-body-container']}` }>
           <div className="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
