@@ -65,7 +65,7 @@ const Login = (props) => {
         rut: "76.485.689-9",
         apellidoMaterno: "Test",
         apellidoPaterno: "Test",
-        correo: "dwigodski@gmail.com",
+        correo: "dwigodski@wit.la",
         correo2: "",
         fechaNacimiento: "05/05/2000",
         nombres: "Prueba",

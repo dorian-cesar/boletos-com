@@ -328,7 +328,7 @@ const ActualizarDatos = () => {
               />
             </div>
           </div>
-          <div className={"row"}>
+          <div className={"row d-flex justify-content-between align-items-center"}>
             {/* <div className={"col-6"}>
               <div className={styles["return"]}>
                 <a href="/">Regresar</a>

@@ -104,7 +104,7 @@ export default async function handler(req, res) {
 
     res.status(200).json({
       success: true,
-      status: flowResponse.status, // 1: pagado, 2: rechazado, 3: pendiente, 4: anulado
+      status: flowResponse.status, // 1: pendiente, 2: pagado, 3: rechazado, 4: anulado
       flowResponse,
     });
   } catch (error) {
