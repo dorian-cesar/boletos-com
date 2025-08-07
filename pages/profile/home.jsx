@@ -47,20 +47,23 @@ const Home = () => {
   // }, [buscarSaldo])
 
   async function actualizarSaldoWallet() {
-    if( !!user ) {
+    if (!!user) {
       try {
-        const { data } = await axios.post('/api/user/consulta-saldo-wallet', user);
+        const { data } = await axios.post(
+          "/api/user/consulta-saldo-wallet",
+          user
+        );
         setUser({
           ...user,
-          wallet: data.object
-        })
+          wallet: data.object,
+        });
       } catch (error) {
         console.error("Error al actualizar el saldo de la billetera:", error);
       }
     }
   }
-  
-  //cambiar icon de mobile a destokp 
+
+  //cambiar icon de mobile a destokp
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -68,11 +71,11 @@ const Home = () => {
       setIsMobile(window.innerWidth < 470);
     };
     // Listener para detectar cambios en el tamaño de la ventana
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
     // Llamar a handleResize una vez para establecer el estado inicial
     handleResize();
     // Limpiar el event listener en la limpieza del efecto
-    return () => window.removeEventListener('resize', handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   return (
@@ -80,14 +83,22 @@ const Home = () => {
       <Head>
         <title>Pullman Bus | Mi Perfil</title>
       </Head>
-      <section className={ styles['perfil-body'] }>
-        <section className={ `container ${ styles['header-profile'] }` }>
-          <div className={ styles['user-info'] }>
-            <img 
-            src={isMobile ? "../img/icon/profile/Perfil-mobile.svg": "../img/icon/profile/Perfil.svg"} alt=""></img>
-            <div className={ styles['user-name'] }>
+      <section className={styles["perfil-body"]}>
+        <section className={`container ${styles["header-profile"]}`}>
+          <div className={styles["user-info"]}>
+            <img
+              src={
+                isMobile
+                  ? "../img/icon/profile/Perfil-mobile.svg"
+                  : "../img/icon/profile/Perfil.svg"
+              }
+              alt=""
+            ></img>
+            <div className={styles["user-name"]}>
               <h2>¡Hola,</h2>
-              <h2>{user?.nombres} {user?.apellidoPaterno}!</h2>
+              <h2>
+                {user?.nombres} {user?.apellidoPaterno}!
+              </h2>
             </div>
           </div>
           {/* <div className={ styles['wallet-info'] }>
@@ -107,7 +118,7 @@ const Home = () => {
             </h2>
           </div> */}
         </section>
-        <section className={ `container ${ styles['profile-body-container']}` }>
+        <section className={`container ${styles["profile-body-container"]}`}>
           <div className="col-12 col-sm-12 col-md-3 col-lg-3 col-xl-3 col-xxl-3">
             <MenuLateral
               vista={vista}
@@ -115,7 +126,9 @@ const Home = () => {
               setNombreVista={setNombreVista}
             />
           </div>
-          <div className={ `${styles['view-container']} col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 col-xxl-8`}>
+          <div
+            className={`${styles["view-container"]} col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8 col-xxl-8`}
+          >
             <div className={styles["titulo-menu"]}>
               Mi cuenta {">"} {nombreVista}
             </div>
@@ -133,7 +146,9 @@ const Home = () => {
             {vista === "viajesEspeciales" && <MenuLateral />}
             {vista === "registrarPasajero" && <RegistrarPasajero />}
             {vista === "historialCompraCuponera" && <HistorialCompraCuponera />}
-            {vista === "historialCompraCuponeraAntigua" && <HistorialCompraCuponeraAntigua />}
+            {vista === "historialCompraCuponeraAntigua" && (
+              <HistorialCompraCuponeraAntigua />
+            )}
           </div>
         </section>
       </section>

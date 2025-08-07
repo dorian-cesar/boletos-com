@@ -72,7 +72,7 @@ const Login = (props) => {
         tipoDocumento: "R",
         sexo: "MASCULINO",
       };
-      
+
       const token = "token_prueba";
 
       encryptData(usuario, LocalStorageEntities.user_auth);
