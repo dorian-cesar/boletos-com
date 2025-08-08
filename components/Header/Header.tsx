@@ -233,6 +233,7 @@ export default function Header({
                           src="../img/icon-user.svg"
                           width={30}
                           className="m-1"
+                          // className={`m-1 ${styles.svgImage} ${styles.svgShadow}`}
                         />
                       </button>
                       <ul className="dropdown-menu">

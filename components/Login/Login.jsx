@@ -61,19 +61,25 @@ const Login = (props) => {
       // Object.assign(usuario.wallet, { last_update: new Date() });
 
       // console.log("USUARIO:::", usuario);
-      const usuario = {
-        rut: "76.485.689-9",
-        apellidoMaterno: "Test",
-        apellidoPaterno: "Test",
-        correo: "dwigodski@wit.la",
-        correo2: "",
-        fechaNacimiento: "05/05/2000",
-        nombres: "Prueba",
-        tipoDocumento: "R",
-        sexo: "MASCULINO",
-      };
 
-      const token = "token_prueba";
+      const res = await axios.post("/api/user/validar-login", { ...login });
+      console.log(res);
+
+      const { token, usuario } = res.data.object;
+
+      // const usuario = {
+      //   rut: "76.485.689-9",
+      //   apellidoMaterno: "Test",
+      //   apellidoPaterno: "Test",
+      //   correo: "dwigodski@wit.la",
+      //   correo2: "",
+      //   fechaNacimiento: "05/05/2000",
+      //   nombres: "Prueba",
+      //   tipoDocumento: "R",
+      //   sexo: "MASCULINO",
+      // };
+
+      // const token = "token_prueba";
 
       encryptData(usuario, LocalStorageEntities.user_auth);
       encryptData(token, LocalStorageEntities.user_token);
@@ -142,7 +148,7 @@ const Login = (props) => {
                     Al registrarte o iniciar sesión, estás aceptando nuestros
                     términos y condiciones de uso.
                   </p>
-                  <div className="row">
+                  <div className="row text-center text-success">
                     {alert.visible ? (
                       <div className={"alert " + alert?.type} role="alert">
                         {alert?.msg}

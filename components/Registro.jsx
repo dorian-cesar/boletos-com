@@ -11,7 +11,7 @@ const CustomInput = forwardRef(({ value, onClick }, ref) => (
     onClick={onClick}
     ref={ref}
     value={value}
-    onChange={()=>{}}
+    onChange={() => {}}
   />
 ));
 const months = [
@@ -29,28 +29,37 @@ const months = [
   "Diciembre",
 ];
 
+// const registroFormFields = {
+//   rut:"",
+//   apellidoMaterno:"",
+//   apellidoPaterno:"",
+//   password:"",
+//   password2: "",
+//   mail:"",
+//   mail2:"",
+//   fechaNacimiento:"",
+//   nombres:"",
+//   tipoDocumento:"R",
+//   sexo:""
+// }
+
 const registroFormFields = {
-  rut:"",
-  apellidoMaterno:"",
-  apellidoPaterno:"",
-  password:"",
+  rut: "",
+  password: "",
   password2: "",
-  mail:"",
-  mail2:"",
-  fechaNacimiento:"",
-  nombres:"",
-  tipoDocumento:"R",
-  sexo:""
-}
+  mail: "",
+  mail2: "",
+  nombreApellido: "",
+  tipoDocumento: "R",
+};
 
 const Registro = ({ onChangeMode, onChangeAlert }) => {
-
   const { formState: registro, onInputChange } = useForm(registroFormFields);
-  const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState({
-    errorMsg: '',
-    status: false
+    errorMsg: "",
+    status: false,
   });
 
   const [isShowPassword, setIsShowPassword] = useState(false);
@@ -58,77 +67,108 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
 
   const listaYears = useMemo(() => {
     let years = [];
-    for(let i = new Date().getFullYear(); i >= 1910; i--) {
+    for (let i = new Date().getFullYear(); i >= 1910; i--) {
       years.push(i);
     }
-    return years
-  }, [])
+    return years;
+  }, []);
 
-  useEffect(() => {
-    registro.fechaNacimiento = fechaNacimiento;
-  }, [fechaNacimiento]);
-  
+  // useEffect(() => {
+  //   registro.fechaNacimiento = fechaNacimiento;
+  // }, [fechaNacimiento]);
+
   const changeMode = () => {
     onChangeMode("0");
   };
 
   const registrar = async () => {
     const formStatus = await validarForm();
-    if(formStatus){
-      try{
+    if (formStatus) {
+      try {
         setIsLoading(true);
-        const res = await axios.post("/api/user/registro-usuario", {...registro});
-        if(res.data.status){
+        const res = await axios.post("/api/user/registro-usuario", {
+          ...registro,
+        });
+        if (res.data.message === "Usuario registrado correctamente") {
           onChangeAlert({
-            msg: '¡Registro completado con éxito!',
+            msg: "¡Registro completado con éxito! Ingrese con su correo electrónico y contraseña.",
             visible: true,
-            type: 'alert-success'
-          })
+            type: "alert-success",
+          });
           changeMode();
         }
       } catch (e) {
         setIsLoading(false);
-        if(!!e.response){
-          const { message } = e.response?.data;
-          setError({ status: true, errorMsg: message });
+        if (e.response) {
+          const backendError = e.response.data;
+          const isDuplicateEmail =
+            backendError.details &&
+            backendError.details.includes("E11000 duplicate key error");
+          const baseMsg = isDuplicateEmail
+            ? (onChangeAlert({
+                msg: "El usuario ya está registrado. Ingrese con su correo electrónico y contraseña.",
+                visible: true,
+                type: "alert-success",
+              }),
+              changeMode())
+            : backendError.error || "Error desconocido.";
+          const errorMsg = isDuplicateEmail
+            ? baseMsg
+            : `${baseMsg} Intente nuevamente.`;
+          setError({
+            status: true,
+            errorMsg,
+          });
         } else {
-          setError({ status: true, errorMsg: 'Ocurrió un error inesperado.' });
+          setError({
+            status: true,
+            errorMsg: "Ocurrió un error inesperado.",
+          });
         }
-
       }
     }
-  }
+  };
 
   const validarForm = () => {
     return new Promise((resolve, reject) => {
       const values = Object.values(registro);
-      const camposVacios = values.filter((v) => v == '');
-      if(camposVacios.length > 0){
-        setError({ status: true, errorMsg: 'Se requiere rellenar todos los campos.' });
+      const camposVacios = values.filter((v) => v == "");
+      if (camposVacios.length > 0) {
+        setError({
+          status: true,
+          errorMsg: "Se requiere rellenar todos los campos.",
+        });
         resolve(false);
       } else {
-        if(registro?.tipoDocumento == 'R'){
+        if (registro?.tipoDocumento == "R") {
           let rut = new Rut(registro?.rut);
           if (!rut?.isValid) {
-            setError({ status: true, errorMsg: 'Se requiere ingresar un rut válido' });
+            setError({
+              status: true,
+              errorMsg: "Se requiere ingresar un rut válido",
+            });
             return resolve(false);
           }
         }
-        if(registro?.mail != registro?.mail2){
-          setError({ status: true, errorMsg: 'Los correo no coinciden. Por favor, verificar.' });
+        if (registro?.mail != registro?.mail2) {
+          setError({
+            status: true,
+            errorMsg: "Los correos no coinciden. Por favor, verificar.",
+          });
           resolve(false);
-        } else if(registro?.password != registro?.password2){
-          setError({ status: true, errorMsg: 'Las contraseñas no coinciden. Por favor, verificar.' });
+        } else if (registro?.password != registro?.password2) {
+          setError({
+            status: true,
+            errorMsg: "Las contraseñas no coinciden. Por favor, verificar.",
+          });
           resolve(false);
         } else {
-          setError({ status: false, errorMsg: '' });
+          setError({ status: false, errorMsg: "" });
           resolve(true);
         }
       }
-    })
-  }
-
-
+    });
+  };
 
   return (
     <>
@@ -145,36 +185,37 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
               ¡Se parte de Pullman Bus! Ingresa los siguientes datos para crear
               tu cuenta
             </div>
-            <div className="row mt-2">
-            {error.status ?  
-            <div className="alert alert-danger" role="alert">
-              { error?.errorMsg }
-            </div>:''
-            }
+            <div className="row mt-2 text-center">
+              {error.status ? (
+                <div className="alert alert-danger text-danger" role="alert">
+                  {error?.errorMsg}
+                </div>
+              ) : (
+                ""
+              )}
             </div>
-            {isLoading ? 
-            <div className="d-flex justify-content-center">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden"></span>
+            {isLoading ? (
+              <div className="d-flex justify-content-center">
+                <div className="spinner-border text-primary my-2" role="status">
+                  <span className="visually-hidden"></span>
+                </div>
               </div>
-            </div>:''
-            }
+            ) : (
+              ""
+            )}
             <div className="row mt-2">
               <div className="col-12 col-md-6">
                 <div className="row">
                   <div className="col-4">
                     <label className="contenedor">
                       RUT
-                      <input 
-                        type="checkbox" 
-                        value={"R"} 
+                      <input
+                        type="checkbox"
+                        value={"R"}
                         name="tipoDocumento"
-                        onChange={ onInputChange }
-                        checked={
-                          registro?.tipoDocumento == "R"
-                            ? true
-                            : false
-                        }/>
+                        onChange={onInputChange}
+                        checked={registro?.tipoDocumento == "R" ? true : false}
+                      />
                       <span className="checkmark"></span>
                     </label>
                   </div>
@@ -185,12 +226,8 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                         type="checkbox"
                         value={"P"}
                         name="tipoDocumento"
-                        onChange={ onInputChange }
-                        checked={
-                          registro?.tipoDocumento == "P"
-                            ? true
-                            : false
-                        }
+                        onChange={onInputChange}
+                        checked={registro?.tipoDocumento == "P" ? true : false}
                       />
                       <span className="checkmark"></span>
                     </label>
@@ -198,26 +235,32 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                 </div>
                 <input
                   type="text"
-                  placeholder={ registro?.tipoDocumento != 'R' ? 'Ej. 111111111':'Ej. 11111111-1'}
-                  disabled={ registro?.tipoDocumento != '' ? false:true }
+                  placeholder={
+                    registro?.tipoDocumento != "R"
+                      ? "Ej. 111111111"
+                      : "Ej. 11111111-1"
+                  }
+                  disabled={registro?.tipoDocumento != "" ? false : true}
                   className={"form-control form-control-modal"}
                   name="rut"
-                  value={ registro?.rut }
-                  onChange={ onInputChange }
+                  value={registro?.rut}
+                  onChange={onInputChange}
                 />
               </div>
               <div className="col-12 col-md-6">
-                  <label className="label-input-modal">Nombres</label>
-                  <input
-                    type="text"
-                    className={"form-control form-control-modal"}
-                    name="nombres"
-                    value={ registro?.nombres }
-                    onChange={ onInputChange }
-                  />
+                <label className="label-input-modal">Nombre y Apellido</label>
+                <input
+                  type="text"
+                  className={"form-control form-control-modal"}
+                  // name="nombres"
+                  // value={ registro?.nombres }
+                  name="nombreApellido"
+                  value={registro?.nombreApellido}
+                  onChange={onInputChange}
+                />
               </div>
             </div>
-            <div className="row">
+            {/* <div className="row">
               <div className="col-12 col-md-6">
                 <label className="label-input-modal">Apellido Paterno</label>
                 <input
@@ -238,8 +281,8 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                   onChange={ onInputChange }
                 />
               </div>
-            </div>
-            <div className="row">
+            </div> */}
+            {/* <div className="row">
               <div className="col-12 col-md-7 col-lg-6">
                 <label className="label-input-modal">Género</label>
                 <select
@@ -254,8 +297,8 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                   <option value={"Mujer"}>Mujer</option>
                   <option value={"OTRO"}>Prefiero no especificar</option>
                 </select>
-              </div>
-              <div className="col-12 col-md-5 col-lg-6">
+              </div> */}
+            {/* <div className="col-12 col-md-5 col-lg-6">
                 <label className="label-input-modal">Fecha nacimiento</label>
                 <DatePicker
                   renderCustomHeader={({
@@ -312,8 +355,8 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                   placeholderText={""}
                   customInput={<CustomInput />}
                 />
-              </div>
-            </div>
+              </div> */}
+            {/* </div> */}
             <div className="row">
               <div className="col-12 col-md-6">
                 <label className="label-input-modal">Correo</label>
@@ -341,20 +384,33 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                 <label className="label-input-modal">Contraseña</label>
                 <div className="input-group">
                   <input
-                    type={ !isShowPassword ? "password" : "text" }
+                    type={!isShowPassword ? "password" : "text"}
                     className={"form-control form-control-modal w-75"}
                     name="password"
                     value={registro?.password}
                     onChange={onInputChange}
                   />
-                  <span className="input-group-text form-control p-0 d-flex" onClick={ () => setIsShowPassword(!isShowPassword) }>
-                    {
-                      !isShowPassword ? (
-                        <img src="img/icon/form/eye-outline.svg" className="d-flex m-auto" width={25} height={25} alt="eye outline" />
-                      ) : (
-                        <img src="img/icon/form/eye-off-outline.svg" className="d-flex m-auto" width={25} height={25} alt="eye outline" />
-                      )
-                    }
+                  <span
+                    className="input-group-text form-control p-0 d-flex"
+                    onClick={() => setIsShowPassword(!isShowPassword)}
+                  >
+                    {!isShowPassword ? (
+                      <img
+                        src="img/icon/form/eye-outline.svg"
+                        className="d-flex m-auto"
+                        width={25}
+                        height={25}
+                        alt="eye outline"
+                      />
+                    ) : (
+                      <img
+                        src="img/icon/form/eye-off-outline.svg"
+                        className="d-flex m-auto"
+                        width={25}
+                        height={25}
+                        alt="eye outline"
+                      />
+                    )}
                   </span>
                 </div>
               </div>
@@ -362,20 +418,33 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                 <label className="label-input-modal">Confirme contraseña</label>
                 <div className="input-group">
                   <input
-                    type={ !isShowPassword2 ? "password" : "text" }
+                    type={!isShowPassword2 ? "password" : "text"}
                     className={"form-control form-control-modal w-75"}
                     name="password2"
                     value={registro?.password2}
                     onChange={onInputChange}
                   />
-                  <span className="input-group-text form-control p-0 d-flex" onClick={ () => setIsShowPassword2(!isShowPassword2) }>
-                    {
-                      !isShowPassword2 ? (
-                        <img src="img/icon/form/eye-outline.svg" className="d-flex m-auto" width={25} height={25} alt="eye outline" />
-                      ) : (
-                        <img src="img/icon/form/eye-off-outline.svg" className="d-flex m-auto" width={25} height={25} alt="eye outline" />
-                      )
-                    }
+                  <span
+                    className="input-group-text form-control p-0 d-flex"
+                    onClick={() => setIsShowPassword2(!isShowPassword2)}
+                  >
+                    {!isShowPassword2 ? (
+                      <img
+                        src="img/icon/form/eye-outline.svg"
+                        className="d-flex m-auto"
+                        width={25}
+                        height={25}
+                        alt="eye outline"
+                      />
+                    ) : (
+                      <img
+                        src="img/icon/form/eye-off-outline.svg"
+                        className="d-flex m-auto"
+                        width={25}
+                        height={25}
+                        alt="eye outline"
+                      />
+                    )}
                   </span>
                 </div>
               </div>
@@ -383,7 +452,11 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
           </div>
         </div>
         <div className="modal-footer">
-          <button type="button" className="btn btn-modal-primary" onClick={(e) => registrar()}>
+          <button
+            type="button"
+            className="btn btn-modal-primary"
+            onClick={(e) => registrar()}
+          >
             Registrarme
           </button>
           <button
