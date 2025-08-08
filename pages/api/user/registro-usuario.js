@@ -25,16 +25,12 @@ export default async (req, res) => {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método no permitido" });
   }
-
   const token = generateToken();
-
   try {
     const { nombreApellido, mail, password, rut } = req.body;
-
     if (!nombreApellido || !mail || !password || !rut) {
       return res.status(400).json({ error: "Faltan campos requeridos" });
     }
-
     const postData = {
       name: nombreApellido,
       rut,
@@ -42,9 +38,6 @@ export default async (req, res) => {
       password,
       role: 'usuario',
     };
-
-    console.log("postData", postData);
-
     const response = await axios.post(
       `${config.url_api}/users/register`,
       postData,
@@ -54,14 +47,11 @@ export default async (req, res) => {
         },
       }
     );
-
     res.status(200).json(response.data);
   } catch (error) {
     console.error("Error en registro:", error);
-
     const status = error?.response?.status || 500;
     const message = error?.response?.data || { error: "Error desconocido" };
-
     res.status(status).json(message);
   }
 };

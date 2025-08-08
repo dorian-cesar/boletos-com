@@ -9,7 +9,7 @@ import { encryptData } from "utils/encrypt-data";
 import LocalStorageEntities from "entities/LocalStorageEntities";
 
 const loginFormFields = {
-  mail: "",
+  email: "",
   password: "",
 };
 
@@ -24,7 +24,7 @@ const Login = (props) => {
     type: "",
   });
   const [emptyFields, setEmptyFields] = useState({
-    mail: false,
+    email: false,
     password: false,
   });
 
@@ -37,14 +37,15 @@ const Login = (props) => {
   };
 
   const onLogin = async () => {
-    if (login.mail == "" || login.password == "") {
+    if (login.email == "" || login.password == "") {
       setAlert({
-        msg: "Rellene los campos vacios",
+        msg: "Rellene los campos vacios.",
         visible: true,
-        type: "alert-danger",
+        // type: "alert-danger",
+        type: "text-danger",
       });
       setEmptyFields({
-        mail: login.mail === "",
+        email: login.email === "",
         password: login.password === "",
       });
       return;
@@ -63,9 +64,19 @@ const Login = (props) => {
       // console.log("USUARIO:::", usuario);
 
       const res = await axios.post("/api/user/validar-login", { ...login });
-      console.log(res);
 
-      const { token, usuario } = res.data.object;
+      const { token, user } = res.data;
+
+      const nombresSplit = user.name.split(" ");
+      const nombres = nombresSplit[0];
+      const apellidoPaterno = nombresSplit[1];
+
+      const userLogged = {
+        nombres,
+        apellidoPaterno,
+        rut: user.rut,
+        correo: user.email,
+      };
 
       // const usuario = {
       //   rut: "76.485.689-9",
@@ -81,7 +92,7 @@ const Login = (props) => {
 
       // const token = "token_prueba";
 
-      encryptData(usuario, LocalStorageEntities.user_auth);
+      encryptData(userLogged, LocalStorageEntities.user_auth);
       encryptData(token, LocalStorageEntities.user_token);
 
       setIsLoading(false);
@@ -90,19 +101,20 @@ const Login = (props) => {
       myModal.hidden = true;
       window.location.reload(false);
     } catch (e) {
-      console.log(e);
+      console.error(e);
       setIsLoading(false);
-      if (!!e.response) {
-        const { message } = e.response?.data;
+      if (e.response?.data?.message) {
         setAlert({
-          msg: message,
+          msg: e.response.data.message,
           visible: true,
-          type: "alert-danger",
+          // type: "alert-danger",
+          type: "text-danger",
         });
       } else {
         setAlert({
-          msg: "Ocurrió un error inesperado",
+          msg: "Ocurrió un error inesperado.",
           visible: true,
+          type: "text-danger",
           type: "alert-danger",
         });
       }
@@ -148,7 +160,7 @@ const Login = (props) => {
                     Al registrarte o iniciar sesión, estás aceptando nuestros
                     términos y condiciones de uso.
                   </p>
-                  <div className="row text-center text-success">
+                  <div className="row text-center">
                     {alert.visible ? (
                       <div className={"alert " + alert?.type} role="alert">
                         {alert?.msg}
@@ -173,12 +185,14 @@ const Login = (props) => {
                     <div className="row mt-2" key={key}>
                       <div className="col-12">
                         <label className="label-input">
-                          {key === "mail" ? "Correo electrónico" : "Contraseña"}
+                          {key === "email"
+                            ? "Correo electrónico"
+                            : "Contraseña"}
                         </label>
                         <input
                           type={key === "password" ? "password" : "text"}
                           placeholder={
-                            key === "mail"
+                            key === "email"
                               ? "Ej: example@example.com"
                               : "Ej: ******"
                           }

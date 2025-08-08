@@ -22,13 +22,14 @@ const config = serverRuntimeConfig;
 export default async (req, res) => {
   try {
     const postData = req.body;
-    let data = await axios.post(config.url_api + `/users/login/`, postData);
-    res.status(200).json(data.data);
+    console.log("postData", postData);
+    let response = await axios.post(config.url_api + `/users/login/`, postData);
+    res.status(200).json(response.data);
   } catch (error) {
-    if (error.response.data.status === false) {
+    if (error.response.status === 404 || error.response.status === 401) {
       res.status(400).json({
         status: false,
-        message: "Correo electrónico o contraseña incorrectos",
+        message: "Correo electrónico o contraseña incorrectos.",
       });
     } else {
       res.status(500).json({
