@@ -93,7 +93,8 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
           onChangeAlert({
             msg: "¡Registro completado con éxito! Ingrese con su correo electrónico y contraseña.",
             visible: true,
-            type: "alert-success",
+            // type: "alert-success",
+            type: "text-success",
           });
           changeMode();
         }
@@ -108,7 +109,8 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
             ? (onChangeAlert({
                 msg: "El usuario ya está registrado. Ingrese con su correo electrónico y contraseña.",
                 visible: true,
-                type: "alert-success",
+                // type: "alert-success",
+                type: "text-success",
               }),
               changeMode())
             : backendError.error || "Error desconocido.";

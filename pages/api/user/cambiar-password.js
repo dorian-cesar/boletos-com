@@ -4,18 +4,27 @@ import axios from "axios"
 const {serverRuntimeConfig} = getConfig();
 const config = serverRuntimeConfig;
 
+// export default async (req, res) => {
+//     try {
+//         const postData = req.body;
+//         let token = await doLogin();
+//         let data = await axios.post(config.service_url + `/usuarioPortal/cambiarPassword`, postData, {
+//             headers: {
+//                 'Authorization': `Bearer ${token.token}`
+//             }
+//         })
+//         res.status(200).json(data.data);
+//     } catch(error){
+//         res.status(400).json(error?.response.data);
+//     }
+// }   
+
 export default async (req, res) => {
     try {
         const postData = req.body;
-        let token = await doLogin();
-        let data = await axios.post(config.service_url + `/usuarioPortal/cambiarPassword`, postData, {
-            headers: {
-                'Authorization': `Bearer ${token.token}`
-            }
-        })
+        let data = await axios.post(config.url_api + `/users/reset-password`, postData)
         res.status(200).json(data.data);
     } catch(error){
         res.status(400).json(error?.response.data);
     }
-    
 }   

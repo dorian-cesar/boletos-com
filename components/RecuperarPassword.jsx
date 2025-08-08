@@ -32,7 +32,7 @@ const RecuperarPassword = ({ onChangeMode,  onChangeAlert }) => {
         onChangeAlert({
           msg: res.data.message,
           visible: true,
-          type: 'alert-success'
+          type: 'text-success'
         })
         changeMode();
       }
