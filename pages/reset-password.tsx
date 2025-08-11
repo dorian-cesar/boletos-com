@@ -48,20 +48,19 @@ const ResetPassword = () => {
       setIsLoading(true);
       const res = await axios.post("/api/user/cambiar-password", {
         token,
-        password: reset.password,
+        newPassword: reset.password,
       });
-
-      if (res.data.status) {
-        setSuccessMsg(res.data.message || "Contraseña cambiada con éxito");
+      console.log(res.data);
+      if (res.data.message) {
+        setSuccessMsg("Contraseña cambiada con éxito");
         setTimeout(() => {
           router.push("/");
         }, 3000);
       }
     } catch (e) {
       setIsLoading(false);
-      if (e.response) {
-        const { message } = e.response?.data;
-        setError({ status: true, errorMsg: message });
+      if (e.response.status == 400) {
+        setError({ status: true, errorMsg: "Enlace inválido o expirado." });
       } else {
         setError({
           status: true,
@@ -89,7 +88,7 @@ const ResetPassword = () => {
         </div>
       )}
       {successMsg && (
-        <div className="alert alert-success" role="alert">
+        <div className="alert text-success text-center" role="alert">
           {successMsg} <br />
           Redirigiendo...
         </div>

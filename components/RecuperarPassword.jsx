@@ -20,7 +20,7 @@ const RecuperarPassword = ({ onChangeMode,  onChangeAlert }) => {
   const recuperarPassword = async () => {
     if(recuperar.mail == '') {
       return setError({
-        errorMsg: 'Se requiere ingresar un correo electrónico para recuperar la contraseña',
+        errorMsg: 'Se requiere ingresar un correo electrónico para recuperar la contraseña.',
         status: true
       })
     }
@@ -28,9 +28,9 @@ const RecuperarPassword = ({ onChangeMode,  onChangeAlert }) => {
     try{
       setIsLoading(true);
       const res = await axios.post("/api/user/recuperar-password", {...recuperar});
-      if(res.data.status){
+      if(res.data){
         onChangeAlert({
-          msg: res.data.message,
+          msg: "Se ha enviado un correo para restaurar su contraseña.",
           visible: true,
           type: 'text-success'
         })
@@ -38,9 +38,8 @@ const RecuperarPassword = ({ onChangeMode,  onChangeAlert }) => {
       }
     } catch (e) {
       setIsLoading(false);
-      if(!!e.response){
-        const { message } = e.response?.data;
-        setError({ status: true, errorMsg: message });
+      if(e.response.status == 400){
+        setError({ status: true, errorMsg: "Revise el correo ingresado." });
       } else {
         setError({ status: true, errorMsg: 'Ocurrió un error inesperado.' });
       }
@@ -64,7 +63,7 @@ const RecuperarPassword = ({ onChangeMode,  onChangeAlert }) => {
             </div>
             <div className="row mt-2">
               {error.status ?  
-              <div className="alert alert-danger" role="alert">
+              <div className="alert text-danger text-center" role="alert">
                 { error?.errorMsg }
               </div>:''
               }

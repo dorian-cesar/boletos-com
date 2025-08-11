@@ -24,12 +24,13 @@ export default async (req, res) => {
     try {
         const reqData = req.body;
         const postData = {
-            email: reqData.mail
+            email: reqData.mail,
         };
         console.log(postData);
         let data = await axios.post(config.url_api + `/users/forgot-password`, postData)
+        console.log("data", data);
         res.status(200).json(data.data);
     } catch(error){
-        res.status(400).json(error.response.data);
+        res.status(400).json(error.data);
     }
 }   
