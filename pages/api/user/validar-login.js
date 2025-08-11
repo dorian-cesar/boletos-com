@@ -22,7 +22,6 @@ const config = serverRuntimeConfig;
 export default async (req, res) => {
   try {
     const postData = req.body;
-    console.log("postData", postData);
     let response = await axios.post(config.url_api + `/users/login/`, postData);
     res.status(200).json(response.data);
   } catch (error) {
