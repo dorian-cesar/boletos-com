@@ -135,7 +135,7 @@ const ActualizarDatos = () => {
         setAlerta({
           visible: true,
           msg: "Se requiere rellenar todos los campos.",
-          type: "alert-danger",
+          type: "text-danger",
         });
         resolve(false);
       } else {
@@ -160,7 +160,7 @@ const ActualizarDatos = () => {
         <div className={`${styles["bloque"]} "col-12 col-md-12"`}>
           <h1 className={styles["title-modify-data"]}>Mi Perfil</h1>
           {alerta?.visible ? (
-            <div className={"alert " + alerta?.type} role="alert">
+            <div className={"alert " + alerta?.type + " mb-0"} role="alert">
               {alerta?.msg}
             </div>
           ) : (
@@ -221,7 +221,7 @@ const ActualizarDatos = () => {
               />
             </div>
           </div>
-          <div className={"row"}>
+          {/* <div className={"row"}>
             <div
               className={
                 "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
@@ -240,8 +240,8 @@ const ActualizarDatos = () => {
                 <option value={"MASCULINO"}>Masculino</option>
                 <option value={"OTRO"}>Otro</option>
               </select>
-            </div>
-            <div
+            </div> */}
+            {/* <div
               className={
                 "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
               }
@@ -310,9 +310,9 @@ const ActualizarDatos = () => {
                 placeholderText={""}
                 customInput={<CustomInput />}
               />
-            </div>
-          </div>
-          <div className={"row"}>
+            </div> */}
+          {/* </div> */}
+          {/* <div className={"row"}>
             <div
               className={
                 "col-12 col-sm-12 col-md-12 col-lg-6 col-xl-6 col-xxl-6"
@@ -327,7 +327,7 @@ const ActualizarDatos = () => {
                 disabled
               />
             </div>
-          </div>
+          </div> */}
           <div className={"row d-flex justify-content-between align-items-center"}>
             {/* <div className={"col-6"}>
               <div className={styles["return"]}>
