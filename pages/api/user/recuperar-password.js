@@ -1,7 +1,7 @@
-import doLogin from '../../../utils/oauth-token';
-import getConfig from 'next/config'
-import axios from "axios"
-const {serverRuntimeConfig} = getConfig();
+import doLogin from "../../../utils/oauth-token";
+import getConfig from "next/config";
+import axios from "axios";
+const { serverRuntimeConfig } = getConfig();
 const config = serverRuntimeConfig;
 
 // export default async (req, res) => {
@@ -17,20 +17,24 @@ const config = serverRuntimeConfig;
 //     } catch(error){
 //         res.status(400).json(error.response.data);
 //     }
-    
-// }   
+
+// }
 
 export default async (req, res) => {
-    try {
-        const reqData = req.body;
-        const postData = {
-            email: reqData.mail,
-        };
-        console.log(postData);
-        let data = await axios.post(config.url_api + `/users/forgot-password`, postData)
-        console.log("data", data);
-        res.status(200).json(data.data);
-    } catch(error){
-        res.status(400).json(error.data);
-    }
-}   
+  try {
+    const reqData = req.body;
+    const postData = {
+      email: reqData.mail,
+    };
+    console.log(postData);
+    let data = await axios.post(
+      config.url_api + `/users/forgot-password`,
+      postData
+    );
+    console.log("data", data);
+    res.status(200).json(data.data);
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    res.status(400).json(error.response?.data || { message: error.message });
+  }
+};
