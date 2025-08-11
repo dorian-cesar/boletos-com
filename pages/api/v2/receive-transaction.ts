@@ -14,7 +14,7 @@ export default async function handler(
     // Necesitas usar un middleware o manejarlo manualmente
 
     // Si estás usando bodyParser por defecto, necesitas desactivarlo para esta ruta y usar algo como 'raw-body'
-    console.log("Respuesta de Flow:", res);
+    console.log("Respuesta de PagoPar:", res);
 
     res.setHeader("Content-Type", "text/html");
     res.status(200).send(`
