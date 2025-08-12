@@ -16,11 +16,11 @@ const MediosPago = (props) => {
       valor1: "Pagar con Webpay",
       valor2: "WBPAY",
     },
-    {
-      id: "medio-cuponera",
-      valor1: "Usar cuponera",
-      valor2: "CUP",
-    },
+    // {
+    //   id: "medio-cuponera",
+    //   valor1: "Usar cuponera",
+    //   valor2: "CUP",
+    // },
   ]);
 
   const dispatch = useDispatch();

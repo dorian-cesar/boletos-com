@@ -47,7 +47,7 @@ const CambiarPassword = (props) => {
     if (formStatus) {
       try {
         setIsLoading2(true);
-        const res = await axios.post("/api/user/cambiar-password", {
+        const res = await axios.post("/api/user/cambiar-password-perfil", {
           ...changePassword,
         });
         if (res.data.status) {
