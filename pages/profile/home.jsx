@@ -38,8 +38,8 @@ const Home = () => {
     setUser(checkUser);
     setIsLoading(false);
     setVista("miPerfil");
-    setNombreVista("Mi perfil");
-    setBuscarSaldo(!buscarSaldo);
+    setNombreVista("Mi Perfil");
+    // setBuscarSaldo(!buscarSaldo);
   }, []);
 
   // useEffect(() => {
