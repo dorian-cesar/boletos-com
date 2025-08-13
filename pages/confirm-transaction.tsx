@@ -219,16 +219,19 @@ export default function ConfrimTransaction() {
               // Registra usuario invitado
               let userId = null;
               try {
-                const userRes = await fetch("https://boletos.dev-wit.com/api/users/register-guest", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    name: userName,
-                    email: userEmail,
-                  }),
-                });
+                const userRes = await fetch(
+                  "https://boletos.dev-wit.com/api/users/register-guest",
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                      name: userName,
+                      email: userEmail,
+                    }),
+                  }
+                );
 
                 if (!userRes.ok) {
                   const errorText = await userRes.text();

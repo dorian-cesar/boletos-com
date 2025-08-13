@@ -589,16 +589,17 @@ export const ResumenViaje = (props) => {
           localStorage.setItem("flowOrder", data.flowOrder);
         }
 
-        // setPayment({
-        //   ...payment,
-        //   url: data.url,
-        //   token: data.token,
-        // });
-
         setPayment({
           ...payment,
-          data: data.resultado.data,
+          url: data.url,
+          token: data.token,
         });
+
+        // PagoPar
+        // setPayment({
+        //   ...payment,
+        //   data: data.resultado.data,
+        // });
 
         setIsLoading(false);
       }
@@ -904,8 +905,8 @@ export const ResumenViaje = (props) => {
                 style={{ display: "none" }}
                 method="POST"
                 // action={payment.url}
-                // action={`${payment.url}?token=${payment.token}`}
-                action={`https://www.pagopar.com/pagos/${payment.data}`}
+                action={`${payment.url}?token=${payment.token}`}
+                // action={`https://www.pagopar.com/pagos/${payment.data}`}
               >
                 <input name="TBK_TOKEN" value={payment.token} />
               </form>

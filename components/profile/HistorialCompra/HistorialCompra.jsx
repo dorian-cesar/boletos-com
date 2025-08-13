@@ -12,14 +12,16 @@ import ModalEntities from "../../../entities/ModalEntities";
 
 const actualizarFormFields = {
   rut: "",
-  apellidoMaterno: "",
+  // apellidoMaterno: "",
   apellidoPaterno: "",
-  correo: "",
-  correo2: "",
-  fechaNacimiento: "",
+  email: "",
+  // correo: "",
+  // correo2: "",
+  // fechaNacimiento: "",
   nombres: "",
-  tipoDocumento: "R",
-  sexo: "",
+  userId: "",
+  // tipoDocumento: "R",
+  // sexo: "",
 };
 
 const estadoBoleto = {
@@ -36,11 +38,12 @@ const itemsPerPage = 9;
 const itemsPerPageBoleto = 5;
 
 const HistorialCompra = () => {
-  const { formState: data, onInputChange } = useForm(actualizarFormFields);
+  const { formState: userData, onInputChange } = useForm(actualizarFormFields);
   const [fechaNacimiento, setFechaNacimiento] = useState("");
   const router = useRouter();
   const { getItem } = useLocalStorage();
   const [user, setUser] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [historial, setHistorial] = useState([]);
   const [boleto, setBoleto] = useState([]);
@@ -49,101 +52,101 @@ const HistorialCompra = () => {
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [transaccion, setTransaccion] = useState("");
 
-  const dataHistorial = [
-    {
-      codigo: "TXN001",
-      estado: "ACTI",
-      fechaCompraFormato: "2025-08-01",
-      cantidadBoletos: 2,
-      monto: 5000,
-    },
-    {
-      codigo: "TXN002",
-      estado: "NUL",
-      fechaCompraFormato: "2025-08-02",
-      cantidadBoletos: 1,
-      monto: 2500,
-    },
-    {
-      codigo: "TXN003",
-      estado: "ACTI",
-      fechaCompraFormato: "2025-08-03",
-      cantidadBoletos: 3,
-      monto: 7500,
-    },
-    {
-      codigo: "TXN004",
-      estado: "ACTI",
-      fechaCompraFormato: "2025-08-04",
-      cantidadBoletos: 1,
-      monto: 2000,
-    },
-    {
-      codigo: "TXN005",
-      estado: "NUL",
-      fechaCompraFormato: "2025-08-05",
-      cantidadBoletos: 2,
-      monto: 4800,
-    },
-    {
-      codigo: "TXN006",
-      estado: "ACTI",
-      fechaCompraFormato: "2025-08-06",
-      cantidadBoletos: 4,
-      monto: 9600,
-    },
-    {
-      codigo: "TXN007",
-      estado: "NUL",
-      fechaCompraFormato: "2025-08-07",
-      cantidadBoletos: 1,
-      monto: 2200,
-    },
-    {
-      codigo: "TXN008",
-      estado: "ACTI",
-      fechaCompraFormato: "2025-08-07",
-      cantidadBoletos: 2,
-      monto: 5200,
-    },
-    {
-      codigo: "TXN009",
-      estado: "ACTI",
-      fechaCompraFormato: "2025-08-07",
-      cantidadBoletos: 5,
-      monto: 12500,
-    },
-    {
-      codigo: "TXN010",
-      estado: "NUL",
-      fechaCompraFormato: "2025-08-07",
-      cantidadBoletos: 1,
-      monto: 2000,
-    },
-  ];
+  // const dataHistorial = [
+  //   {
+  //     codigo: "TXN001",
+  //     estado: "ACTI",
+  //     fechaCompraFormato: "2025-08-01",
+  //     cantidadBoletos: 2,
+  //     monto: 5000,
+  //   },
+  //   {
+  //     codigo: "TXN002",
+  //     estado: "NUL",
+  //     fechaCompraFormato: "2025-08-02",
+  //     cantidadBoletos: 1,
+  //     monto: 2500,
+  //   },
+  //   {
+  //     codigo: "TXN003",
+  //     estado: "ACTI",
+  //     fechaCompraFormato: "2025-08-03",
+  //     cantidadBoletos: 3,
+  //     monto: 7500,
+  //   },
+  //   {
+  //     codigo: "TXN004",
+  //     estado: "ACTI",
+  //     fechaCompraFormato: "2025-08-04",
+  //     cantidadBoletos: 1,
+  //     monto: 2000,
+  //   },
+  //   {
+  //     codigo: "TXN005",
+  //     estado: "NUL",
+  //     fechaCompraFormato: "2025-08-05",
+  //     cantidadBoletos: 2,
+  //     monto: 4800,
+  //   },
+  //   {
+  //     codigo: "TXN006",
+  //     estado: "ACTI",
+  //     fechaCompraFormato: "2025-08-06",
+  //     cantidadBoletos: 4,
+  //     monto: 9600,
+  //   },
+  //   {
+  //     codigo: "TXN007",
+  //     estado: "NUL",
+  //     fechaCompraFormato: "2025-08-07",
+  //     cantidadBoletos: 1,
+  //     monto: 2200,
+  //   },
+  //   {
+  //     codigo: "TXN008",
+  //     estado: "ACTI",
+  //     fechaCompraFormato: "2025-08-07",
+  //     cantidadBoletos: 2,
+  //     monto: 5200,
+  //   },
+  //   {
+  //     codigo: "TXN009",
+  //     estado: "ACTI",
+  //     fechaCompraFormato: "2025-08-07",
+  //     cantidadBoletos: 5,
+  //     monto: 12500,
+  //   },
+  //   {
+  //     codigo: "TXN010",
+  //     estado: "NUL",
+  //     fechaCompraFormato: "2025-08-07",
+  //     cantidadBoletos: 1,
+  //     monto: 2000,
+  //   },
+  // ];
 
-  const dataBoleto = [
-    {
-      boleto: "BOL001",
-      origen: "Santiago",
-      fechaEmbarcacion: "2025-08-10",
-      puedeImprimir: true,
-    },
-    {
-      boleto: "BOL002",
-      origen: "Valparaíso",
-      fechaEmbarcacion: "2025-08-12",
-      puedeImprimir: false,
-    },
-  ];
+  // const dataBoleto = [
+  //   {
+  //     boleto: "BOL001",
+  //     origen: "Santiago",
+  //     fechaEmbarcacion: "2025-08-10",
+  //     puedeImprimir: true,
+  //   },
+  //   {
+  //     boleto: "BOL002",
+  //     origen: "Valparaíso",
+  //     fechaEmbarcacion: "2025-08-12",
+  //     puedeImprimir: false,
+  //   },
+  // ];
 
-  useEffect(() => {
-    setHistorial(dataHistorial);
-  }, []);
+  // useEffect(() => {
+  //   setHistorial(dataHistorial);
+  // }, []);
 
-  useEffect(() => {
-    setBoleto(dataBoleto);
-  }, []);
+  // useEffect(() => {
+  //   setBoleto(dataBoleto);
+  // }, []);
 
   const abrirPopup = () => {
     setMostrarPopup(true);
@@ -155,47 +158,94 @@ const HistorialCompra = () => {
   const id = useId();
 
   useEffect(() => {
-    let checkUser = decryptData(LocalStorageEntities.user_auth);
-    if (checkUser == null) router.push("/");
-    setUser(checkUser);
+    if (typeof window === "undefined") return;
+    const checkUser = decryptData(LocalStorageEntities.user_auth);
+
+    if (!checkUser) {
+      router.push("/");
+      return;
+    }
+
+    // Usa checkUser directamente en lugar de esperar a que se actualice el estado
+    console.log("user data:", checkUser);
+    userData.nombres = checkUser?.nombres;
+    userData.apellidoPaterno = checkUser?.apellidoPaterno;
+    userData.email = checkUser?.correo;
+    userData.rut = checkUser?.rut;
+
+    setUser(checkUser); // Esto sigue siendo útil para otros usos
     setIsLoading(false);
   }, []);
 
+  // Depuración del estado actualizado
   useEffect(() => {
-    data.nombres = user?.nombres;
-    data.apellidoPaterno = user?.apellidoPaterno;
-    data.apellidoMaterno = user?.apellidoMaterno;
-    data.genero = user?.genero;
-    data.mail = user?.mail;
-    data.mail2 = user?.mail2;
-    data.rut = user?.rut;
-    if (!!user?.fechaNacimiento) {
-      let fecha = new Date(
-        String(user?.fechaNacimiento).substring(
-          0,
-          String(user?.fechaNacimiento).length - 5
-        )
-      );
-      setFechaNacimiento(fecha);
-    }
+    console.log("user actualizado:", userData); // aquí debería verse el valor de checkUser
   }, [user]);
 
-  useEffect(() => {
-    data.fechaNacimiento = fechaNacimiento;
-  }, [fechaNacimiento]);
+  // useEffect(() => {
+  //   console.log("userdata:::", user);
+  //   data.nombres = user?.nombres;
+  //   data.apellidoPaterno = user?.apellidoPaterno;
+  //   // data.apellidoMaterno = user?.apellidoMaterno;
+  //   // data.genero = user?.genero;
+  //   // data.mail = user?.mail;
+  //   // data.mail2 = user?.mail2;
+  //   data.mail = user?.correo;
+  //   data.rut = user?.rut;
+  //   // if (!!user?.fechaNacimiento) {
+  //   //   let fecha = new Date(
+  //   //     String(user?.fechaNacimiento).substring(
+  //   //       0,
+  //   //       String(user?.fechaNacimiento).length - 5
+  //   //     )
+  //   //   );
+  //   //   setFechaNacimiento(fecha);
+  //   // }
+  // }, [user]);
 
   // useEffect(() => {
-  //   if (user) {
+  //   data.fechaNacimiento = fechaNacimiento;
+  // }, [fechaNacimiento]);
+
+  useEffect(() => {
+    console.log("email:::", userData.email);
+    if (!userData?.email) return;
+    axios
+      .post("/api/user/obtener-usuario", { email: userData.email })
+      .then(({ data }) => {
+        userData.userId = data.id;
+      })
+      .catch((error) => {
+        console.error("Error fetching users:", error);
+      });
+    if (userData.userId) {
+      axios
+        .get("/api/user/historial-compra", {
+          params: { userId: userData.userId },
+        })
+        .then(({ data }) => {
+          setHistorial(data.array);
+          console.log("userId:::", userData.userId);
+          console.log("HISTORIAL:::", data.array);
+        })
+        .catch((error) => console.log("ERROR:::", error));
+    }
+  }, [userData]);
+
+  // useEffect(() => {
+  //   if (userData.userId) {
   //     axios
-  //       .post("/api/user/historial-compra", {
-  //         email: user.mail,
+  //       .get("/api/user/historial-compra", {
+  //         params: { userId: userData.userId },
   //       })
   //       .then(({ data }) => {
-  //         setHistorial(data.object);
+  //         setHistorial(data.array);
+  //         console.log("userId:::", userData.userId);
+  //         console.log("HISTORIAL:::", data.array);
   //       })
   //       .catch((error) => console.log("ERROR:::", error));
   //   }
-  // }, [user]);
+  // }, [userData.userId]);
 
   function retornarEstado(estado) {
     if (estado === "NUL") {
@@ -475,7 +525,7 @@ const HistorialCompra = () => {
       <div className={styles["menu-central"]}>
         <h1 className="title-historial">Historial de compras</h1>
         <span>
-          Mantén un registro de todos los viajes realizados. Recuerda que solo
+          Acá puedes ver el registro de todos los viajes realizados. Recuerda que solo
           podrás descargar tu pasaje mientras esté activo.
         </span>
         <div className={styles["table-responsive-custom"]}>
