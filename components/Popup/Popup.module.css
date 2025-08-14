@@ -102,6 +102,8 @@
     font-weight: 700;
     line-height: normal;
     margin-inline: auto;
+    cursor: pointer;
+    transition: ease 0.2s;
   }
 
 .popup-button:hover {
