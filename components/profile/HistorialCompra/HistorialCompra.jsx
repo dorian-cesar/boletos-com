@@ -88,7 +88,32 @@ const HistorialCompra = () => {
             params: { userId: data.id },
           }
         );
+        // const historialFalso = Array.from({ length: 50 }).map((_, i) => ({
+        //   date: `2025-08-${String((i % 28) + 1).padStart(2, "0")}`,
+        //   departureTime: "10:00",
+        //   origin: "Santiago",
+        //   destination: "Valparaíso",
+        //   serviceId: `srv-${i}`,
+        //   tipo_Asiento_piso_1: "Semi Cama",
+        //   tipo_Asiento_piso_2: "Salón Cama",
+        //   company: "Buses Ejemplo",
+        //   seats: {
+        //     firstFloor: [
+        //       [
+        //         {
+        //           number: `A${i}`,
+        //           floor: 1,
+        //           price: 5000 + i * 100,
+        //           paid: i % 2 === 0,
+        //           authCode: `AUTH${i}`,
+        //         },
+        //       ],
+        //     ],
+        //     secondFloor: [],
+        //   },
+        // }));
         setHistorial(historialData);
+        // setHistorial([...historialData, ...historialFalso]);
       } catch (error) {
         console.error("Error en la carga de datos:", error);
       } finally {
@@ -210,7 +235,7 @@ const HistorialCompra = () => {
             <td>{cantidadBoletos}</td>
             <td>{clpFormat.format(montoTotal)}</td>
             <td className={styles["boton-descargar"]}>
-              {estadoTransaccion === "NUL" ? (
+              {estadoTransaccion === "NUL" || estadoTransaccion === "VENC" ? (
                 ""
               ) : (
                 <img

@@ -80,6 +80,13 @@ export default function Layout({ children, isBuyStage = false }) {
         <div className="overlay-content">
           <div className="links-menu">
             <div className="w-100">
+              <Link href="/profile/home" legacyBehavior>
+                <a href="/profile/home" className="cuponeras">
+                  Mi Perfil
+                </a>
+              </Link>
+            </div>
+            <div className="w-100">
               <Link href="/comprar" legacyBehavior>
                 <a href="/comprar" className="compra">
                   Compra tu pasaje
@@ -99,22 +106,22 @@ export default function Layout({ children, isBuyStage = false }) {
                   Confirmación
                 </a>
               </Link>
-            </div>
-            <div className="w-100">
+            </div> */}
+            {/* <div className="w-100">
               <Link href="/cambioBoleto" legacyBehavior>
                 <a className="cambio-boleto">
                   Cambio de boleto
                 </a>
               </Link>
-            </div>
-            <div className="w-100">
+            </div> */}
+            {/* <div className="w-100">
               <Link href="/devolucion" legacyBehavior>
                 <a className="devolucion">
                   Devolución de boleto
                 </a>
               </Link>
-            </div>
-            <div className="w-100">
+            </div> */}
+            {/* <div className="w-100">
               <Link href="/viajesEspeciales" legacyBehavior>
                 <a className="viajes-especiales">
                   Viajes especiales
