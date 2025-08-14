@@ -146,9 +146,15 @@ const HistorialCompra = () => {
       return <h3>No hay registros</h3>;
     }
 
+    const sortedHistorial = [...historial].sort((a, b) => {
+      const fechaA = new Date(`${a.date}T${a.departureTime || "00:00"}:00`);
+      const fechaB = new Date(`${b.date}T${b.departureTime || "00:00"}:00`);
+      return fechaB - fechaA;
+    });
+
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const currentItems = historial.slice(startIndex, endIndex);
+    const currentItems = sortedHistorial.slice(startIndex, endIndex);
 
     return currentItems.flatMap((servicio, indexServicio) => {
       const allSeats = [
