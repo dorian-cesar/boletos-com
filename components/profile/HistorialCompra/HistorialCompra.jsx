@@ -7,6 +7,7 @@ import axios from "axios";
 import { useId } from "react";
 import { decryptData } from "utils/encrypt-data.js";
 import LocalStorageEntities from "entities/LocalStorageEntities";
+import { generateToken } from 'utils/jwt-auth';
 import Popup from "../../Popup/Popup";
 import ModalEntities from "../../../entities/ModalEntities";
 
@@ -580,12 +581,15 @@ const HistorialCompra = () => {
         [servicio.serviceId]: { ida: [viaje], vuelta: [] },
       };
 
+      const token = generateToken();
+
       const body = {
         ticketData,
         email: user?.correo,
         authCode: asientoCompleto.authCode,
         customerName: user?.nombreCompleto || "Cliente",
         bookingReference: asientoCompleto.authCode,
+        tokenBoleto: token,
       };
 
       const response = await fetch("/api/generar-boletos", {
@@ -704,7 +708,7 @@ const HistorialCompra = () => {
                 onClick={cerrarPopup}
                 disabled={!!loadingTicket}
               >
-                {loadingTicket ? "Procesando..." : "Aceptar"}
+                {loadingTicket ? "Generando boleto..." : "Aceptar"}
               </button>
             </div>
           </div>

@@ -9,6 +9,7 @@ export default function BoletoOperador() {
   const [boleto, setBoleto] = useState<any>(null);
   const [isValid, setIsValid] = useState<boolean | null>(null); // null: cargando, true: válido, false: inválido
   const [errorAlDecodificar, setErrorAlDecodificar] = useState(false);
+  const secret = process.env.NEXT_PUBLIC_SECRET_ENCRYPT_DATA2;
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -37,19 +38,47 @@ export default function BoletoOperador() {
 
     const validateBoleto = async () => {
       try {
-        const { token, authCode } = boleto;
-        const res = await fetch("/api/v2/confirm-transaction", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, flowOrder: authCode }),
-        });
-        const response = await res.json();
-        setIsValid(response?.status === 2);
+        if (boleto.type === "transaction" && boleto.token) {
+          // Validación vía API
+          const res = await fetch("/api/v2/confirm-transaction", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              token: boleto.token,
+              flowOrder: boleto.authCode,
+            }),
+          });
+          const response = await res.json();
+          setIsValid(response?.status === 2);
+        } else if (boleto.type === "boleto" && boleto.tokenBoleto) {
+          // Validación JWT
+          const jwt = await import("jsonwebtoken");
+          try {
+            const decoded = jwt.verify(boleto.tokenBoleto, secret);
+            console.log("TokenBoleto válido:", decoded);
+            setIsValid(true);
+            if (typeof decoded === "object" && decoded !== null) {
+              setBoleto((prev) => ({ ...prev, ...decoded }));
+            } else {
+              console.warn(
+                "TokenBoleto decodificado no es un objeto:",
+                decoded
+              );
+              setBoleto((prev) => ({ ...prev, payload: decoded }));
+            }
+          } catch (err) {
+            console.error("TokenBoleto inválido:", err);
+            setIsValid(false);
+          }
+        } else {
+          setIsValid(false);
+        }
       } catch (error) {
         console.error("Error al validar boleto:", error);
         setIsValid(false);
       }
     };
+
     validateBoleto();
   }, [boleto]);
 
@@ -130,89 +159,88 @@ export default function BoletoOperador() {
 
   // isValid === true
   return (
-      <div className="container my-4">
-        <div className="card text-center border-0 shadow-sm rounded-4">
-          <div className="card-header bg-white border-0 mt-2">
-            <img
-              src="/img/ui/transaction/transaction-success.svg"
-              alt="boleto confirmado"
-            />
+    <div className="container my-4">
+      <div className="card text-center border-0 shadow-sm rounded-4">
+        <div className="card-header bg-white border-0 mt-2">
+          <img
+            src="/img/ui/transaction/transaction-success.svg"
+            alt="boleto confirmado"
+          />
+        </div>
+
+        <div className="card-body">
+          <h1 className="fw-bold text-secondary">Boleto de viaje</h1>
+
+          <div className="container mt-3 mb-2">
+            <div className="row justify-content-center">
+              <p className="col-12 col-md-8 mb-1">
+                Este boleto ha sido validado correctamente.
+              </p>
+              <p className="col-12 col-md-8">
+                A continuación se muestran los detalles del viaje.
+              </p>
+            </div>
           </div>
 
-          <div className="card-body">
-            <h1 className="fw-bold text-secondary">Boleto de viaje</h1>
-
-            <div className="container mt-3 mb-2">
-              <div className="row justify-content-center">
-                <p className="col-12 col-md-8 mb-1">
-                  Este boleto ha sido validado correctamente.
-                </p>
-                <p className="col-12 col-md-8">
-                  A continuación se muestran los detalles del viaje.
-                </p>
-              </div>
-            </div>
-
-            <div className="container">
-              <div className="row justify-content-center">
-                <div className="col-12 col-md-6">
-                  <div className="bg-secondary p-2 rounded-4 shadow-s">
-                    <h5 className="text-white fw-bold m-0">
-                      Código de boleto: {boleto.authCode}
-                    </h5>
-                  </div>
+          <div className="container">
+            <div className="row justify-content-center">
+              <div className="col-12 col-md-6">
+                <div className="bg-secondary p-2 rounded-4 shadow-s">
+                  <h5 className="text-white fw-bold m-0">
+                    Código de boleto: {boleto.authCode}
+                  </h5>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className="mt-4 dotted-top dotted-bottom pt-5">
-              <div className="container">
-                <div className="row justify-content-center gap-4">
-                  <div className="col-12 col-md-5">
-                    <h5 className="fw-bold mb-0">Detalles del viaje</h5>
-                    <div className="my-5">
-                      <div
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: "0.75rem",
-                        }}
-                      >
-                        <div className={`${styles["detalle-item"]}`}>
-                          <ul>
-                            <li>
-                              Origen: <b>{boleto.origin}</b>
-                            </li>
-                            <li>
-                              Destino: <b>{boleto.destination}</b>
-                            </li>
-                          </ul>
-                        </div>
-                        <div>
-                          Salida:{" "}
-                          <b>
-                            {boleto.departureTime}hrs - {formatDate(boleto.date)}
-                          </b>
-                        </div>
-                        <div>
-                          Llegada:{" "}
-                          <b>
-                            {boleto.arrivalTime}hrs -{" "}
-                            {formatDate(boleto.arrivalDate)}
-                          </b>
-                        </div>
+          <div className="mt-4 dotted-top dotted-bottom pt-5">
+            <div className="container">
+              <div className="row justify-content-center gap-4">
+                <div className="col-12 col-md-5">
+                  <h5 className="fw-bold mb-0">Detalles del viaje</h5>
+                  <div className="my-5">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: "0.75rem",
+                      }}
+                    >
+                      <div className={`${styles["detalle-item"]}`}>
+                        <ul>
+                          <li>
+                            Origen: <b>{boleto.origin}</b>
+                          </li>
+                          <li>
+                            Destino: <b>{boleto.destination}</b>
+                          </li>
+                        </ul>
                       </div>
+                      <div>
+                        Salida:{" "}
+                        <b>
+                          {boleto.departureTime}hrs - {formatDate(boleto.date)}
+                        </b>
+                      </div>
+                      <div>
+                        Llegada:{" "}
+                        <b>
+                          {boleto.arrivalTime}hrs -{" "}
+                          {formatDate(boleto.arrivalDate)}
+                        </b>
+                      </div>
+                    </div>
 
-                      <div
-                        className={styles["resumen-servicio-ver-boleto"]}
-                        style={{ marginTop: "1rem" }}
-                      >
-                        <div>
-                          Asiento: <b>{boleto.seat}</b>
-                        </div>
-                        <div>
-                          Piso: <b>{boleto.floor === "floor1" ? "1" : "2"}</b>
-                        </div>
+                    <div
+                      className={styles["resumen-servicio-ver-boleto"]}
+                      style={{ marginTop: "1rem" }}
+                    >
+                      <div>
+                        Asiento: <b>{boleto.seat}</b>
+                      </div>
+                      <div>
+                        Piso: <b>{boleto.floor === "floor1" ? "1" : "2"}</b>
                       </div>
                     </div>
                   </div>
@@ -222,5 +250,6 @@ export default function BoletoOperador() {
           </div>
         </div>
       </div>
+    </div>
   );
 }

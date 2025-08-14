@@ -11,6 +11,7 @@ interface TicketData {
   email: string;
   authCode?: string;
   token?: string;
+  tokenBoleto?: string;
   customerName?: string;
   bookingReference?: string;
 }
@@ -52,10 +53,11 @@ export default async (
       email,
       authCode,
       token,
+      tokenBoleto,
       customerName,
       bookingReference,
     }: TicketData = req.body;
-    console.log("Datos recibidos:", { ticketData, email });
+    console.log("Datos recibidos:", { ticketData, email, tokenBoleto });
 
     if (!ticketData || !email) {
       return res.status(400).json({
@@ -70,7 +72,8 @@ export default async (
     const { generatedTickets } = await generateAllTicketsPDF(
       ticketData,
       authCode,
-      token
+      token,
+      tokenBoleto
     );
 
     // 2. Enviar por email
@@ -118,7 +121,8 @@ export default async (
 async function generateAllTicketsPDF(
   ticketData: any,
   authCode?: string,
-  token?: string
+  token?: string,
+  tokenBoleto?: string
 ): Promise<{
   generatedTickets: Array<{
     fileName: string;
@@ -141,7 +145,8 @@ async function generateAllTicketsPDF(
         "ida",
         generatedTickets,
         authCode,
-        token
+        token,
+        tokenBoleto
       );
     }
 
@@ -151,7 +156,8 @@ async function generateAllTicketsPDF(
         "vuelta",
         generatedTickets,
         authCode,
-        token
+        token,
+        tokenBoleto
       );
     }
   }
@@ -165,7 +171,8 @@ async function processTrips(
   tripType: string,
   generatedTickets: any[],
   authCode?: string,
-  token?: string
+  token?: string,
+  tokenBoleto?: string
 ): Promise<void> {
   for (const trip of trips) {
     if (!trip?.asientos?.length) continue;
@@ -176,7 +183,8 @@ async function processTrips(
         seat,
         tripType,
         authCode,
-        token
+        token,
+        tokenBoleto
       );
       generatedTickets.push(ticket);
     }
@@ -188,7 +196,8 @@ export async function generateTicketPDF(
   seat: any,
   tripType: string,
   authCode?: string,
-  token?: string
+  token?: string,
+  tokenBoleto?: string
 ): Promise<{
   fileName: string;
   base64: string;
@@ -212,8 +221,17 @@ export async function generateTicketPDF(
         : trip.seatLayout.tipo_Asiento_piso_2,
     price: seat.valorAsiento,
     authCode: seat.authCode || authCode,
-    token: token,
+    token: token || null,
+    tokenBoleto: tokenBoleto || null,
+    type: tokenBoleto ? "boleto" : "transaction",
   });
+
+  console.log(
+    "Generando PDF para asiento",
+    seat.asiento,
+    "tokenBoleto:",
+    tokenBoleto
+  );
 
   const encoded = Buffer.from(qrData).toString("base64");
   const qrUrl = `https://boletos-com.netlify.app/ver-boleto?data=${encoded}`;
