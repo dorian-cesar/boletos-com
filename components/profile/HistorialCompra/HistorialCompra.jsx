@@ -52,102 +52,6 @@ const HistorialCompra = () => {
   const [mostrarPopup, setMostrarPopup] = useState(false);
   const [transaccion, setTransaccion] = useState("");
 
-  // const dataHistorial = [
-  //   {
-  //     codigo: "TXN001",
-  //     estado: "ACTI",
-  //     fechaCompraFormato: "2025-08-01",
-  //     cantidadBoletos: 2,
-  //     monto: 5000,
-  //   },
-  //   {
-  //     codigo: "TXN002",
-  //     estado: "NUL",
-  //     fechaCompraFormato: "2025-08-02",
-  //     cantidadBoletos: 1,
-  //     monto: 2500,
-  //   },
-  //   {
-  //     codigo: "TXN003",
-  //     estado: "ACTI",
-  //     fechaCompraFormato: "2025-08-03",
-  //     cantidadBoletos: 3,
-  //     monto: 7500,
-  //   },
-  //   {
-  //     codigo: "TXN004",
-  //     estado: "ACTI",
-  //     fechaCompraFormato: "2025-08-04",
-  //     cantidadBoletos: 1,
-  //     monto: 2000,
-  //   },
-  //   {
-  //     codigo: "TXN005",
-  //     estado: "NUL",
-  //     fechaCompraFormato: "2025-08-05",
-  //     cantidadBoletos: 2,
-  //     monto: 4800,
-  //   },
-  //   {
-  //     codigo: "TXN006",
-  //     estado: "ACTI",
-  //     fechaCompraFormato: "2025-08-06",
-  //     cantidadBoletos: 4,
-  //     monto: 9600,
-  //   },
-  //   {
-  //     codigo: "TXN007",
-  //     estado: "NUL",
-  //     fechaCompraFormato: "2025-08-07",
-  //     cantidadBoletos: 1,
-  //     monto: 2200,
-  //   },
-  //   {
-  //     codigo: "TXN008",
-  //     estado: "ACTI",
-  //     fechaCompraFormato: "2025-08-07",
-  //     cantidadBoletos: 2,
-  //     monto: 5200,
-  //   },
-  //   {
-  //     codigo: "TXN009",
-  //     estado: "ACTI",
-  //     fechaCompraFormato: "2025-08-07",
-  //     cantidadBoletos: 5,
-  //     monto: 12500,
-  //   },
-  //   {
-  //     codigo: "TXN010",
-  //     estado: "NUL",
-  //     fechaCompraFormato: "2025-08-07",
-  //     cantidadBoletos: 1,
-  //     monto: 2000,
-  //   },
-  // ];
-
-  // const dataBoleto = [
-  //   {
-  //     boleto: "BOL001",
-  //     origen: "Santiago",
-  //     fechaEmbarcacion: "2025-08-10",
-  //     puedeImprimir: true,
-  //   },
-  //   {
-  //     boleto: "BOL002",
-  //     origen: "Valparaíso",
-  //     fechaEmbarcacion: "2025-08-12",
-  //     puedeImprimir: false,
-  //   },
-  // ];
-
-  // useEffect(() => {
-  //   setHistorial(dataHistorial);
-  // }, []);
-
-  // useEffect(() => {
-  //   setBoleto(dataBoleto);
-  // }, []);
-
   const abrirPopup = () => {
     setMostrarPopup(true);
   };
@@ -166,21 +70,39 @@ const HistorialCompra = () => {
       return;
     }
 
-    // Usa checkUser directamente en lugar de esperar a que se actualice el estado
-    console.log("user data:", checkUser);
-    userData.nombres = checkUser?.nombres;
-    userData.apellidoPaterno = checkUser?.apellidoPaterno;
-    userData.email = checkUser?.correo;
-    userData.rut = checkUser?.rut;
+    const loadData = async () => {
+      try {
+        let updatedUser = checkUser;
 
-    setUser(checkUser); // Esto sigue siendo útil para otros usos
-    setIsLoading(false);
+        const { data } = await axios.post("/api/user/obtener-usuario", {
+          email: checkUser.correo,
+        });
+        updatedUser = { ...updatedUser, id: data.id };
+        setUser(updatedUser);
+
+        // Obtener historial de compras
+        const { data: historialData } = await axios.get(
+          "/api/user/historial-compra",
+          {
+            params: { userId: data.id },
+          }
+        );
+        setHistorial(historialData);
+      } catch (error) {
+        console.error("Error en la carga de datos:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
   }, []);
 
-  // Depuración del estado actualizado
-  useEffect(() => {
-    console.log("user actualizado:", userData); // aquí debería verse el valor de checkUser
-  }, [user]);
+  // useEffect(() => {
+  //   if (user) {
+  //     console.log("user actualizado:", user);
+  //   }
+  // }, [user]);
 
   // useEffect(() => {
   //   console.log("userdata:::", user);
@@ -207,46 +129,6 @@ const HistorialCompra = () => {
   //   data.fechaNacimiento = fechaNacimiento;
   // }, [fechaNacimiento]);
 
-  useEffect(() => {
-    console.log("email:::", userData.email);
-    if (!userData?.email) return;
-    axios
-      .post("/api/user/obtener-usuario", { email: userData.email })
-      .then(({ data }) => {
-        userData.userId = data.id;
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error);
-      });
-    if (userData.userId) {
-      axios
-        .get("/api/user/historial-compra", {
-          params: { userId: userData.userId },
-        })
-        .then(({ data }) => {
-          setHistorial(data.array);
-          console.log("userId:::", userData.userId);
-          console.log("HISTORIAL:::", data.array);
-        })
-        .catch((error) => console.log("ERROR:::", error));
-    }
-  }, [userData]);
-
-  // useEffect(() => {
-  //   if (userData.userId) {
-  //     axios
-  //       .get("/api/user/historial-compra", {
-  //         params: { userId: userData.userId },
-  //       })
-  //       .then(({ data }) => {
-  //         setHistorial(data.array);
-  //         console.log("userId:::", userData.userId);
-  //         console.log("HISTORIAL:::", data.array);
-  //       })
-  //       .catch((error) => console.log("ERROR:::", error));
-  //   }
-  // }, [userData.userId]);
-
   function retornarEstado(estado) {
     if (estado === "NUL") {
       return "Transacción nula";
@@ -257,39 +139,85 @@ const HistorialCompra = () => {
     return "Sin descripción";
   }
 
-  const MemoizedComponent = useMemo(
-    function renderHistorial() {
-      if (historial.length === 0) {
-        return <h3>No hay registros</h3>;
-      } else {
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        const currentItems = historial.slice(startIndex, endIndex);
+  const MemoizedComponent = useMemo(() => {
+    if (!historial || historial.length === 0) {
+      return <h3>No hay registros</h3>;
+    }
 
-        return currentItems.map((itemHistorial, index) => (
-          <tr key={index}>
-            <td>{itemHistorial.codigo}</td>
-            <td>{retornarEstado(itemHistorial.estado)}</td>
-            <td>{itemHistorial.fechaCompraFormato}</td>
-            <td>{itemHistorial.cantidadBoletos}</td>
-            <td>{clpFormat.format(itemHistorial.monto)}</td>
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentItems = historial.slice(startIndex, endIndex);
+
+    return currentItems.flatMap((servicio, indexServicio) => {
+      const allSeats = [
+        ...(servicio.seats.firstFloor?.flat() || []),
+        ...(servicio.seats.secondFloor?.flat() || []),
+      ];
+
+      if (allSeats.length === 0) {
+        return (
+          <tr key={indexServicio}>
+            <td colSpan={6}>No hay boletos en esta transacción</td>
+          </tr>
+        );
+      }
+
+      // Agrupar asientos por authCode
+      const seatsByAuth = allSeats.reduce((acc, asiento) => {
+        if (!acc[asiento.authCode]) acc[asiento.authCode] = [];
+        acc[asiento.authCode].push(asiento);
+        return acc;
+      }, {});
+
+      const today = new Date();
+
+      return Object.entries(seatsByAuth).map(([authCode, seats], indexAuth) => {
+        const cantidadBoletos = seats.length;
+        const montoTotal = seats.reduce((sum, a) => sum + (a.price || 0), 0);
+
+        const hayPago = seats.some((a) => a.paid);
+        const fechaViaje = new Date(
+          `${servicio.date}T${servicio.departureTime}:00`
+        );
+        let estadoTransaccion = "NUL";
+
+        if (!hayPago) {
+          estadoTransaccion = "NUL"; // no pagado
+        } else if (fechaViaje >= today) {
+          estadoTransaccion = "ACTI"; // boleto activo
+        } else {
+          estadoTransaccion = "VENC"; // boleto vencido
+        }
+
+        return (
+          <tr key={`${indexServicio}-${indexAuth}`}>
+            <td>{authCode}</td>
+            <td>
+              {estadoTransaccion === "ACTI"
+                ? "Boleto activo"
+                : estadoTransaccion === "NUL"
+                ? "Transacción nula"
+                : "Boleto usado"}
+            </td>
+            <td>{servicio.date}</td>
+            <td>{cantidadBoletos}</td>
+            <td>{clpFormat.format(montoTotal)}</td>
             <td className={styles["boton-descargar"]}>
-              {itemHistorial.estado === "NUL" ? (
+              {estadoTransaccion === "NUL" ? (
                 ""
               ) : (
                 <img
                   width={24}
                   src="/img/icon/general/search-outline.svg"
-                  onClick={() => abrirPopTransaccion(itemHistorial.codigo)}
+                  onClick={() => abrirPopTransaccion(authCode)}
                 />
               )}
             </td>
           </tr>
-        ));
-      }
-    },
-    [historial, currentPage]
-  );
+        );
+      });
+    });
+  }, [historial, currentPage]);
 
   const totalPages = Math.ceil(historial.length / itemsPerPage);
 
@@ -437,32 +365,28 @@ const HistorialCompra = () => {
     return pages;
   };
 
-  const boletoDetalle = useMemo(
-    function renderHistorial() {
-      if (boleto.length === 0) {
-        return <h3>No hay registros</h3>;
-      } else {
-        return boleto.map((itemBoleto, index) => (
-          <tr key={index}>
-            <td>{itemBoleto.boleto}</td>
-            <td>{itemBoleto.origen}</td>
-            <td>{itemBoleto.fechaEmbarcacion}</td>
-            <td className={styles["boton-descargar"]}>
-              {itemBoleto.puedeImprimir ? (
-                <img
-                  src="/img/icon/general/download-outline.svg"
-                  onClick={() => descargarBoleto(itemBoleto.boleto)}
-                />
-              ) : (
-                ""
-              )}
-            </td>
-          </tr>
-        ));
-      }
-    },
-    [boleto, currentPageBoleto, mostrarPopup]
-  );
+  const boletoDetalle = useMemo(() => {
+    if (boleto.length === 0) {
+      return <h3>No hay registros</h3>;
+    }
+
+    return boleto.map((itemBoleto, index) => (
+      <tr key={index}>
+        <td>{itemBoleto.boleto}</td>
+        <td>{itemBoleto.origen}</td>
+        <td>{itemBoleto.destino}</td>
+        <td>{itemBoleto.fechaEmbarcacion}</td>
+        <td className={styles["boton-descargar"]}>
+          {itemBoleto.puedeImprimir && (
+            <img
+              src="/img/icon/general/download-outline.svg"
+              onClick={() => descargarBoleto(itemBoleto.boleto)}
+            />
+          )}
+        </td>
+      </tr>
+    ));
+  }, [boleto, currentPageBoleto, mostrarPopup]);
 
   const tablaArmada = (
     <div className={styles["menu-central"]}>
@@ -471,11 +395,22 @@ const HistorialCompra = () => {
           <tr>
             <th scope="col">Boleto</th>
             <th scope="col">Origen</th>
+            <th scope="col">Destino</th>
             <th scope="col">Fecha embarque</th>
             <th scope="col"></th>
           </tr>
         </thead>
-        <tbody>{!isLoading ? boletoDetalle : ""}</tbody>
+        <tbody>
+          {isLoading ? (
+            <tr>
+              <td colSpan={5}>
+                <div className={styles.loader}></div>
+              </td>
+            </tr>
+          ) : (
+            boletoDetalle
+          )}
+        </tbody>
       </table>
       <nav aria-label="Page navigation example">
         <ul className={`pagination ${styles["pagination-css"]}`}>
@@ -485,39 +420,124 @@ const HistorialCompra = () => {
     </div>
   );
 
-  const abrirPopTransaccion = (transaccion) => {
-    {
-      // setTransaccion(transaccion);
-      // axios
-      //   .post("/api/user/historial-compra-boletos", {
-      //     codigo: transaccion,
-      //   })
-      //   .then(({ data }) => {
-      //     setBoleto(data.object);
-      //     abrirPopup();
-      //   })
-      //   .catch((error) => console.log("ERROR:::", error));
-      setBoleto(dataBoleto);
-      abrirPopup();
+  const abrirPopTransaccion = (authCode) => {
+    setTransaccion(authCode);
+
+    // Buscar todos los asientos que coinciden con la transacción
+    const seatsParaTransaccion = historial
+      .flatMap((servicio) => [
+        ...(servicio.seats.firstFloor?.flat() || []),
+        ...(servicio.seats.secondFloor?.flat() || []),
+      ])
+      .filter((asiento) => asiento.authCode === authCode);
+
+    // Mapear a la estructura de la tabla
+    const boletos = seatsParaTransaccion.map((asiento) => {
+      const servicio = historial.find((s) =>
+        [
+          ...(s.seats.firstFloor?.flat() || []),
+          ...(s.seats.secondFloor?.flat() || []),
+        ].some((a) => a.authCode === authCode)
+      );
+
+      return {
+        boleto: asiento.number,
+        origen: servicio?.origin,
+        destino: servicio?.destination,
+        fechaEmbarcacion: servicio?.date,
+        puedeImprimir: asiento.paid,
+      };
+    });
+
+    setBoleto(boletos);
+    abrirPopup();
+  };
+
+  // const descargarBoleto = async (boletoBuscar) => {
+  //   let boleto = {
+  //     codigo: transaccion,
+  //     boleto: boletoBuscar,
+  //   };
+  //   try {
+  //     const res = await axios.post("/api/voucher", boleto);
+  //     if (res.request.status) {
+  //       const linkSource = `data:application/pdf;base64,${res.data?.archivo}`;
+  //       const downloadLink = document.createElement("a");
+  //       const fileName = res.data.nombre;
+  //       downloadLink.href = linkSource;
+  //       downloadLink.download = fileName;
+  //       downloadLink.click();
+  //     }
+  //   } catch (e) {}
+  // };
+
+  const generarBoletos = async () => {
+    const token = localStorage.getItem("tokenTemp");
+    try {
+      console.log("Enviando boletos...");
+      if (
+        !carroCompras ||
+        (Object.keys(carroCompras).length === 0 && !buyerInfo.email)
+      ) {
+        console.error("No hay datos de compras para generar boletos");
+        return;
+      }
+
+      const response = await fetch("/api/generar-boletos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ticketData: carroCompras,
+          email: buyerInfo.email,
+          authCode: flowOrder,
+          token: token,
+        }),
+      });
+
+      console.log("Body para generar boletos:", {
+        ticketData: carroCompras,
+        email: buyerInfo.email,
+        authCode: flowOrder,
+        token: token,
+      });
+
+      const result = await response.json();
+      console.log("Resultado de la generación de boletos:", result);
+
+      if (response.ok) {
+        setGeneratedTickets(result.tickets);
+        console.log("Boletos generados y guardados", result.tickets);
+      } else {
+        console.error("Error:", result);
+      }
+    } catch (error) {
+      console.error("Error en generarBoletos:", error);
     }
   };
 
-  const descargarBoleto = async (boletoBuscar) => {
-    let boleto = {
-      codigo: transaccion,
-      boleto: boletoBuscar,
-    };
+  const descargarBoletos = () => {
     try {
-      const res = await axios.post("/api/voucher", boleto);
-      if (res.request.status) {
-        const linkSource = `data:application/pdf;base64,${res.data?.archivo}`;
-        const downloadLink = document.createElement("a");
-        const fileName = res.data.nombre;
-        downloadLink.href = linkSource;
-        downloadLink.download = fileName;
-        downloadLink.click();
+      console.log("Descargando boletos...");
+      if (!generatedTickets || generatedTickets.length === 0) {
+        return;
       }
-    } catch (e) {}
+      generatedTickets.forEach((ticket) => {
+        downloadTicket(ticket.base64, ticket.fileName);
+      });
+    } catch (error) {
+      console.error("Error al descargar los boletos:", error);
+    }
+  };
+
+  const downloadTicket = (base64, fileName) => {
+    const link = document.createElement("a");
+    link.href = base64;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -525,22 +545,32 @@ const HistorialCompra = () => {
       <div className={styles["menu-central"]}>
         <h1 className="title-historial">Historial de compras</h1>
         <span>
-          Acá puedes ver el registro de todos los viajes realizados. Recuerda que solo
-          podrás descargar tu pasaje mientras esté activo.
+          Registro de todos tus boletos comprados. Recuerda que solo podrás
+          descargar tu pasaje mientras esté activo.
         </span>
         <div className={styles["table-responsive-custom"]}>
           <table className={`table ${styles["tabla-informacion"]}`}>
             <thead>
               <tr>
                 <th scope="col">Código Transacción</th>
-                <th scope="col">Estado Transacción</th>
-                <th scope="col">Fecha Compra</th>
+                <th scope="col">Estado Boleto</th>
+                <th scope="col">Fecha Viaje</th>
                 <th scope="col">Cantidad Boletos</th>
                 <th scope="col">Monto</th>
                 <th scope="col">Ver boletos</th>
               </tr>
             </thead>
-            <tbody>{!isLoading ? MemoizedComponent : ""}</tbody>
+            <tbody>
+              {isLoading ? (
+                <tr>
+                  <td colSpan={6}>
+                    <div className={styles.loader}></div>
+                  </td>
+                </tr>
+              ) : (
+                MemoizedComponent
+              )}
+            </tbody>
           </table>
         </div>
         <nav
