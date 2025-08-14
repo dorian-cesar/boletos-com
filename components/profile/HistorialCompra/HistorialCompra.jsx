@@ -526,8 +526,8 @@ const HistorialCompra = () => {
         departureTime: servicio.departureTime,
         arrivalDate: servicio.arrivalDate,
         arrivalTime: servicio.arrivalTime,
-        terminalOrigin: servicio.origin,
-        terminalDestination: servicio.destination,
+        terminalOrigin: servicio.terminalOrigin,
+        terminalDestination: servicio.terminalDestination,
         company: servicio.company,
         seatLayout: {
           tipo_Asiento_piso_1: servicio.tipo_Asiento_piso_1,
