@@ -45,6 +45,7 @@ const HistorialCompra = () => {
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [loadingTicket, setLoadingTicket] = useState(null);
   const [historial, setHistorial] = useState([]);
   const [boleto, setBoleto] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -140,6 +141,7 @@ const HistorialCompra = () => {
   }
 
   const MemoizedComponent = useMemo(() => {
+    console.log("historial", historial);
     if (!historial || historial.length === 0) {
       return <h3>No hay registros</h3>;
     }
@@ -162,7 +164,6 @@ const HistorialCompra = () => {
         );
       }
 
-      // Agrupar asientos por authCode
       const seatsByAuth = allSeats.reduce((acc, asiento) => {
         if (!acc[asiento.authCode]) acc[asiento.authCode] = [];
         acc[asiento.authCode].push(asiento);
@@ -378,15 +379,28 @@ const HistorialCompra = () => {
         <td>{itemBoleto.fechaEmbarcacion}</td>
         <td className={styles["boton-descargar"]}>
           {itemBoleto.puedeImprimir && (
-            <img
-              src="/img/icon/general/download-outline.svg"
-              onClick={() => descargarBoleto(itemBoleto.boleto)}
-            />
+            <button
+              disabled={loadingTicket === itemBoleto.authCode}
+              className={styles["btn-descargar"]}
+              onClick={() => descargarBoleto(itemBoleto)}
+              aria-label="Descargar boleto"
+            >
+              {loadingTicket === itemBoleto.authCode ? (
+                <div className={styles.spinner} aria-hidden="true"></div>
+              ) : (
+                <img
+                  width={24}
+                  height={24}
+                  src="/img/icon/general/download-outline.svg"
+                  alt="Descargar"
+                />
+              )}
+            </button>
           )}
         </td>
       </tr>
     ));
-  }, [boleto, currentPageBoleto, mostrarPopup]);
+  }, [boleto, currentPageBoleto, loadingTicket]);
 
   const tablaArmada = (
     <div className={styles["menu-central"]}>
@@ -423,7 +437,6 @@ const HistorialCompra = () => {
   const abrirPopTransaccion = (authCode) => {
     setTransaccion(authCode);
 
-    // Buscar todos los asientos que coinciden con la transacción
     const seatsParaTransaccion = historial
       .flatMap((servicio) => [
         ...(servicio.seats.firstFloor?.flat() || []),
@@ -431,7 +444,6 @@ const HistorialCompra = () => {
       ])
       .filter((asiento) => asiento.authCode === authCode);
 
-    // Mapear a la estructura de la tabla
     const boletos = seatsParaTransaccion.map((asiento) => {
       const servicio = historial.find((s) =>
         [
@@ -446,6 +458,7 @@ const HistorialCompra = () => {
         destino: servicio?.destination,
         fechaEmbarcacion: servicio?.date,
         puedeImprimir: asiento.paid,
+        authCode: asiento.authCode,
       };
     });
 
@@ -471,63 +484,100 @@ const HistorialCompra = () => {
   //   } catch (e) {}
   // };
 
-  const generarBoletos = async () => {
-    const token = localStorage.getItem("tokenTemp");
+  const descargarBoleto = async (itemBoleto) => {
+    if (!itemBoleto || loadingTicket) return;
+
     try {
-      console.log("Enviando boletos...");
-      if (
-        !carroCompras ||
-        (Object.keys(carroCompras).length === 0 && !buyerInfo.email)
-      ) {
-        console.error("No hay datos de compras para generar boletos");
+      setLoadingTicket(itemBoleto.authCode);
+
+      const asientoCompleto = historial
+        .flatMap((servicio) => [
+          ...(servicio.seats.firstFloor?.flat() || []),
+          ...(servicio.seats.secondFloor?.flat() || []),
+        ])
+        .find(
+          (a) =>
+            a.authCode === itemBoleto.authCode && a.number === itemBoleto.boleto
+        );
+
+      if (!asientoCompleto) {
+        console.error("No se encontró el asiento en el historial");
+        setLoadingTicket(null);
         return;
       }
+
+      const servicio = historial.find((s) =>
+        [
+          ...(s.seats.firstFloor?.flat() || []),
+          ...(s.seats.secondFloor?.flat() || []),
+        ].some((a) => a._id === asientoCompleto._id)
+      );
+
+      if (!servicio) {
+        console.error("No se encontró el servicio correspondiente al boleto");
+        setLoadingTicket(null);
+        return;
+      }
+
+      const viaje = {
+        origin: servicio.origin,
+        destination: servicio.destination,
+        date: servicio.date,
+        departureTime: servicio.departureTime,
+        arrivalDate: servicio.arrivalDate,
+        arrivalTime: servicio.arrivalTime,
+        terminalOrigin: servicio.origin,
+        terminalDestination: servicio.destination,
+        company: servicio.company,
+        seatLayout: {
+          tipo_Asiento_piso_1: servicio.tipo_Asiento_piso_1,
+          tipo_Asiento_piso_2: servicio.tipo_Asiento_piso_2,
+        },
+        asientos: [
+          {
+            asiento: asientoCompleto.number,
+            floor: asientoCompleto.floor,
+            valorAsiento: asientoCompleto.price,
+            authCode: asientoCompleto.authCode,
+          },
+        ],
+      };
+
+      const ticketData = {
+        [servicio.serviceId]: { ida: [viaje], vuelta: [] },
+      };
+
+      const body = {
+        ticketData,
+        email: user?.correo,
+        authCode: asientoCompleto.authCode,
+        customerName: user?.nombreCompleto || "Cliente",
+        bookingReference: asientoCompleto.authCode,
+      };
 
       const response = await fetch("/api/generar-boletos", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ticketData: carroCompras,
-          email: buyerInfo.email,
-          authCode: flowOrder,
-          token: token,
-        }),
-      });
-
-      console.log("Body para generar boletos:", {
-        ticketData: carroCompras,
-        email: buyerInfo.email,
-        authCode: flowOrder,
-        token: token,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
       });
 
       const result = await response.json();
-      console.log("Resultado de la generación de boletos:", result);
 
-      if (response.ok) {
-        setGeneratedTickets(result.tickets);
-        console.log("Boletos generados y guardados", result.tickets);
+      if (
+        response.ok &&
+        Array.isArray(result.tickets) &&
+        result.tickets.length > 0
+      ) {
+        result.tickets.forEach((ticket) =>
+          downloadTicket(ticket.base64, ticket.fileName)
+        );
       } else {
-        console.error("Error:", result);
+        console.error("Error al generar boleto:", result);
       }
     } catch (error) {
-      console.error("Error en generarBoletos:", error);
-    }
-  };
-
-  const descargarBoletos = () => {
-    try {
-      console.log("Descargando boletos...");
-      if (!generatedTickets || generatedTickets.length === 0) {
-        return;
-      }
-      generatedTickets.forEach((ticket) => {
-        downloadTicket(ticket.base64, ticket.fileName);
-      });
-    } catch (error) {
-      console.error("Error al descargar los boletos:", error);
+      console.error("Error al descargar el boleto:", error);
+    } finally {
+      setLoadingTicket(null);
     }
   };
 
@@ -582,12 +632,49 @@ const HistorialCompra = () => {
           </ul>
         </nav>
         {mostrarPopup && (
-          <Popup
-            modalKey={ModalEntities.detail_ticket}
-            modalClose={cerrarPopup}
-            modalBody={tablaArmada}
-            modalMethods={cerrarPopup}
-          />
+          <div className={styles["popup-overlay"]}>
+            <div
+              className={styles["popup-container"]}
+              key={`popup-${transaccion}-${loadingTicket}`}
+            >
+              <div className={styles["popup-header"]}>
+                <span
+                  className={`${styles["close-icon"]} ${
+                    loadingTicket ? styles["disabled"] : ""
+                  }`}
+                  onClick={() => {
+                    if (!loadingTicket) cerrarPopup();
+                  }}
+                >
+                  &times;
+                </span>
+              </div>
+
+              <div className="col-12">
+                <div className="row justify-content-center">
+                  <div className="col-12 text-center">
+                    <img
+                      src="/img/icon/popup/checkmark-circle-outline.svg"
+                      alt="Checkmark"
+                    />
+                  </div>
+                  <div className="col-12 text-center">
+                    <p className="mb-0 fw-bold">Detalle boletos</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className={styles["popup-content"]}>{tablaArmada}</div>
+
+              <button
+                className={styles["popup-button"]}
+                onClick={cerrarPopup}
+                disabled={!!loadingTicket}
+              >
+                {loadingTicket ? "Procesando..." : "Aceptar"}
+              </button>
+            </div>
+          </div>
         )}
       </div>
     </>
