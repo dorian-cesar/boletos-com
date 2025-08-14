@@ -410,28 +410,30 @@ const HistorialCompra = () => {
 
   const tablaArmada = (
     <div className={styles["menu-central"]}>
-      <table className={`table ${styles["tabla-informacion"]}`}>
-        <thead>
-          <tr>
-            <th scope="col">Boleto</th>
-            <th scope="col">Origen</th>
-            <th scope="col">Destino</th>
-            <th scope="col">Fecha embarque</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading ? (
+      <div className={styles["tabla-responsive"]}>
+        <table className={`table ${styles["tabla-informacion"]}`}>
+          <thead>
             <tr>
-              <td colSpan={5}>
-                <div className={styles.loader}></div>
-              </td>
+              <th scope="col">Boleto</th>
+              <th scope="col">Origen</th>
+              <th scope="col">Destino</th>
+              <th scope="col">Fecha embarque</th>
+              <th scope="col"></th>
             </tr>
-          ) : (
-            boletoDetalle
-          )}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan={5}>
+                  <div className={styles.loader}></div>
+                </td>
+              </tr>
+            ) : (
+              boletoDetalle
+            )}
+          </tbody>
+        </table>
+      </div>
       <nav aria-label="Page navigation example">
         <ul className={`pagination ${styles["pagination-css"]}`}>
           {renderPaginationBoleto()}
