@@ -35,11 +35,11 @@ const TeAyudamos = (props) => {
       </Head>
       {stage == 0 ? (
         <div className="pt-3 pb-5 bg-bus">
-          <h2 className="text-center text-secondary fw-bold mb-4">Nuestros canales de atención</h2>
+          <h2 className="text-center text-secondary fw-bold mb-4 pt-5">Nuestros canales de atención</h2>
           <div className="container overflow-hidden">
-            <div className="row g-2 g-md-0 justify-content-center gap-3">
+            <div className="row g-2 g-md-0 justify-content-center gap-5 py-5">
 
-              <div className="card text-center col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
+              {/* <div className="card text-center col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
                 <div className="card-header bg-white border-0">
                   <img src="/img/icon/help/help-circle-outline.svg" height={ 48 } width={ 48 }/>
                   <h4 className="text-secondary fw-bold mb-0">Preguntas frecuentes</h4>
@@ -58,7 +58,7 @@ const TeAyudamos = (props) => {
                     </button>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="card text-center col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
                 <div className="card-header bg-white border-0">
@@ -101,7 +101,7 @@ const TeAyudamos = (props) => {
                 </div>
               </div>
 
-              <div className="card col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
+              {/* <div className="card col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
                 <div className="card-body">
                   <h5 className="text-secondary fw-bold">¿Buscas cotizar un viaje especial?</h5>
                   <span>
@@ -117,7 +117,7 @@ const TeAyudamos = (props) => {
                     </Link>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
