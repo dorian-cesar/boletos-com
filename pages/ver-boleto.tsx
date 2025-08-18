@@ -35,6 +35,7 @@ export default function BoletoOperador() {
   // Validar boleto
   useEffect(() => {
     if (!boleto) return;
+    console.log("Boleto:", boleto);
 
     const validateBoleto = async () => {
       try {
@@ -83,12 +84,12 @@ export default function BoletoOperador() {
   }, [boleto]);
 
   // Logs para debug
-  useEffect(() => {
-    if (boleto) {
-      console.log("Boleto actualizado:", boleto);
-      console.log("Tipo de boleto:", typeof boleto);
-    }
-  }, [boleto]);
+  // useEffect(() => {
+  //   if (boleto) {
+  //     console.log("Boleto actualizado:", boleto);
+  //     console.log("Tipo de boleto:", typeof boleto);
+  //   }
+  // }, [boleto]);
 
   const formatDate = (dateStr) => {
     if (!dateStr) return "";
