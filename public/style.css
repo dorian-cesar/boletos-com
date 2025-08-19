@@ -1088,6 +1088,7 @@ select.form-control.seleccion {
 
 .pasajes-compra {
   background: var(--Azul-fondo, #E6ECF6);
+  min-height: 50vh;
 }
 
 @media (max-width: 470px) {
