@@ -35,7 +35,7 @@ const clpFormat = new Intl.NumberFormat("es-CL", {
   currency: "CLP",
 });
 
-const itemsPerPage = 9;
+const itemsPerPage = 8;
 const itemsPerPageBoleto = 5;
 
 const HistorialCompra = () => {
@@ -89,30 +89,30 @@ const HistorialCompra = () => {
             params: { userId: data.id },
           }
         );
-        // const historialFalso = Array.from({ length: 50 }).map((_, i) => ({
-        //   date: `2025-08-${String((i % 28) + 1).padStart(2, "0")}`,
-        //   departureTime: "10:00",
-        //   origin: "Santiago",
-        //   destination: "Valparaíso",
-        //   serviceId: `srv-${i}`,
-        //   tipo_Asiento_piso_1: "Semi Cama",
-        //   tipo_Asiento_piso_2: "Salón Cama",
-        //   company: "Buses Ejemplo",
-        //   seats: {
-        //     firstFloor: [
-        //       [
-        //         {
-        //           number: `A${i}`,
-        //           floor: 1,
-        //           price: 5000 + i * 100,
-        //           paid: i % 2 === 0,
-        //           authCode: `AUTH${i}`,
-        //         },
-        //       ],
-        //     ],
-        //     secondFloor: [],
-        //   },
-        // }));
+        const historialFalso = Array.from({ length: 50 }).map((_, i) => ({
+          date: `2025-08-${String((i % 28) + 1).padStart(2, "0")}`,
+          departureTime: "10:00",
+          origin: "Santiago",
+          destination: "Valparaíso",
+          serviceId: `srv-${i}`,
+          tipo_Asiento_piso_1: "Semi Cama",
+          tipo_Asiento_piso_2: "Salón Cama",
+          company: "Buses Ejemplo",
+          seats: {
+            firstFloor: [
+              [
+                {
+                  number: `A${i}`,
+                  floor: 1,
+                  price: 5000 + i * 100,
+                  paid: i % 2 === 0,
+                  authCode: `AUTH${i}`,
+                },
+              ],
+            ],
+            secondFloor: [],
+          },
+        }));
         setHistorial(historialData);
         // setHistorial([...historialData, ...historialFalso]);
       } catch (error) {
@@ -125,134 +125,89 @@ const HistorialCompra = () => {
     loadData();
   }, []);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     console.log("user actualizado:", user);
-  //   }
-  // }, [user]);
-
-  // useEffect(() => {
-  //   console.log("userdata:::", user);
-  //   data.nombres = user?.nombres;
-  //   data.apellidoPaterno = user?.apellidoPaterno;
-  //   // data.apellidoMaterno = user?.apellidoMaterno;
-  //   // data.genero = user?.genero;
-  //   // data.mail = user?.mail;
-  //   // data.mail2 = user?.mail2;
-  //   data.mail = user?.correo;
-  //   data.rut = user?.rut;
-  //   // if (!!user?.fechaNacimiento) {
-  //   //   let fecha = new Date(
-  //   //     String(user?.fechaNacimiento).substring(
-  //   //       0,
-  //   //       String(user?.fechaNacimiento).length - 5
-  //   //     )
-  //   //   );
-  //   //   setFechaNacimiento(fecha);
-  //   // }
-  // }, [user]);
-
-  // useEffect(() => {
-  //   data.fechaNacimiento = fechaNacimiento;
-  // }, [fechaNacimiento]);
-
-  // function retornarEstado(estado) {
-  //   if (estado === "NUL") {
-  //     return "Transacción nula";
-  //   }
-  //   if (estado === "ACTI") {
-  //     return "Transacción activa";
-  //   }
-  //   return "Sin descripción";
-  // }
-
   const MemoizedComponent = useMemo(() => {
-    console.log("historial", historial);
     if (!historial || historial.length === 0) {
-      return <h4 className="pt-3">No hay registros</h4>;
+      return (
+        <tr>
+          <td colSpan={5}>No hay registros</td>
+        </tr>
+      );
     }
 
-    const sortedHistorial = [...historial].sort((a, b) => {
-      const fechaA = new Date(`${a.date}T${a.departureTime || "00:00"}:00`);
-      const fechaB = new Date(`${b.date}T${b.departureTime || "00:00"}:00`);
-      return fechaB - fechaA;
-    });
-
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const currentItems = sortedHistorial.slice(startIndex, endIndex);
-
-    return currentItems.flatMap((servicio, indexServicio) => {
+    const boletosPlanos = historial.flatMap((servicio, servicioIndex) => {
       const allSeats = [
         ...(servicio.seats.firstFloor?.flat() || []),
         ...(servicio.seats.secondFloor?.flat() || []),
       ];
 
-      if (allSeats.length === 0) {
-        return (
-          <tr key={indexServicio}>
-            <td colSpan={6}>No hay boletos en esta transacción</td>
-          </tr>
-        );
-      }
-
-      const seatsByAuth = allSeats.reduce((acc, asiento) => {
-        if (!acc[asiento.authCode]) acc[asiento.authCode] = [];
-        acc[asiento.authCode].push(asiento);
-        return acc;
-      }, {});
-
       const today = new Date();
 
-      return Object.entries(seatsByAuth).map(([authCode, seats], indexAuth) => {
-        const cantidadBoletos = seats.length;
-        const montoTotal = seats.reduce((sum, a) => sum + (a.price || 0), 0);
-
-        const hayPago = seats.some((a) => a.paid);
+      return allSeats.map((asiento, asientoIndex) => {
         const fechaViaje = new Date(
-          `${servicio.date}T${servicio.departureTime}:00`
+          `${servicio.date}T${servicio.departureTime || "00:00"}:00`
         );
         let estadoTransaccion = "NUL";
+        if (!asiento.paid) estadoTransaccion = "NUL";
+        else if (fechaViaje >= today) estadoTransaccion = "ACTI";
+        else estadoTransaccion = "VENC";
 
-        if (!hayPago) {
-          estadoTransaccion = "NUL"; // no pagado
-        } else if (fechaViaje >= today) {
-          estadoTransaccion = "ACTI"; // boleto activo
-        } else {
-          estadoTransaccion = "VENC"; // boleto vencido
-        }
-
-        return (
-          <tr key={`${indexServicio}-${indexAuth}`}>
-            <td>{authCode}</td>
-            <td>
-              {estadoTransaccion === "ACTI"
-                ? "Boleto activo"
-                : estadoTransaccion === "NUL"
-                ? "Transacción nula"
-                : "Boleto usado"}
-            </td>
-            <td>{servicio.date}</td>
-            <td>{cantidadBoletos}</td>
-            <td>{clpFormat.format(montoTotal)}</td>
-            <td className={styles["boton-descargar"]}>
-              {estadoTransaccion === "NUL" || estadoTransaccion === "VENC" ? (
-                ""
-              ) : (
-                <img
-                  width={24}
-                  src="/img/icon/general/search-outline.svg"
-                  onClick={() => abrirPopTransaccion(authCode)}
-                />
-              )}
-            </td>
-          </tr>
-        );
+        return {
+          key: `${asiento.authCode}-${servicioIndex}-${asientoIndex}`,
+          authCode: asiento.authCode,
+          fecha: servicio.date,
+          cantidadBoletos: 1,
+          montoTotal: asiento.price || 0,
+          estadoTransaccion,
+        };
       });
     });
+
+    boletosPlanos.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const boletosPagina = boletosPlanos.slice(startIndex, endIndex);
+
+    if (boletosPagina.length === 0) {
+      return (
+        <tr>
+          <td colSpan={5}>No hay boletos en esta página</td>
+        </tr>
+      );
+    }
+
+    return boletosPagina.map((boleto) => (
+      <tr key={boleto.key}>
+        <td>{boleto.authCode}</td>
+        <td>
+          {boleto.estadoTransaccion === "ACTI"
+            ? "Boleto activo"
+            : boleto.estadoTransaccion === "NUL"
+            ? "Transacción nula"
+            : "Boleto usado"}
+        </td>
+        <td>{boleto.fecha}</td>
+        {/* <td>{boleto.cantidadBoletos}</td> */}
+        <td>{clpFormat.format(boleto.montoTotal)}</td>
+        <td className={styles["boton-descargar"]}>
+          {boleto.estadoTransaccion === "ACTI" && (
+            <img
+              width={24}
+              src="/img/icon/general/search-outline.svg"
+              onClick={() => abrirPopTransaccion(boleto.authCode)}
+            />
+          )}
+        </td>
+      </tr>
+    ));
   }, [historial, currentPage]);
 
-  const totalPages = Math.ceil(historial.length / itemsPerPage);
+  const totalPages = Math.ceil(
+    (historial.flatMap((s) => [
+      ...(s.seats.firstFloor?.flat() || []),
+      ...(s.seats.secondFloor?.flat() || []),
+    ]).length || 0) / itemsPerPage
+  );
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber >= 1 && pageNumber <= totalPages) {
@@ -639,7 +594,7 @@ const HistorialCompra = () => {
                 <th scope="col">Código Transacción</th>
                 <th scope="col">Estado Boleto</th>
                 <th scope="col">Fecha Viaje</th>
-                <th scope="col">Cantidad Boletos</th>
+                {/* <th scope="col">Cantidad Boletos</th> */}
                 <th scope="col">Monto</th>
                 <th scope="col">Ver boletos</th>
               </tr>
@@ -647,7 +602,7 @@ const HistorialCompra = () => {
             <tbody>
               {isLoading ? (
                 <tr>
-                  <td colSpan={6}>
+                  <td colSpan={5}>
                     <div className={styles.loader}></div>
                   </td>
                 </tr>
