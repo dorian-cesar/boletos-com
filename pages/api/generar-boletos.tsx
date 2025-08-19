@@ -57,6 +57,7 @@ export default async (
       customerName,
       bookingReference,
     }: TicketData = req.body;
+
     console.log("Datos recibidos:", { ticketData, email, tokenBoleto });
 
     if (!ticketData || !email) {
@@ -68,16 +69,36 @@ export default async (
       });
     }
 
+    // Medir tiempo total
+    console.time("Tiempo total generación boletos");
+
     // 1. Generar los boletos en PDF
+    console.time("Generación de boletos");
     const { generatedTickets } = await generateAllTicketsPDF(
       ticketData,
       authCode,
       token,
       tokenBoleto
     );
+    console.timeEnd("Generación de boletos");
 
-    // 2. Enviar por email
-    const emailResult = await sendTicketsByEmail({
+    // 2. Preparar respuesta para el frontend
+    const frontendTickets = generatedTickets.map((ticket) => ({
+      fileName: ticket.fileName,
+      base64: ticket.base64,
+    }));
+
+    res.status(200).json({
+      success: true,
+      message: "Boletos generados correctamente",
+      tickets: frontendTickets,
+      emailSent: "", // aún no enviado
+    });
+
+    console.timeEnd("Tiempo total generación boletos");
+
+    // 3. Enviar email **después** de responder al frontend
+    sendTicketsByEmail({
       customerEmail: email,
       tickets: generatedTickets.map((t) => ({
         fileName: t.fileName,
@@ -88,24 +109,17 @@ export default async (
       })),
       customerName,
       bookingReference,
-    });
-
-    if (!emailResult.success) {
-      throw new Error(emailResult.message);
-    }
-
-    // 3. Preparar respuesta para el frontend
-    const frontendTickets = generatedTickets.map((ticket) => ({
-      fileName: ticket.fileName,
-      base64: ticket.base64,
-    }));
-
-    res.status(200).json({
-      success: true,
-      message: "Boletos generados y enviados correctamente",
-      tickets: frontendTickets,
-      emailSent: email,
-    });
+    })
+      .then((emailResult) => {
+        if (!emailResult.success) {
+          console.error("Error al enviar email:", emailResult.message);
+        } else {
+          console.log("Email enviado correctamente a:", email);
+        }
+      })
+      .catch((err) => {
+        console.error("Error en envío de email:", err);
+      });
   } catch (error) {
     console.error("Error en el endpoint:", error);
     res.status(500).json({
