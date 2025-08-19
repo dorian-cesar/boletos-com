@@ -7,7 +7,7 @@ import axios from "axios";
 import { useId } from "react";
 import { decryptData } from "utils/encrypt-data.js";
 import LocalStorageEntities from "entities/LocalStorageEntities";
-import { generateToken } from 'utils/jwt-auth';
+import { generateToken } from "utils/jwt-auth";
 import Popup from "../../Popup/Popup";
 import ModalEntities from "../../../entities/ModalEntities";
 
@@ -156,20 +156,20 @@ const HistorialCompra = () => {
   //   data.fechaNacimiento = fechaNacimiento;
   // }, [fechaNacimiento]);
 
-  function retornarEstado(estado) {
-    if (estado === "NUL") {
-      return "Transacción nula";
-    }
-    if (estado === "ACTI") {
-      return "Transacción activa";
-    }
-    return "Sin descripción";
-  }
+  // function retornarEstado(estado) {
+  //   if (estado === "NUL") {
+  //     return "Transacción nula";
+  //   }
+  //   if (estado === "ACTI") {
+  //     return "Transacción activa";
+  //   }
+  //   return "Sin descripción";
+  // }
 
   const MemoizedComponent = useMemo(() => {
     console.log("historial", historial);
     if (!historial || historial.length === 0) {
-      return <h3>No hay registros</h3>;
+      return <h4 className="pt-3">No hay registros</h4>;
     }
 
     const sortedHistorial = [...historial].sort((a, b) => {
@@ -275,7 +275,6 @@ const HistorialCompra = () => {
   const renderPagination = () => {
     const pages = [];
     const maxVisiblePages = 3;
-
     const startPage = Math.max(
       1,
       currentPage - Math.floor(maxVisiblePages / 2)
@@ -286,35 +285,44 @@ const HistorialCompra = () => {
       pages.push(
         <li
           key={i}
-          className={`page-item ${currentPage === i ? "active" : ""}`}
+          className={`${styles["page-item"]} ${
+            currentPage === i ? styles["active"] : ""
+          }`}
         >
-          <a className="page-link" onClick={() => handlePageChange(i)}>
+          <button
+            onClick={() => handlePageChange(i)}
+            className={styles["page-link"]}
+          >
             {i}
-          </a>
+          </button>
         </li>
       );
     }
 
     if (currentPage > 1) {
       pages.unshift(
-        <li key="previous" className="page-item">
-          <a
-            className="page-link"
-            aria-label="Previous"
+        <li key="previous" className={styles["page-item"]}>
+          <button
             onClick={handlePreviousPage}
+            className={styles["page-link"]}
+            aria-label="Previous"
           >
-            <span aria-hidden="true">&laquo;</span>
-          </a>
+            &laquo;
+          </button>
         </li>
       );
     }
 
     if (currentPage < totalPages) {
       pages.push(
-        <li key="next" className="page-item">
-          <a className="page-link" aria-label="Next" onClick={handleNextPage}>
-            <span aria-hidden="true">&raquo;</span>
-          </a>
+        <li key="next" className={styles["page-item"]}>
+          <button
+            onClick={handleNextPage}
+            className={styles["page-link"]}
+            aria-label="Next"
+          >
+            &raquo;
+          </button>
         </li>
       );
     }
@@ -358,39 +366,44 @@ const HistorialCompra = () => {
       pages.push(
         <li
           key={i}
-          className={`page-item ${currentPageBoleto === i ? "active" : ""}`}
+          className={`${styles["page-item"]} ${
+            currentPageBoleto === i ? styles["active"] : ""
+          }`}
         >
-          <a className="page-link" onClick={() => handlePageChangeBoleto(i)}>
+          <button
+            onClick={() => handlePageChangeBoleto(i)}
+            className={styles["page-link"]}
+          >
             {i}
-          </a>
+          </button>
         </li>
       );
     }
 
     if (currentPageBoleto > 1) {
       pages.unshift(
-        <li key="previous" className="page-item">
-          <a
-            className="page-link"
-            aria-label="Previous"
+        <li key="previous" className={styles["page-item"]}>
+          <button
             onClick={handlePreviousPageBoleto}
+            className={styles["page-link"]}
+            aria-label="Previous"
           >
-            <span aria-hidden="true">&laquo;</span>
-          </a>
+            &laquo;
+          </button>
         </li>
       );
     }
 
     if (currentPageBoleto < totalPagesBoletos) {
       pages.push(
-        <li key="next" className="page-item">
-          <a
-            className="page-link"
-            aria-label="Next"
+        <li key="next" className={styles["page-item"]}>
+          <button
             onClick={handleNextPageBoleto}
+            className={styles["page-link"]}
+            aria-label="Next"
           >
-            <span aria-hidden="true">&raquo;</span>
-          </a>
+            &raquo;
+          </button>
         </li>
       );
     }
@@ -435,7 +448,7 @@ const HistorialCompra = () => {
   }, [boleto, currentPageBoleto, loadingTicket]);
 
   const tablaArmada = (
-    <div className={styles["menu-central"]}>
+    <div className={`${styles["menu-central"]} mt-0 pt-2`}>
       <div className={styles["tabla-responsive"]}>
         <table className={`table ${styles["tabla-informacion"]}`}>
           <thead>
@@ -444,7 +457,7 @@ const HistorialCompra = () => {
               <th scope="col">Origen</th>
               <th scope="col">Destino</th>
               <th scope="col">Fecha embarque</th>
-              <th scope="col"></th>
+              <th scope="col">Descargar</th>
             </tr>
           </thead>
           <tbody>
@@ -460,11 +473,13 @@ const HistorialCompra = () => {
           </tbody>
         </table>
       </div>
-      <nav aria-label="Page navigation example">
-        <ul className={`pagination ${styles["pagination-css"]}`}>
-          {renderPaginationBoleto()}
-        </ul>
-      </nav>
+      {totalPagesBoletos > 1 && (
+        <nav aria-label="Page navigation boletos">
+          <ul className={styles["pagination-css"]}>
+            {renderPaginationBoleto()}
+          </ul>
+        </nav>
+      )}
     </div>
   );
 
@@ -499,24 +514,6 @@ const HistorialCompra = () => {
     setBoleto(boletos);
     abrirPopup();
   };
-
-  // const descargarBoleto = async (boletoBuscar) => {
-  //   let boleto = {
-  //     codigo: transaccion,
-  //     boleto: boletoBuscar,
-  //   };
-  //   try {
-  //     const res = await axios.post("/api/voucher", boleto);
-  //     if (res.request.status) {
-  //       const linkSource = `data:application/pdf;base64,${res.data?.archivo}`;
-  //       const downloadLink = document.createElement("a");
-  //       const fileName = res.data.nombre;
-  //       downloadLink.href = linkSource;
-  //       downloadLink.download = fileName;
-  //       downloadLink.click();
-  //     }
-  //   } catch (e) {}
-  // };
 
   const descargarBoleto = async (itemBoleto) => {
     if (!itemBoleto || loadingTicket) return;
@@ -660,14 +657,11 @@ const HistorialCompra = () => {
             </tbody>
           </table>
         </div>
-        <nav
-          className={styles["navigation"]}
-          aria-label="Page navigation example"
-        >
-          <ul className={`pagination ${styles["pagination-css"]}`}>
-            {renderPagination()}
-          </ul>
-        </nav>
+        {totalPages > 1 && (
+          <nav aria-label="Page navigation historial">
+            <ul className={styles["pagination-css"]}>{renderPagination()}</ul>
+          </nav>
+        )}
         {mostrarPopup && (
           <div className={styles["popup-overlay"]}>
             <div

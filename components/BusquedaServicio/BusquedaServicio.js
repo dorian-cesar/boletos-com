@@ -11,7 +11,10 @@ import { toast } from "react-toastify";
 import { useSelector, useDispatch } from "react-redux";
 import Popup from "../Popup/Popup";
 import ModalEntities from "entities/ModalEntities";
-import { liberarAsientos, limpiarListaCarrito } from "store/usuario/compra-slice";
+import {
+  liberarAsientos,
+  limpiarListaCarrito,
+} from "store/usuario/compra-slice";
 import {
   decryptDataNoSaved,
   encryptDataNoSave,
@@ -56,14 +59,7 @@ const BusquedaServicio = (props) => {
   const [mostrarPopup, setMostrarPopup] = useState(false);
 
   const [origenes, setOrigenes] = useState([]);
-
-  useEffect(() => {
-    getOrigins();
-  }, []);
-
-  useEffect(() => {
-    getDestinos();
-  }, [origen]);
+  const [ciudades, setCiudades] = useState([]);
 
   const abrirPopup = () => {
     setMostrarPopup(true);
@@ -144,49 +140,29 @@ const BusquedaServicio = (props) => {
     }
   }
 
-  async function getOrigins() {
-    try {
-      const res = await fetch("/api/ciudades");
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status} - ${res.statusText}`);
-      }
-      const data = await res.json();
-      // console.log("Ciudades obtenidas:", data);
-      const ciudades = data.map((item) => item.origen);
-      setOrigenes(ciudades);
-      // console.log("Origenes:", ciudades);
-    } catch (error) {
-      console.error(`Error al obtener ciudades: ${error?.message}`);
-    }
-  }
+  useEffect(() => {
+    getCiudades();
+  }, []);
 
-  // async function getDestinos() {
-  //   if (origen !== null) {
-  //     try {
-  //       let { data } = await axios.post("/api/ciudades");
-  //       setDestinos(data);
-  //     } catch ({ message }) {
-  //       console.error(`Error al obtener destinos [${message}]`);
-  //     }
-  //   }
-  // }
-
-  async function getDestinos() {
+  useEffect(() => {
     if (origen) {
-      try {
-        const { data } = await axios.get("/api/ciudades");
-        const origenData = data.find((item) => item.origen === origen);
-        if (origenData) {
-          setDestinos(origenData.destinos);
-        } else {
-          setDestinos([]);
-        }
-      } catch (error) {
-        console.error(`Error al obtener destinos [${error.message}]`);
-        setDestinos([]);
-      }
+      const origenData = ciudades.find((item) => item.origen === origen);
+      setDestinos(origenData ? origenData.destinos : []);
     } else {
       setDestinos([]);
+    }
+  }, [origen, ciudades]);
+
+  async function getCiudades() {
+    try {
+      const { data } = await axios.get("/api/ciudades");
+      setCiudades(data);
+
+      // Extraer orígenes únicos
+      const listaOrigenes = [...new Set(data.map((item) => item.origen))];
+      setOrigenes(listaOrigenes);
+    } catch (error) {
+      console.error(`Error al obtener ciudades: ${error.message}`);
     }
   }
 
@@ -224,10 +200,6 @@ const BusquedaServicio = (props) => {
     setDestino(null);
     setOrigen(origenSeleccionado);
   }
-
-  useEffect(() => {
-    (async () => await getDestinos())();
-  }, [origen]);
 
   useEffect(() => {
     if (endDate && dayjs(startDate).isAfter(dayjs(endDate))) {

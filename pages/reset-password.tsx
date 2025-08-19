@@ -18,6 +18,9 @@ const ResetPassword = () => {
   const router = useRouter();
   const [token, setToken] = useState("");
 
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   useEffect(() => {
     if (router.query.token) {
       const queryToken = Array.isArray(router.query.token)
@@ -62,7 +65,7 @@ const ResetPassword = () => {
         newPassword: reset.password,
       });
       if (res.data.message) {
-        setSuccessMsg("Contraseña cambiada con éxito");
+        setSuccessMsg("Contraseña restablecida con éxito");
         setCountdown(3);
       }
     } catch (e) {
@@ -107,29 +110,92 @@ const ResetPassword = () => {
         </div>
       )}
 
-      <div className="mb-3">
+      {/* Campo password */}
+      <div className="mb-3 position-relative">
         <label className="form-label">Nueva contraseña</label>
         <input
-          type="password"
+          type={showPassword ? "text" : "password"}
           placeholder="********"
           className="form-control"
           name="password"
           value={reset.password}
           onChange={onInputChange}
           disabled={isDisabled}
+          style={{ paddingRight: 40 }}
         />
+        <button
+          type="button"
+          onClick={() => setShowPassword((prev) => !prev)}
+          style={{
+            position: "absolute",
+            right: 2,
+            top: 14,
+            height: "100%",
+            width: 40,
+            border: "none",
+            background: "transparent",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          disabled={isDisabled}
+        >
+          <img
+            src={
+              showPassword
+                ? "img/icon/form/eye-outline.svg"
+                : "img/icon/form/eye-off-outline.svg"
+            }
+            alt={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            width={20}
+          />
+        </button>
       </div>
-      <div className="mb-3">
+
+      {/* Campo confirmar password */}
+      <div className="mb-3 position-relative">
         <label className="form-label">Confirmar contraseña</label>
         <input
-          type="password"
+          type={showConfirmPassword ? "text" : "password"}
           placeholder="********"
           className="form-control"
           name="confirmPassword"
           value={reset.confirmPassword}
           onChange={onInputChange}
           disabled={isDisabled}
+          style={{ paddingRight: 40 }}
         />
+        <button
+          type="button"
+          onClick={() => setShowConfirmPassword((prev) => !prev)}
+          style={{
+            position: "absolute",
+            right: 2,
+            top: 14,
+            height: "100%",
+            width: 40,
+            border: "none",
+            background: "transparent",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          disabled={isDisabled}
+        >
+          <img
+            src={
+              showConfirmPassword
+                ? "img/icon/form/eye-outline.svg"
+                : "img/icon/form/eye-off-outline.svg"
+            }
+            alt={
+              showConfirmPassword ? "Ocultar contraseña" : "Mostrar contraseña"
+            }
+            width={20}
+          />
+        </button>
       </div>
 
       <button

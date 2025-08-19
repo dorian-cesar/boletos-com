@@ -263,51 +263,65 @@
   text-align: left;
 }
 
+/* Contenedor */
 .pagination-css {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
   list-style: none;
   padding-left: 0;
+  margin-top: 16px;
 }
 
-.pagination-css .page-item {
+/* Cada item */
+.page-item {
   display: inline-block;
 }
 
-.pagination-css .page-link {
+/* Botón */
+.page-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 36px;
-  height: 36px;
-  padding: 0 10px;
-  border-radius: 8px;
-  background-color: #f5f5f5;
-  color: #333;
+  min-width: 30px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  color: #333333;
   font-weight: 500;
-  border: 1px solid #ddd;
-  text-decoration: none;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   cursor: pointer;
   transition: all 0.2s ease-in-out;
+  user-select: none;
 }
 
-.pagination-css .page-link:hover {
-  background-color: #007bff;
+/* Hover */
+.page-link:hover {
+  background-color: #e0e0e0;
+  color: #111;
+  transform: scale(1.05);
+}
+
+/* Activo */
+.active .page-link {
+  background-color: #fd7012;
   color: white;
-  border-color: #007bff;
+  font-weight: 600;
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.pagination-css .page-item.active .page-link {
-  background-color: #007bff;
-  color: white;
-  border-color: #007bff;
-}
-
-.pagination-css .page-link:disabled,
-.pagination-css .page-item.disabled .page-link {
-  background-color: #e9ecef;
-  color: #6c757d;
-  border-color: #dee2e6;
+/* Deshabilitado */
+.page-link:disabled {
+  background-color: #f5f5f5;
+  color: #aaa;
   cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+.tabla-informacion td:nth-child(5) {
+  text-align: center;
 }
