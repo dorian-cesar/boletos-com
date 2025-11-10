@@ -61,7 +61,7 @@ const MediosPago = (props) => {
             />
             {element.valor2 === "WBPAY" ? (
               <img
-                src="/img/icon/cuponera/logo-flow.png"
+                src="/img/icon/cuponera/logo-pagopar.png"
                 style={{
                   maxWidth: "100px",
                   width: "100%",

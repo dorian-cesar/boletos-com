@@ -8,7 +8,9 @@ import Link from "next/link";
 const imagenDeRespaldo = {
   key: "banner_01",
   // url: "/",
-  image: "https://pullman.cl/imagenes/fenix/banner/banner-1.jpg",
+  // image: "https://pullman.cl/imagenes/fenix/banner/banner-1.jpg",
+  // image: "/banner-paraguay.jpeg",
+  image: "/banner-1.png",
 };
 
 const Banner = (props) => {
@@ -83,7 +85,12 @@ const Banner = (props) => {
                     </a>
                   </Link>
                 ) : (
-                  <img className="w-100" style={{ cursor: 'default' }} src={image} alt={`Banner ${index}`} />
+                  <img
+                    className="w-100"
+                    style={{ cursor: "default" }}
+                    src={image}
+                    alt={`Banner ${index}`}
+                  />
                 )}
               </SwiperSlide>
             ))

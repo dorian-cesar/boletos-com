@@ -585,23 +585,33 @@ export const ResumenViaje = (props) => {
           });
           return;
         } else {
-          localStorage.setItem("tokenTemp", data.token);
-          localStorage.setItem("flowOrder", data.flowOrder);
+          // localStorage.setItem("tokenTemp", data.token);
+          // localStorage.setItem("flowOrder", data.flowOrder);
         }
 
-        setPayment({
-          ...payment,
-          url: data.url,
-          token: data.token,
-        });
-
-        // PagoPar
         // setPayment({
         //   ...payment,
-        //   data: data.resultado.data,
+        //   url: data.url,
+        //   token: data.token,
         // });
 
+        // PagoPar
+        setPayment({
+          ...payment,
+          data: data.resultado.data,
+        });
+
         setIsLoading(false);
+
+        const pagoData = data?.resultado?.[0]?.data;
+        console.log("pagoData:", pagoData);
+        if (pagoData) {
+          const url = `https://www.pagopar.com/pagos/${pagoData}`;
+          console.log("Redirigiendo a PagoPar:", url);
+          window.location.href = url;
+        } else {
+          toast.error("No se pudo obtener el link de PagoPar");
+        }
       }
     } catch (error) {
       setIsLoading(false);
@@ -647,11 +657,20 @@ export const ResumenViaje = (props) => {
     obtenerInformacion();
   }, [informacionAgrupada]);
 
-  useEffect(() => {
-    if (payment.url) {
-      payment_form.current?.submit();
-    }
-  }, [payment]);
+  // useEffect(() => {
+  //   if (payment.url) {
+  //     payment_form.current?.submit();
+  //   }
+  // }, [payment]);
+
+  // PagoPar
+  // useEffect(() => {
+  //   if (payment?.data) {
+  //     const url = `https://www.pagopar.com/pagos/${payment.data}`;
+  //     console.log("Redirigiendo a PagoPar:", url);
+  //     window.location.href = url;
+  //   }
+  // }, [payment]);
 
   useEffect(() => {
     let total = 0;
@@ -905,10 +924,10 @@ export const ResumenViaje = (props) => {
                 style={{ display: "none" }}
                 method="POST"
                 // action={payment.url}
-                action={`${payment.url}?token=${payment.token}`}
+                // action={`${payment.url}?token=${payment.token}`}
                 // action={`https://www.pagopar.com/pagos/${payment.data}`}
               >
-                <input name="TBK_TOKEN" value={payment.token} />
+                {/* <input name="TBK_TOKEN" value={payment.token} /> */}
               </form>
             </div>
           ) : (
