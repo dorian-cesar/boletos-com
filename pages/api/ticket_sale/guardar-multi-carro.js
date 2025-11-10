@@ -113,6 +113,11 @@ async function handleGuardarMultiCarro(req, res) {
 
     const productId = crypto.randomUUID();
 
+    const nombreCompleto =
+      serviceRequest.datosComprador.nombre +
+      " " +
+      serviceRequest.datosComprador.apellido;
+
     const comercio_token_privado = process.env.PAGOPAR_PRIVATE_KEY;
     const idPedido = productId;
     const monto_total = serviceRequest.montoTotal;
@@ -145,7 +150,7 @@ async function handleGuardarMultiCarro(req, res) {
         ruc: "4247903-7",
         email: serviceRequest.datosComprador.email,
         ciudad: 1,
-        nombre: "Rudolph Goetz",
+        nombre: nombreCompleto,
         telefono: "0972200046",
         direccion: "",
         documento: "4247903",
@@ -160,12 +165,11 @@ async function handleGuardarMultiCarro(req, res) {
       compras_items: [
         {
           ciudad: "1",
-          nombre: "Pasajes de bus",
+          nombre: "Pasaje(s) de bus",
           cantidad: 1,
           categoria: "909",
           public_key: publicKey,
-          url_imagen:
-            "http://www.example.com/d7/wordpress/wp-content/uploads/2017/10/ticket.png",
+          url_imagen: "https://boletos-com.netlify.app/ticket-bus.jpg",
           descripcion: "Compra de pasajes de bus",
           id_producto: 1,
           precio_total: serviceRequest.montoTotal,
