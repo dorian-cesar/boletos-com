@@ -140,7 +140,6 @@ const Footer = () => (
       }
       .social-icon img {
         transition: transform 0.2s ease, opacity 0.2s ease;
-        opacity: 0.85;
       }
       .social-icon:hover img {
         transform: scale(1.1);

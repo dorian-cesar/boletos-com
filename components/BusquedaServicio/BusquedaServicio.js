@@ -30,7 +30,7 @@ registerLocale("es", es);
 const CustomInput = forwardRef(({ value, onClick }, ref) => (
   <input
     type="text"
-    className="fecha-input form-control m-0 w-100"
+    className="fecha-input form-control m-0 w-100 shadow-sm border"
     onClick={onClick}
     ref={ref}
     defaultValue={value}
@@ -250,7 +250,9 @@ const BusquedaServicio = (props) => {
         <div className={isHomeComponent ? styles["seleccion-servicio"] : ""}>
           <div>
             {isHomeComponent && (
-              <h1 className={styles["titulo-azul"]}>
+              <h1
+                className={`${styles["titulo-azul"]} text-center text-md-start mb-4 fw-bold display-6`}
+              >
                 ¿Cuál es tu próximo destino?
               </h1>
             )}
@@ -285,9 +287,11 @@ const BusquedaServicio = (props) => {
             )}
           </div>
           <div className="container">
-            <div className="row d-flex justify-content-evenly align-items-end">
+            <div className="row d-flex justify-content-evenly align-items-end g-3">
               <div className="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-2 col-xxl-2">
-                <label className={styles["label-titulo-busqueda-servicio"]}>
+                <label
+                  className={`${styles["label-titulo-busqueda-servicio"]} form-label fw-semibold mb-2`}
+                >
                   Origen
                 </label>
                 {/* <Input
@@ -303,7 +307,7 @@ const BusquedaServicio = (props) => {
                   setSelected={cambiarOrigen}
                 /> */}
                 <Input
-                  className="sel-input origen"
+                  className="sel-input origen form-control-lg border-0 shadow-sm"
                   placeholder="Seleccione origen"
                   items={retornaCiudadesSelect(origenes)}
                   selected={origen ? { label: origen, value: origen } : null}
@@ -314,11 +318,14 @@ const BusquedaServicio = (props) => {
                 <img
                   src="img/repeat-outline.svg"
                   onClick={() => invertirDestinos()}
-                  className={`pointer mx-auto mb-1 d-none d-md-block ${styles.svgImage} ${styles.svgShadow}`}
+                  className={`pointer mx-auto mb-1 d-none d-md-block ${styles.svgImage} ${styles.svgShadow} bg-light rounded-circle p-2 border shadow-sm`}
+                  style={{ width: "45px", height: "45px" }}
                 />
               </div>
               <div className="col-12 col-sm-12 col-md-5 col-lg-5 col-xl-2 col-xxl-2">
-                <label className={styles["label-titulo-busqueda-servicio"]}>
+                <label
+                  className={`${styles["label-titulo-busqueda-servicio"]} form-label fw-semibold mb-2`}
+                >
                   Destino
                 </label>
                 {/* <Input
@@ -347,7 +354,7 @@ const BusquedaServicio = (props) => {
                   }}
                 >
                   <Input
-                    className="sel-input destino"
+                    className="sel-input destino form-control-lg border-0 shadow-sm"
                     placeholder={"Seleccione destino"}
                     items={retornaDestinosSelect(destinos)}
                     selected={
@@ -358,7 +365,9 @@ const BusquedaServicio = (props) => {
                 </div>
               </div>
               <div className="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-2 col-xxl-2">
-                <label className={styles["label-titulo-busqueda-servicio"]}>
+                <label
+                  className={`${styles["label-titulo-busqueda-servicio"]} form-label fw-semibold mb-2`}
+                >
                   Salida
                 </label>
                 <DatePicker
@@ -370,10 +379,13 @@ const BusquedaServicio = (props) => {
                   minDate={new Date()}
                   dateFormat="dd/MM/yyyy"
                   customInput={<CustomInput />}
+                  wrapperClassName="w-100"
                 />
               </div>
               <div className="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-2 col-xxl-2">
-                <label className={styles["label-titulo-busqueda-servicio"]}>
+                <label
+                  className={`${styles["label-titulo-busqueda-servicio"]} form-label fw-semibold mb-2`}
+                >
                   Vuelta
                 </label>
                 <DatePicker
@@ -393,22 +405,46 @@ const BusquedaServicio = (props) => {
                   className={styles["input"]}
                   customInput={<CustomInput />}
                   isClearable
+                  wrapperClassName="w-100"
                 />
               </div>
               <div className="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-2 col-xxl-2">
                 <button
                   ref={buscarBtnRef}
-                  className={`mx-auto mt-4 mt-md-0 ${
+                  className={`mx-auto mt-4 mt-md-0 w-100 btn btn-primary btn-lg gradient-bg ${
                     styles["button-busqueda-servicio"]
-                  } ${isLoading ? styles["loading-button"] : ""}`}
+                  } ${
+                    isLoading ? styles["loading-button"] : ""
+                  } border-0 shadow`}
                   onClick={redireccionarBuscarServicio}
-                  disabled={!origen || !destino}
+                  disabled={!origen || !destino || isLoading}
                 >
-                  <img
-                    src="img/icon-buscar-blanco.svg"
-                    style={{ width: "15px" }}
-                  />{" "}
-                  Buscar
+                  {isLoading ? (
+                    <>
+                      <div
+                        className="me-2"
+                        style={{
+                          display: "inline-block",
+                          width: "16px",
+                          height: "16px",
+                          border: "2px solid rgba(255,255,255,0.3)",
+                          borderTop: "2px solid white",
+                          borderRadius: "50%",
+                          animation: "spin 0.8s linear infinite",
+                        }}
+                      ></div>
+                      Buscando...
+                    </>
+                  ) : (
+                    <>
+                      <img
+                        src="img/icon-buscar-blanco.svg"
+                        style={{ width: "15px" }}
+                        className="me-2"
+                      />{" "}
+                      Buscar
+                    </>
+                  )}
                 </button>
               </div>
             </div>

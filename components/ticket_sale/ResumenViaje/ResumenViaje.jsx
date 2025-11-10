@@ -610,7 +610,7 @@ export const ResumenViaje = (props) => {
           console.log("Redirigiendo a PagoPar:", url);
           window.location.href = url;
         } else {
-          toast.error("No se pudo obtener el link de PagoPar");
+          toast.error("No se pudo redireccionar a PagoPar");
         }
       }
     } catch (error) {
