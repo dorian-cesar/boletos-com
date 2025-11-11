@@ -954,7 +954,7 @@ select.form-control.seleccion {
 .home {
   background: var(--Azul-fondo, #e6ecf6);
   /* padding-block-end: 150px; */
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .home .img-principal img {
@@ -1110,7 +1110,7 @@ select.form-control.seleccion {
 
 .pasajes-compra {
   background: var(--Azul-fondo, #e6ecf6);
-  min-height: 50vh;
+  min-height: 100vh;
 }
 
 @media (max-width: 470px) {

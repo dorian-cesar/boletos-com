@@ -311,7 +311,7 @@ export default function Home(props) {
         setStage={setStage}
         componentSearch={componentSearch}
       />
-      <div className="pasajes-compra pb-5">
+      <div className="pasajes-compra">
         <div className="container">
           {stages_active[stage].kind == "pasajes_1" ||
           stages_active[stage].kind == "pasajes_2" ? (
