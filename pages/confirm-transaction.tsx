@@ -127,6 +127,245 @@
 //   };
 // }, sessionOptions);
 
+// FLOW
+
+// import Footer from "components/Footer";
+// import Layout from "components/Layout";
+// import { useEffect, useState } from "react";
+// import { useRouter } from "next/router";
+// import Image from "next/image";
+// import { generateToken } from "utils/jwt-auth";
+// import JWT from "jsonwebtoken";
+// import { useSelector } from "react-redux";
+
+// const SECRET = "xWL!96JRaWi2lT0jG";
+
+// export default function ConfrimTransaction() {
+//   const router = useRouter();
+//   const [carroCompras, setCarroCompras] = useState([]);
+//   const [hasPushed, setHasPushed] = useState(false);
+
+//   const selector =
+//     useSelector((state: any) => state.compra?.listaCarrito) || [];
+
+//   useEffect(() => {
+//     let keys = 0;
+
+//     if (selector) {
+//       keys = Object.keys(selector).length;
+//     }
+
+//     if (keys > 0) {
+//       const token = JWT.sign(selector, SECRET);
+//       sessionStorage.setItem("transactionBasketInfo", token);
+//       setCarroCompras(selector);
+//     } else {
+//       setCarroCompras([]);
+//     }
+//   }, []);
+
+//   useEffect(() => {
+//     const runCheck = async () => {
+//       const token = localStorage.getItem("tokenTemp");
+//       const flowOrder = localStorage.getItem("flowOrder");
+
+//       if (!token) {
+//         if (router.pathname !== "/error-transaccion") {
+//           router.push("/error-transaccion");
+//         }
+//         return;
+//       }
+
+//       try {
+//         const response = await fetch("/api/v2/confirm-transaction", {
+//           method: "POST",
+//           headers: { "Content-Type": "application/json" },
+//           body: JSON.stringify({ token, flowOrder }),
+//         });
+
+//         const data = await response.json();
+
+//         switch (data.status) {
+//           case 1:
+//             setTimeout(runCheck, 3000);
+//             break;
+
+//           case 2:
+//             try {
+//               const rawPurchaseInfo = localStorage.getItem("purchase_info");
+//               const rawBuyerInfo = localStorage.getItem("buyer_info");
+//               const buyerInfo = rawBuyerInfo ? JSON.parse(rawBuyerInfo) : null;
+//               const purchaseInfo = rawPurchaseInfo
+//                 ? JSON.parse(rawPurchaseInfo)
+//                 : [];
+
+//               const firstName = buyerInfo?.nombre?.trim() || "";
+//               const lastName = buyerInfo?.apellido?.trim() || "";
+//               const userName = `${firstName} ${lastName}`.trim() || "Invitado";
+//               const userEmail = buyerInfo?.email || null;
+//               const tokenAPI = generateToken();
+
+//               if (
+//                 !Array.isArray(purchaseInfo) ||
+//                 purchaseInfo.length === 0 ||
+//                 !userEmail ||
+//                 !flowOrder
+//               ) {
+//                 console.warn("Faltan datos para confirmar asientos");
+//                 if (router.pathname !== "/error-transaccion") {
+//                   router.push("/error-transaccion");
+//                 }
+//                 return;
+//               }
+
+//               // Registra usuario invitado
+//               let userId = null;
+//               try {
+//                 const userRes = await fetch(
+//                   "https://boletos.dev-wit.com/api/users/register-guest",
+//                   {
+//                     method: "POST",
+//                     headers: {
+//                       "Content-Type": "application/json",
+//                     },
+//                     body: JSON.stringify({
+//                       name: userName,
+//                       email: userEmail,
+//                     }),
+//                   }
+//                 );
+
+//                 if (!userRes.ok) {
+//                   const errorText = await userRes.text();
+//                   console.error(
+//                     "Error al registrar usuario invitado:",
+//                     errorText
+//                   );
+//                   if (router.pathname !== "/error-transaccion") {
+//                     router.push("/error-transaccion");
+//                   }
+//                   return;
+//                 }
+
+//                 const userData = await userRes.json();
+//                 userId = userData?.user_id;
+//                 console.log("Usuario registrado:", userData);
+
+//                 if (!userId) {
+//                   console.error("No se obtuvo el ID del usuario creado");
+//                   if (router.pathname !== "/error-transaccion") {
+//                     router.push("/error-transaccion");
+//                   }
+//                   return;
+//                 }
+
+//                 console.log("Usuario registrado con éxito, ID:", userId);
+//               } catch (err) {
+//                 console.error("Error durante el registro de usuario:", err);
+//                 if (router.pathname !== "/error-transaccion") {
+//                   router.push("/error-transaccion");
+//                 }
+//                 return;
+//               }
+
+//               // Confirmar asientos
+//               for (const servicio of purchaseInfo) {
+//                 const serviceId = servicio?.id;
+//                 const asientos = servicio?.asientos || [];
+
+//                 if (!serviceId || asientos.length === 0) {
+//                   console.warn("Servicio inválido o sin asientos:", servicio);
+//                   if (router.pathname !== "/error-transaccion") {
+//                     router.push("/error-transaccion");
+//                   }
+//                   return;
+//                 }
+
+//                 for (const asiento of asientos) {
+//                   const seatNumber = asiento?.asiento;
+//                   if (!seatNumber) continue;
+
+//                   const confirmRes = await fetch(
+//                     `https://boletos.dev-wit.com/api/seats/${serviceId}/confirm`,
+//                     {
+//                       method: "POST",
+//                       headers: {
+//                         "Content-Type": "application/json",
+//                         Authorization: `Bearer ${tokenAPI}`,
+//                       },
+//                       body: JSON.stringify({
+//                         seatNumber,
+//                         authCode: flowOrder,
+//                         userId,
+//                       }),
+//                     }
+//                   );
+
+//                   if (!confirmRes.ok) {
+//                     const errorText = await confirmRes.text();
+//                     console.error(
+//                       `Error al confirmar asiento ${seatNumber} del servicio ${serviceId}:`,
+//                       errorText
+//                     );
+//                     if (router.pathname !== "/error-transaccion") {
+//                       router.push("/error-transaccion");
+//                     }
+//                     return;
+//                   } else {
+//                     console.log(`Asiento ${seatNumber} confirmado`);
+//                   }
+//                 }
+//               }
+
+//               // Éxito total
+//               if (router.pathname !== "/respuesta-transaccion-v2") {
+//                 router.push("/respuesta-transaccion-v2");
+//               }
+//             } catch (error) {
+//               console.error("Error confirmando asientos:", error);
+//               if (router.pathname !== "/error-transaccion") {
+//                 router.push("/error-transaccion");
+//               }
+//             }
+//             break;
+
+//           case 3:
+//           case 4:
+//           default:
+//             if (router.pathname !== "/error-transaccion") {
+//               router.push("/error-transaccion");
+//             }
+//             break;
+//         }
+//       } catch (error) {
+//         console.error("Error al verificar estado del pago:", error);
+//         if (router.pathname !== "/error-transaccion") {
+//           router.push("/error-transaccion");
+//         }
+//       }
+//     };
+
+//     if (router.isReady) {
+//       runCheck();
+//     }
+//   }, [router.isReady]);
+
+//   return (
+//     <Layout>
+//       <div
+//         className="container d-flex flex-column align-items-center justify-content-center"
+//         style={{ minHeight: "75vh" }}
+//       >
+//         <img src="/img/loading.gif" width={300} height={300} alt="Loading" />
+//         <h5 className="text-center">
+//           Estamos completando su transacción, por favor espere.
+//         </h5>
+//       </div>
+//       <Footer />
+//     </Layout>
+//   );
+// }
+
 import Footer from "components/Footer";
 import Layout from "components/Layout";
 import { useEffect, useState } from "react";
@@ -138,39 +377,28 @@ import { useSelector } from "react-redux";
 
 const SECRET = "xWL!96JRaWi2lT0jG";
 
-export default function ConfrimTransaction() {
+export default function ConfirmTransaction() {
   const router = useRouter();
   const [carroCompras, setCarroCompras] = useState([]);
-  const [hasPushed, setHasPushed] = useState(false);
-
   const selector =
     useSelector((state: any) => state.compra?.listaCarrito) || [];
 
   useEffect(() => {
-    let keys = 0;
-
-    if (selector) {
-      keys = Object.keys(selector).length;
-    }
-
-    if (keys > 0) {
+    if (selector && Object.keys(selector).length > 0) {
       const token = JWT.sign(selector, SECRET);
       sessionStorage.setItem("transactionBasketInfo", token);
       setCarroCompras(selector);
     } else {
       setCarroCompras([]);
     }
-  }, []);
+  }, [selector]);
 
   useEffect(() => {
     const runCheck = async () => {
-      const token = localStorage.getItem("tokenTemp");
-      const flowOrder = localStorage.getItem("flowOrder");
+      const hash_order = localStorage.getItem("hash_order");
 
-      if (!token) {
-        if (router.pathname !== "/error-transaccion") {
-          router.push("/error-transaccion");
-        }
+      if (!hash_order) {
+        router.push("/error-transaccion");
         return;
       }
 
@@ -178,17 +406,36 @@ export default function ConfrimTransaction() {
         const response = await fetch("/api/v2/confirm-transaction", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, flowOrder }),
+          body: JSON.stringify({ hash_order }),
         });
 
         const data = await response.json();
 
-        switch (data.status) {
-          case 1:
+        if (!data.success) {
+          console.error("Respuesta inválida del backend:", data);
+          router.push("/error-transaccion");
+          return;
+        }
+
+        console.log("Respuesta de Pagopar:", data);
+
+        // 🔹 Si el backend devuelve pagado y cancelado
+        const { pagado, cancelado, estado } = data;
+
+        // Caso especial: pagado = false y cancelado = false → pago no realizado
+        if (pagado === false && cancelado === false) {
+          router.push("/error-transaccion");
+          return;
+        }
+
+        // 🔹 Evaluamos el estado devuelto por tu endpoint
+        switch (estado) {
+          case "pendiente":
+            // Reintenta cada 3 segundos hasta obtener pagado/cancelado
             setTimeout(runCheck, 3000);
             break;
 
-          case 2:
+          case "pagado":
             try {
               const rawPurchaseInfo = localStorage.getItem("purchase_info");
               const rawBuyerInfo = localStorage.getItem("buyer_info");
@@ -207,25 +454,21 @@ export default function ConfrimTransaction() {
                 !Array.isArray(purchaseInfo) ||
                 purchaseInfo.length === 0 ||
                 !userEmail ||
-                !flowOrder
+                !hash_order
               ) {
                 console.warn("Faltan datos para confirmar asientos");
-                if (router.pathname !== "/error-transaccion") {
-                  router.push("/error-transaccion");
-                }
+                router.push("/error-transaccion");
                 return;
               }
 
-              // Registra usuario invitado
+              // 🔹 Registrar usuario invitado
               let userId = null;
               try {
                 const userRes = await fetch(
                   "https://boletos.dev-wit.com/api/users/register-guest",
                   {
                     method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
+                    headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({
                       name: userName,
                       email: userEmail,
@@ -233,49 +476,30 @@ export default function ConfrimTransaction() {
                   }
                 );
 
-                if (!userRes.ok) {
-                  const errorText = await userRes.text();
-                  console.error(
-                    "Error al registrar usuario invitado:",
-                    errorText
-                  );
-                  if (router.pathname !== "/error-transaccion") {
-                    router.push("/error-transaccion");
-                  }
-                  return;
-                }
-
                 const userData = await userRes.json();
                 userId = userData?.user_id;
-                console.log("Usuario registrado:", userData);
 
                 if (!userId) {
                   console.error("No se obtuvo el ID del usuario creado");
-                  if (router.pathname !== "/error-transaccion") {
-                    router.push("/error-transaccion");
-                  }
+                  router.push("/error-transaccion");
                   return;
                 }
 
-                console.log("Usuario registrado con éxito, ID:", userId);
+                console.log("Usuario registrado con éxito:", userId);
               } catch (err) {
-                console.error("Error durante el registro de usuario:", err);
-                if (router.pathname !== "/error-transaccion") {
-                  router.push("/error-transaccion");
-                }
+                console.error("Error registrando usuario invitado:", err);
+                router.push("/error-transaccion");
                 return;
               }
 
-              // Confirmar asientos
+              // 🔹 Confirmar asientos
               for (const servicio of purchaseInfo) {
                 const serviceId = servicio?.id;
                 const asientos = servicio?.asientos || [];
 
                 if (!serviceId || asientos.length === 0) {
                   console.warn("Servicio inválido o sin asientos:", servicio);
-                  if (router.pathname !== "/error-transaccion") {
-                    router.push("/error-transaccion");
-                  }
+                  router.push("/error-transaccion");
                   return;
                 }
 
@@ -293,59 +517,42 @@ export default function ConfrimTransaction() {
                       },
                       body: JSON.stringify({
                         seatNumber,
-                        authCode: flowOrder,
+                        authCode: hash_order,
                         userId,
                       }),
                     }
                   );
 
                   if (!confirmRes.ok) {
-                    const errorText = await confirmRes.text();
                     console.error(
-                      `Error al confirmar asiento ${seatNumber} del servicio ${serviceId}:`,
-                      errorText
+                      `Error confirmando asiento ${seatNumber} del servicio ${serviceId}`
                     );
-                    if (router.pathname !== "/error-transaccion") {
-                      router.push("/error-transaccion");
-                    }
+                    router.push("/error-transaccion");
                     return;
-                  } else {
-                    console.log(`Asiento ${seatNumber} confirmado`);
                   }
                 }
               }
 
-              // Éxito total
-              if (router.pathname !== "/respuesta-transaccion-v2") {
-                router.push("/respuesta-transaccion-v2");
-              }
+              // 🔹 Todo OK → redirigir al éxito
+              router.push("/respuesta-transaccion-v2");
             } catch (error) {
               console.error("Error confirmando asientos:", error);
-              if (router.pathname !== "/error-transaccion") {
-                router.push("/error-transaccion");
-              }
-            }
-            break;
-
-          case 3:
-          case 4:
-          default:
-            if (router.pathname !== "/error-transaccion") {
               router.push("/error-transaccion");
             }
             break;
+
+          case "cancelado":
+          default:
+            router.push("/error-transaccion");
+            break;
         }
       } catch (error) {
-        console.error("Error al verificar estado del pago:", error);
-        if (router.pathname !== "/error-transaccion") {
-          router.push("/error-transaccion");
-        }
+        console.error("Error verificando estado de Pagopar:", error);
+        router.push("/error-transaccion");
       }
     };
 
-    if (router.isReady) {
-      runCheck();
-    }
+    if (router.isReady) runCheck();
   }, [router.isReady]);
 
   return (

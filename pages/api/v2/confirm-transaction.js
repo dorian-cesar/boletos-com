@@ -68,50 +68,155 @@
 //   }
 // }
 
+// FLOW
+
+// import axios from "axios";
+// import crypto from "crypto";
+
+// const FLOW_API_KEY = process.env.FLOW_API_KEY;
+// const FLOW_SECRET_KEY = process.env.FLOW_SECRET_KEY;
+// const FLOW_SANDBOX_URL = process.env.FLOW_API_URL;
+
+// export default async function handler(req, res) {
+//   if (req.method !== "POST")
+//     return res.status(405).json({ error: "Method not allowed" });
+
+//   const { token, flowOrder } = req.body;
+
+//   if (!token || !flowOrder) {
+//     return res.status(400).json({ error: "Token y flowOrder son requeridos" });
+//   }
+
+//   try {
+//     const params = {
+//       apiKey: FLOW_API_KEY,
+//       token,
+//     };
+
+//     const stringToSign = `apiKey=${params.apiKey}&token=${params.token}`;
+//     params.s = crypto
+//       .createHmac("sha256", FLOW_SECRET_KEY)
+//       .update(stringToSign)
+//       .digest("hex");
+
+//     const { data: flowResponse } = await axios.get(
+//       `${FLOW_SANDBOX_URL}/payment/getStatus`,
+//       { params }
+//     );
+
+//     res.status(200).json({
+//       success: true,
+//       status: flowResponse.status, // 1: pendiente, 2: pagado, 3: rechazado, 4: anulado
+//       flowResponse,
+//     });
+//   } catch (error) {
+//     console.error("Error en /api/paymentStatus:", error.message);
+//     res.status(500).json({
+//       success: false,
+//       message: "Error al consultar estado del pago.",
+//       error: error.response?.data || error.message,
+//     });
+//   }
+// }
+
 import axios from "axios";
 import crypto from "crypto";
 
-const FLOW_API_KEY = process.env.FLOW_API_KEY;
-const FLOW_SECRET_KEY = process.env.FLOW_SECRET_KEY;
-const FLOW_SANDBOX_URL = process.env.FLOW_API_URL;
+const PAGOPAR_PUBLIC_KEY = process.env.PAGOPAR_PUBLIC_KEY;
+const PAGOPAR_PRIVATE_KEY = process.env.PAGOPAR_PRIVATE_KEY;
+const PAGOPAR_URL = "https://api.pagopar.com/api/pedidos/1.1/traer";
 
 export default async function handler(req, res) {
   if (req.method !== "POST")
     return res.status(405).json({ error: "Method not allowed" });
 
-  const { token, flowOrder } = req.body;
+  const { hash_order } = req.body;
 
-  if (!token || !flowOrder) {
-    return res.status(400).json({ error: "Token y flowOrder son requeridos" });
+  if (!hash_order) {
+    return res.status(400).json({ error: "hash_order es requerido" });
   }
 
   try {
-    const params = {
-      apiKey: FLOW_API_KEY,
-      token,
-    };
-
-    const stringToSign = `apiKey=${params.apiKey}&token=${params.token}`;
-    params.s = crypto
-      .createHmac("sha256", FLOW_SECRET_KEY)
-      .update(stringToSign)
+    // 🔐 Generar token según documentación
+    const token = crypto
+      .createHash("sha1")
+      .update(PAGOPAR_PRIVATE_KEY + "CONSULTA")
       .digest("hex");
 
-    const { data: flowResponse } = await axios.get(
-      `${FLOW_SANDBOX_URL}/payment/getStatus`,
-      { params }
-    );
+    // 📦 Cuerpo de la petición a la API de Pagopar
+    const payload = {
+      hash_order,
+      token,
+      token_publico: PAGOPAR_PUBLIC_KEY,
+    };
 
-    res.status(200).json({
+    const { data } = await axios.post(PAGOPAR_URL, payload, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    // 🧩 Validar respuesta
+    if (!data.respuesta || !data.resultado?.length) {
+      return res.status(400).json({
+        success: false,
+        message: "Respuesta inválida de Pagopar",
+        data,
+      });
+    }
+
+    const pedido = data.resultado[0];
+
+    // 🎯 Construcción de respuesta para el frontend
+    const pagoExitoso = pedido.pagado === true;
+    const pagoCancelado = pedido.cancelado === true;
+
+    if (pagoExitoso) {
+      return res.status(200).json({
+        success: true,
+        estado: "pagado",
+        mensaje: "Pago realizado con éxito ✅",
+        detalle: {
+          numero_pedido: pedido.numero_pedido,
+          numero_comprobante: pedido.numero_comprobante_interno,
+          monto: pedido.monto,
+          forma_pago: pedido.forma_pago,
+          fecha_pago: pedido.fecha_pago,
+          documento: pedido.documento,
+        },
+      });
+    }
+
+    if (pagoCancelado) {
+      return res.status(200).json({
+        success: true,
+        estado: "cancelado",
+        mensaje: "El pago fue cancelado ❌",
+        detalle: {
+          numero_pedido: pedido.numero_pedido,
+          monto: pedido.monto,
+          forma_pago: pedido.forma_pago,
+          fecha_maxima_pago: pedido.fecha_maxima_pago,
+          ultimo_mensaje_error: pedido.ultimo_mensaje_error,
+        },
+      });
+    }
+
+    // Si no está pagado ni cancelado → pendiente
+    return res.status(200).json({
       success: true,
-      status: flowResponse.status, // 1: pendiente, 2: pagado, 3: rechazado, 4: anulado
-      flowResponse,
+      estado: "pendiente",
+      mensaje: "El pago está pendiente ⏳",
+      detalle: {
+        numero_pedido: pedido.numero_pedido,
+        monto: pedido.monto,
+        forma_pago: pedido.forma_pago,
+        fecha_maxima_pago: pedido.fecha_maxima_pago,
+      },
     });
   } catch (error) {
-    console.error("Error en /api/paymentStatus:", error.message);
+    console.error("Error consultando Pagopar:", error.message);
     res.status(500).json({
       success: false,
-      message: "Error al consultar estado del pago.",
+      message: "Error al consultar estado del pedido en Pagopar.",
       error: error.response?.data || error.message,
     });
   }

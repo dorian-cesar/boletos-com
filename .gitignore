@@ -39,6 +39,7 @@ yarn-error.log*
 result.txt
 /cache/token.json
 view.json
+view2.json
 view.html
 view.js
 /components/ticket_sale/Parrilla/Parrilla cambiodeprops.js

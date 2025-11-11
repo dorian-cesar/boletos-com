@@ -575,7 +575,7 @@ export const ResumenViaje = (props) => {
         });
 
         const data = await response.json();
-        console.log("data", data);
+        // console.log("data", data);
 
         if (Boolean(data.error)) {
           toast.error("Error al completar la transacción", {
@@ -585,7 +585,6 @@ export const ResumenViaje = (props) => {
           });
           return;
         } else {
-          // localStorage.setItem("tokenTemp", data.token);
           // localStorage.setItem("flowOrder", data.flowOrder);
         }
 
@@ -607,6 +606,7 @@ export const ResumenViaje = (props) => {
         console.log("pagoData:", pagoData);
         if (pagoData) {
           const url = `https://www.pagopar.com/pagos/${pagoData}`;
+          localStorage.setItem("hash_order", JSON.stringify(pagoData));
           console.log("Redirigiendo a PagoPar:", url);
           window.location.href = url;
         } else {
