@@ -30,6 +30,15 @@ const MediosPago = (props) => {
     datos: {},
   });
 
+  // Seleccionar automáticamente el primer medio de pago
+  useEffect(() => {
+    if (mediosPago.length > 0 && !medioPago) {
+      const primerMedioPago = mediosPago[0].valor2;
+
+      dispatch(agregarMedioPago({ medioPago: primerMedioPago }));
+    }
+  }, [mediosPago, medioPago, dispatch]);
+
   function setDataMedioPago({ name, value }) {
     try {
       let carro_temp = { ...carro };
