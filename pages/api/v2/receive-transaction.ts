@@ -34,11 +34,10 @@ export default async function handler(
   // }
 
   try {
-    // console.log("Headers:", req.headers);
-    // console.log("Body:", req.body);
-
-    // Devolver los datos que recibiste
-    res.status(200).json(req.body);
+    // Si la respuesta de PagoPar viene en req.body
+    const respuestaPagoPar = req.body.resultado;
+    // Responde con el array
+    res.status(200).json(respuestaPagoPar);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "Error interno", error: error.message });
