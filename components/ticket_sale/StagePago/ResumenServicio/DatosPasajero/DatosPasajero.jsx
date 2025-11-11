@@ -215,29 +215,34 @@ const DatosPasajero = (props) => {
   async function obtenerDatosPasajero() {
     let asientoTemporal = {
       ...informacionAsiento,
-    }
+    };
 
-    if( asientoTemporal['rut'] && asientoTemporal['tipoDocumento'] === 'R' && asientoTemporal['rut'].length >= 11 ||
-      asientoTemporal['rut'] && asientoTemporal['tipoDocumento'] === 'P' && asientoTemporal['rut'].length >= 6
+    if (
+      (asientoTemporal["rut"] &&
+        asientoTemporal["tipoDocumento"] === "R" &&
+        asientoTemporal["rut"].length >= 11) ||
+      (asientoTemporal["rut"] &&
+        asientoTemporal["tipoDocumento"] === "P" &&
+        asientoTemporal["rut"].length >= 6)
     ) {
       try {
-        const response = await axios.post(`/api/obtener-datos-pasajero`,{
-          documento: asientoTemporal['rut'],
-          tipodoc: asientoTemporal['tipoDocumento']
+        const response = await axios.post(`/api/obtener-datos-pasajero`, {
+          documento: asientoTemporal["rut"],
+          tipodoc: asientoTemporal["tipoDocumento"],
         });
 
         setCantidadEquipaje(0);
 
         const { nombres, apellidos, nacionalidad } = response.data;
 
-        asientoTemporal['nombre'] = nombres;
-        asientoTemporal['apellido'] = apellidos;
+        asientoTemporal["nombre"] = nombres;
+        asientoTemporal["apellido"] = apellidos;
         // asientoTemporal['nacionalidad'] = nacionalidad;
-        asientoTemporal['cantidadEquipaje'] = 0;
+        asientoTemporal["cantidadEquipaje"] = 0;
 
         // const nacionalidadEncontrada = returnNationalitiesArray().find(nationality => nationality.value === nacionalidad);
 
-        if( nacionalidadEncontrada ) {
+        if (nacionalidadEncontrada) {
           setNationalitySelected(nacionalidadEncontrada);
         }
 
@@ -249,8 +254,12 @@ const DatosPasajero = (props) => {
         if (servicio) {
           dispatch(agregarInformacionAsiento(infoToDispatch));
 
-          if( asiento.asientoAsociado ) {
-            let asientoMab = { ...servicio.asientos.find((asientoMab) => asientoMab.asiento === asiento.asientoAsociado) };
+          if (asiento.asientoAsociado) {
+            let asientoMab = {
+              ...servicio.asientos.find(
+                (asientoMab) => asientoMab.asiento === asiento.asientoAsociado
+              ),
+            };
 
             asientoMab = {
               ...asientoMab,
@@ -258,19 +267,21 @@ const DatosPasajero = (props) => {
               tipoDocumento: asientoTemporal?.tipoDocumento,
               nombre: asientoTemporal?.nombre,
               apellido: asientoTemporal?.apellido,
-              nacionalidad: asientoTemporal?.nacionalidad
-            }
+              nacionalidad: asientoTemporal?.nacionalidad,
+            };
 
-            dispatch(agregarInformacionAsiento({
-              servicio,
-              asiento: asientoMab
-            }));
+            dispatch(
+              agregarInformacionAsiento({
+                servicio,
+                asiento: asientoMab,
+              })
+            );
           }
         }
 
         setInformacionAsiento(asientoTemporal);
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
     }
   }
@@ -362,6 +373,32 @@ const DatosPasajero = (props) => {
               <div className={"col-12 col-md-6 mt-1"}>
                 <div className="container">
                   <div className={"row"}>
+                    <div className={"col-12 p-0"}>
+                      <label className={styles["label"]}>RUT</label>
+                    </div>
+                  </div>
+                </div>
+                <div className={"grupo-campos"}>
+                  <input
+                    type="text"
+                    value={asiento["rut"]}
+                    name="rut"
+                    placeholder="Ej: 111111111"
+                    className={`${
+                      Array.isArray(asiento.errors) &&
+                      asiento.errors.includes("rut")
+                        ? "is-invalid"
+                        : ""
+                    } ${styles["input"]}`}
+                    disabled={usuario}
+                    onChange={(e) => setDataComprador(e.target)}
+                    // onBlur={obtenerDatosPasajero}
+                  />
+                </div>
+              </div>
+              {/* <div className={"col-12 col-md-6 mt-1"}>
+                <div className="container">
+                  <div className={"row"}>
                     <div className={"col-4 p-0"}>
                       <label className={"contenedor"}>
                         <label className={styles["label"]}>RUT</label>
@@ -413,7 +450,7 @@ const DatosPasajero = (props) => {
                     // onBlur={obtenerDatosPasajero}
                   />
                 </div>
-              </div>
+              </div> */}
             </>
           ) : (
             <>
@@ -446,43 +483,8 @@ const DatosPasajero = (props) => {
                 </div>
               </div>
               <div className={"col-12 col-md-6"}>
-                <div className="container">
-                  <div className={"row"}>
-                    <div className={"col-4 p-0"}>
-                      <label className={"contenedor"}>
-                        <label className={styles["label"]}>RUT</label>
-                        <input
-                          type="checkbox"
-                          checked={
-                            asiento["tipoDocumento"] === "R" ? true : false
-                          }
-                          value="R"
-                          name="tipoDocumento"
-                          disabled={usuario}
-                          onChange={(e) => setDataComprador(e.target)}
-                        />
-                        <span className="checkmark"></span>
-                      </label>
-                    </div>
-                    <div className={"col-6 p-0"}>
-                      <label className={"contenedor"}>
-                        <label className={styles["label"]}>DNI/Pasaporte</label>
-                        <input
-                          type="checkbox"
-                          checked={
-                            asiento["tipoDocumento"] === "P" ? true : false
-                          }
-                          value="P"
-                          name="tipoDocumento"
-                          disabled={usuario}
-                          onChange={(e) => setDataComprador(e.target)}
-                        />
-                        <span className={"checkmark"}></span>
-                      </label>
-                    </div>
-                  </div>
-                </div>
                 <div className={"grupo-campos"}>
+                  <label className={styles["label"]}>RUT</label>
                   <input
                     type="text"
                     value={asiento["rut"]}
@@ -500,15 +502,8 @@ const DatosPasajero = (props) => {
                 </div>
               </div>
               <div className={"col-12 col-md-6"}>
-                <div className={"row"}>
-                  <div className={"col"}>
-                    <label className={styles["container-text"]}>
-                      <label className={styles["label"]}>E-mail</label>
-                    </label>
-                  </div>
-                  <div className={"col"}></div>
-                </div>
                 <div className={"grupo-campos"}>
+                  <label className={styles["label"]}>E-mail</label>
                   <input
                     type="email"
                     value={asiento["email"]}
@@ -521,6 +516,111 @@ const DatosPasajero = (props) => {
                 </div>
               </div>
             </>
+            // <>
+            //   <div className={"col-12 col-md-6"}>
+            //     <div className={"grupo-campos"}>
+            //       <label className={styles["label"]}>Nombres</label>
+            //       <input
+            //         type="text"
+            //         value={asiento["nombre"]}
+            //         name="nombre"
+            //         placeholder="Ej: Juan Andrés"
+            //         className={styles["input"]}
+            //         disabled={usuario}
+            //         onChange={(e) => setDataComprador(e.target)}
+            //       />
+            //     </div>
+            //   </div>
+            //   <div className={"col-12 col-md-6"}>
+            //     <div className={"grupo-campos"}>
+            //       <label className={styles["label"]}>Apellidos</label>
+            //       <input
+            //         type="text"
+            //         value={asiento["apellido"]}
+            //         name="apellido"
+            //         placeholder="Ej: Espinoza Arcos"
+            //         className={styles["input"]}
+            //         disabled={usuario}
+            //         onChange={(e) => setDataComprador(e.target)}
+            //       />
+            //     </div>
+            //   </div>
+            //   <div className={"col-12 col-md-6"}>
+            //     <div className="container">
+            //       <div className={"row"}>
+            //         <div className={"col-4 p-0"}>
+            //           <label className={"contenedor"}>
+            //             <label className={styles["label"]}>RUT</label>
+            //             <input
+            //               type="checkbox"
+            //               checked={
+            //                 asiento["tipoDocumento"] === "R" ? true : false
+            //               }
+            //               value="R"
+            //               name="tipoDocumento"
+            //               disabled={usuario}
+            //               onChange={(e) => setDataComprador(e.target)}
+            //             />
+            //             <span className="checkmark"></span>
+            //           </label>
+            //         </div>
+            //         <div className={"col-6 p-0"}>
+            //           <label className={"contenedor"}>
+            //             <label className={styles["label"]}>DNI/Pasaporte</label>
+            //             <input
+            //               type="checkbox"
+            //               checked={
+            //                 asiento["tipoDocumento"] === "P" ? true : false
+            //               }
+            //               value="P"
+            //               name="tipoDocumento"
+            //               disabled={usuario}
+            //               onChange={(e) => setDataComprador(e.target)}
+            //             />
+            //             <span className={"checkmark"}></span>
+            //           </label>
+            //         </div>
+            //       </div>
+            //     </div>
+            //     <div className={"grupo-campos"}>
+            //       <input
+            //         type="text"
+            //         value={asiento["rut"]}
+            //         name="rut"
+            //         placeholder="Ej: 111111111"
+            //         className={`${
+            //           Array.isArray(asiento.errors) &&
+            //           asiento.errors.includes("rut")
+            //             ? "is-invalid"
+            //             : ""
+            //         } ${styles["input"]}`}
+            //         disabled={usuario}
+            //         onChange={(e) => setDataComprador(e.target)}
+            //       />
+            //     </div>
+            //   </div>
+            //   <div className={"col-12 col-md-6"}>
+            //     <div className={"row"}>
+            //       <div className={"col"}>
+            //         <label className={styles["container-text"]}>
+            //           <label className={styles["label"]}>E-mail</label>
+            //         </label>
+            //       </div>
+            //       <div className={"col"}></div>
+            //     </div>
+            //     <div className={"grupo-campos"}>
+            //       <input
+            //         type="email"
+            //         value={asiento["email"]}
+            //         name="email"
+            //         placeholder="Ej: correo@correo.cl"
+            //         className={styles["input"]}
+            //         disabled={usuario}
+            //         onChange={(e) => setDataComprador(e.target)}
+            //       />
+            //     </div>
+            //   </div>
+            // </>
           )}
           {/* {
             pasajero == true && (
