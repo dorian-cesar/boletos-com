@@ -141,7 +141,21 @@ async function handleGuardarMultiCarro(req, res) {
 
     const fecha = new Date();
     fecha.setMinutes(fecha.getMinutes() + 15); // sumar 15 minutos
-    const fechaMaxPago = fecha.toISOString().slice(0, 19).replace("T", " ");
+
+    // Formatear en hora de Paraguay
+    const fechaMaxPago = fecha
+      .toLocaleString("es-PY", {
+        timeZone: "America/Asuncion",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: false,
+      })
+      .replace(/(\d{2})\/(\d{2})\/(\d{4}), (\d{2}:\d{2}:\d{2})/, "$3-$2-$1 $4");
+
     console.log({ fechaMaxPago });
 
     const params = {
