@@ -34,16 +34,11 @@ export default async function handler(
   // }
 
   try {
-    console.log("Headers:", req.headers);
-    console.log("Body:", req.body);
+    // console.log("Headers:", req.headers);
+    // console.log("Body:", req.body);
 
     // Devolver los datos que recibiste
-    res.status(200).json({
-      mensaje: "Datos recibidos",
-      headers: req.headers,
-      body: req.body,
-      timestamp: new Date().toISOString(),
-    });
+    res.status(200).json(req.body);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "Error interno", error: error.message });
