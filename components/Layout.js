@@ -61,7 +61,7 @@ export default function Layout({ children, isBuyStage = false }) {
 
       <Header isBuyStage={isBuyStage} openNav={openNav} />
 
-      <GoogleTagManager gtmId={googleTagManager} />
+      {/* <GoogleTagManager gtmId={googleTagManager} /> */}
       <main>{children}</main>
       <DynamicDrawerComponent
         open={open}

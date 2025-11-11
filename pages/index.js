@@ -20,13 +20,16 @@ import Script from "next/script";
 
 registerLocale("es", es);
 
-const DynamicBusquedaServicioComponent = dynamic(() => import('components/BusquedaServicio/BusquedaServicio'), {
-  ssr: false
-})
+const DynamicBusquedaServicioComponent = dynamic(
+  () => import("components/BusquedaServicio/BusquedaServicio"),
+  {
+    ssr: false,
+  }
+);
 
-const DynamicFooterComponent = dynamic(() => import('components/Footer'), {
-  ssr: false
-})
+const DynamicFooterComponent = dynamic(() => import("components/Footer"), {
+  ssr: false,
+});
 
 export default function Home(props) {
   const origenes = props.ciudades;
@@ -34,39 +37,43 @@ export default function Home(props) {
 
   const [isShowModalMobile, setIsShowModalMobile] = useState(false);
 
-  useEffect(() =>{ 
-    dispatch(liberarAsientos()) 
-    dispatch(limpiarCambio())
+  useEffect(() => {
+    dispatch(liberarAsientos());
+    dispatch(limpiarCambio());
   }, []);
 
   useEffect(() => {
     const fechaLimite = new Date(2024, 11, 8, 23, 59, 59);
-    if( new Date() <= fechaLimite ) {
+    if (new Date() <= fechaLimite) {
       setIsShowModalMobile(true);
     }
-  }, [])
+  }, []);
 
   return (
-      <Layout>
-          <Head>
-              <title>Pullman Bus | Inicio</title>
-          </Head>
-          <div className="home">
-              <Banner/>
-              <DynamicBusquedaServicioComponent
-                  origenes={origenes}
-                  dias={props.dias}
-                  // isShowMascota={true}
-              />
+    <Layout>
+      <Head>
+        <title>Boletos | Inicio</title>
+      </Head>
+      <div className="home">
+        <DynamicBusquedaServicioComponent
+          origenes={origenes}
+          dias={props.dias}
+        />
+      </div>
+      {/* <div className="home">
+        <Banner/>
+        <DynamicBusquedaServicioComponent
+          origenes={origenes}
+          dias={props.dias}
+          // isShowMascota={true}
+        />
 
-              {/* <Ofertas /> */}
-          </div>
-          <DynamicFooterComponent/>
-          {isShowModalMobile && (
-              <PopupInformativo
-                  modalClose={() => setIsShowModalMobile(false)}
-              />)
-          }
-      </Layout>
+        <Ofertas />
+      </div> */}
+      <DynamicFooterComponent />
+      {isShowModalMobile && (
+        <PopupInformativo modalClose={() => setIsShowModalMobile(false)} />
+      )}
+    </Layout>
   );
 }
