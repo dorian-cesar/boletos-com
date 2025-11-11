@@ -1,4 +1,4 @@
-import Rut from "rutjs";
+// import Rut from "rutjs";
 
 // Función para validar RUC de Paraguay
 function validarRucParaguay(ruc) {
@@ -7,34 +7,12 @@ function validarRucParaguay(ruc) {
   // Limpiar el RUC (eliminar puntos, guiones, espacios)
   const rucLimpio = ruc.trim().replace(/[\.\-\s]/g, "");
 
-  // Validar longitud básica
-  if (rucLimpio.length < 7 || rucLimpio.length > 9) return false;
+  // Validar longitud - Paraguay acepta desde 6 hasta 9 dígitos
+  if (rucLimpio.length < 6 || rucLimpio.length > 9) return false;
 
   // Validar que solo contenga números
   if (!/^\d+$/.test(rucLimpio)) return false;
-
-  // Validar usando algoritmo de módulo 11
-  return validarDigitoVerificador(rucLimpio);
-}
-
-function validarDigitoVerificador(ruc) {
-  const base = ruc.slice(0, -1); // Todos los dígitos excepto el último
-  const digitoVerificador = parseInt(ruc.slice(-1)); // Último dígito
-
-  let suma = 0;
-  let factor = 2;
-
-  // Calcular suma ponderada de derecha a izquierda
-  for (let i = base.length - 1; i >= 0; i--) {
-    suma += parseInt(base[i]) * factor;
-    factor = factor === 9 ? 2 : factor + 1;
-  }
-
-  // Calcular dígito verificador esperado
-  const resto = suma % 11;
-  const digitoEsperado = resto === 0 ? 0 : 11 - resto;
-
-  return digitoVerificador === digitoEsperado;
+  return true;
 }
 
 const isSame = (array1, array2) =>
@@ -84,10 +62,11 @@ export function isValidPasajero(
       isValid = false;
     } else {
       // PARA PARAGUAY: Cuando tipoDocumento es "R", validar como RUC paraguayo
-      if (!validarRucParaguay(pasajero.rut)) {
+      if (pasajero.tipoDocumento === "R" && !validarRucParaguay(pasajero.rut)) {
         isValid = false;
         errorTemporal.push("rut");
       }
+      // Para tipoDocumento "P" (pasaporte), no aplicamos validación de RUC
     }
 
     if (!isSame(errorTemporal, errors)) {
@@ -128,7 +107,7 @@ export function newIsValidPasajero(pasajero) {
         validator.error = `Debe ingresar un ruc para pasajero del asiento ${pasajero.asiento}`;
         return validator;
       } else {
-        // PARA PARAGUAY: Validar como RUC paraguayo en lugar de RUT chileno
+        // PARA PARAGUAY: Validar como RUC paraguayo
         if (!validarRucParaguay(pasajero.rut)) {
           validator.valid = false;
           validator.error = `Debe ingresar un ruc válido para pasajero del asiento ${pasajero.asiento}`;
@@ -143,6 +122,7 @@ export function newIsValidPasajero(pasajero) {
         validator.error = `Debe ingresar un numero de pasaporte para pasajero del asiento ${pasajero.asiento}`;
         return validator;
       }
+      // Para pasaporte, no validamos formato específico
     }
 
     if (!pasajero.email || pasajero.email == "") {
@@ -178,7 +158,7 @@ export function newIsValidPasajeroCompra(pasajero) {
         validator.error = `Debe ingresar un ruc para pasajero del asiento ${pasajero.asiento}`;
         return validator;
       } else {
-        // PARA PARAGUAY: Validar como RUC paraguayo en lugar de RUT chileno
+        // PARA PARAGUAY: Validar como RUC paraguayo
         if (!validarRucParaguay(pasajero.rut)) {
           validator.valid = false;
           validator.error = `Debe ingresar un ruc válido para pasajero del asiento ${pasajero.asiento}`;
@@ -194,12 +174,6 @@ export function newIsValidPasajeroCompra(pasajero) {
         return validator;
       }
     }
-
-    // if (!pasajero.nacionalidad || pasajero.nacionalidad == "") {
-    //   validator.valid = false;
-    //   validator.error = `Debe ingresar una nacionalidad para pasajero del asiento ${pasajero.asiento}`;
-    //   return validator;
-    // }
 
     if (!pasajero.nombre || pasajero.nombre == "") {
       validator.valid = false;
@@ -244,7 +218,7 @@ export function newIsValidComprador(pasajero) {
         validator.error = `Debe ingresar un ruc para datos del comprador`;
         return validator;
       } else {
-        // PARA PARAGUAY: Validar como RUC paraguayo en lugar de RUT chileno
+        // PARA PARAGUAY: Validar como RUC paraguayo
         if (!validarRucParaguay(pasajero.rut)) {
           validator.valid = false;
           validator.error = `Debe ingresar un ruc válido para datos del comprador`;
@@ -311,8 +285,8 @@ export function isValidDatosComprador(cuerpo) {
     if (!cuerpo.rut || cuerpo.rut == "") {
       isValid = false;
     } else {
-      // PARA PARAGUAY: Validar como RUC paraguayo en lugar de RUT chileno
-      if (!validarRucParaguay(cuerpo.rut)) {
+      // PARA PARAGUAY: Validar como RUC paraguayo
+      if (cuerpo.tipoDocumento === "R" && !validarRucParaguay(cuerpo.rut)) {
         isValid = false;
       }
     }

@@ -112,12 +112,11 @@ const DatosPasajero = (props) => {
       }
 
       if (asiento["tipoDocumento"] == "R" && name === "rut" && value !== "") {
-        value = validarFormatoRut(name, value);
-      }
-
-      if (asiento["tipoDocumento"] == "R" && name === "rut" && value !== "") {
-        value = value.replace(/[^\dkK0-9.-]/g, "");
-        if (value.length > 12) return;
+        value = validarFormatoRucParaguayo(name, value);
+        value = value.replace(/[^\d\-]/g, "");
+        if (value.length > 10) {
+          value = value.substring(0, 10);
+        }
       }
 
       if (name === "tipoDocumento") {
@@ -188,15 +187,44 @@ const DatosPasajero = (props) => {
     }
   }, [cantidadEquipaje]);
 
-  function validarFormatoRut(name, value) {
+  // function validarFormatoRut(name, value) {
+  //   try {
+  //     if (name.trim() == "rut" && value.length > 2) {
+  //       let rut = new Rut(value);
+  //       value = new Rut(rut.getCleanRut().replace("-", "")).getNiceRut(true);
+  //     }
+  //     return value;
+  //   } catch ({ message }) {
+  //     console.error(`Error al validar formato de rut [${message}]`);
+  //   }
+  // }
+
+  function validarFormatoRucParaguayo(name, value) {
     try {
       if (name.trim() == "rut" && value.length > 2) {
-        let rut = new Rut(value);
-        value = new Rut(rut.getCleanRut().replace("-", "")).getNiceRut(true);
+        // Limpiar el RUC (mantener números y guión si existe)
+        let rucLimpio = value.replace(/[^\d\-]/g, "").replace(/-/g, "");
+
+        // Limitar a 9 dígitos máximo (8 + DV)
+        if (rucLimpio.length > 9) {
+          rucLimpio = rucLimpio.substring(0, 9);
+        }
+
+        // Aplicar formato paraguayo: XXXXXXX-X (solo guión, sin puntos)
+        if (rucLimpio.length >= 7) {
+          // Para 7+ dígitos: agregar guión antes del último dígito si hay 8 o más
+          if (rucLimpio.length >= 8) {
+            value = rucLimpio.replace(/(\d{7,8})(\d{1})/, "$1-$2");
+          } else {
+            value = rucLimpio; // Menos de 8 dígitos, dejar sin guión
+          }
+        }
+        // Para menos de 7 dígitos, dejar sin formato
       }
       return value;
     } catch ({ message }) {
-      console.error(`Error al validar formato de rut [${message}]`);
+      console.error(`Error al validar formato de RUC [${message}]`);
+      return value;
     }
   }
 
@@ -383,7 +411,7 @@ const DatosPasajero = (props) => {
                     type="text"
                     value={asiento["rut"]}
                     name="rut"
-                    placeholder="Ej: 111111111"
+                    placeholder="Ej: 1111111"
                     className={`${
                       Array.isArray(asiento.errors) &&
                       asiento.errors.includes("rut")
@@ -489,7 +517,7 @@ const DatosPasajero = (props) => {
                     type="text"
                     value={asiento["rut"]}
                     name="rut"
-                    placeholder="Ej: 111111111"
+                    placeholder="Ej: 1111111"
                     className={`${
                       Array.isArray(asiento.errors) &&
                       asiento.errors.includes("rut")
