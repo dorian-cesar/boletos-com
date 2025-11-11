@@ -17,16 +17,17 @@ export default async function handler(
     console.log("Respuesta de PagoPar:", res);
 
     res.setHeader("Content-Type", "text/html");
-    res.status(200).send(`
-      <html>
-        <head>
-          <meta http-equiv="refresh" content="0; url=/confirm-transaction" />
-        </head>
-        <body>
-          Cargando...
-        </body>
-      </html>
-    `);
+    // res.status(200).send(`
+    //   <html>
+    //     <head>
+    //       <meta http-equiv="refresh" content="0; url=/confirm-transaction" />
+    //     </head>
+    //     <body>
+    //       Cargando...
+    //     </body>
+    //   </html>
+    // `);
+    res.status(200).send(res);
   } catch (error) {
     console.error("Error procesando retorno de Flow:", error);
     res.status(500).json({ message: "Error interno" });
