@@ -374,7 +374,7 @@ const DatosPasajero = (props) => {
                 <div className="container">
                   <div className={"row"}>
                     <div className={"col-12 p-0"}>
-                      <label className={styles["label"]}>RUT</label>
+                      <label className={styles["label"]}>RUC</label>
                     </div>
                   </div>
                 </div>
@@ -484,7 +484,7 @@ const DatosPasajero = (props) => {
               </div>
               <div className={"col-12 col-md-6"}>
                 <div className={"grupo-campos"}>
-                  <label className={styles["label"]}>RUT</label>
+                  <label className={styles["label"]}>RUC</label>
                   <input
                     type="text"
                     value={asiento["rut"]}
