@@ -27,9 +27,9 @@ export default async function handler(
     //     </body>
     //   </html>
     // `);
-    res.status(200).send(res);
+    res.status(200).json(res);
   } catch (error) {
-    console.error("Error procesando retorno de Flow:", error);
+    console.error("Error procesando retorno de Pagopar:", error);
     res.status(500).json({ message: "Error interno" });
   }
 }
