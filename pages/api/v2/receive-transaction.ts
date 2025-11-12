@@ -34,10 +34,19 @@ export default async function handler(
   // }
 
   try {
-    // Si la respuesta de PagoPar viene en req.body
     const respuestaPagoPar = req.body.resultado;
-    // Responde con el array
     res.status(200).json(respuestaPagoPar);
+    // res.setHeader("Content-Type", "text/html");
+    // res.status(200).send(`
+    //     <html>
+    //       <head>
+    //         <meta http-equiv="refresh" content="0; url=/confirm-transaction" />
+    //       </head>
+    //       <body>
+    //         Cargando...
+    //       </body>
+    //     </html>
+    //   `);
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ message: "Error interno", error: error.message });

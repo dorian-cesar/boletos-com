@@ -395,7 +395,8 @@ export default function ConfirmTransaction() {
 
   useEffect(() => {
     const runCheck = async () => {
-      const hash_order = localStorage.getItem("hash_order");
+      let hash_order = localStorage.getItem("hash_order");
+      // console.log("hash_order:", hash_order);
 
       if (!hash_order) {
         router.push("/error-transaccion");
@@ -419,7 +420,7 @@ export default function ConfirmTransaction() {
 
         console.log("Respuesta de Pagopar:", data);
 
-        // 🔹 Si el backend devuelve pagado y cancelado
+        // Si el backend devuelve pagado y cancelado
         const { pagado, cancelado, estado } = data;
 
         // Caso especial: pagado = false y cancelado = false → pago no realizado
@@ -428,12 +429,11 @@ export default function ConfirmTransaction() {
           return;
         }
 
-        // 🔹 Evaluamos el estado devuelto por tu endpoint
+        // Evaluamos el estado devuelto por tu endpoint
         switch (estado) {
-          case "pendiente":
-            // Reintenta cada 3 segundos hasta obtener pagado/cancelado
-            setTimeout(runCheck, 3000);
-            break;
+          // case "pendiente":
+          //   setTimeout(runCheck, 3000);
+          //   break;
 
           case "pagado":
             try {
@@ -461,7 +461,7 @@ export default function ConfirmTransaction() {
                 return;
               }
 
-              // 🔹 Registrar usuario invitado
+              // Registrar usuario invitado
               let userId = null;
               try {
                 const userRes = await fetch(
@@ -492,7 +492,7 @@ export default function ConfirmTransaction() {
                 return;
               }
 
-              // 🔹 Confirmar asientos
+              // Confirmar asientos
               for (const servicio of purchaseInfo) {
                 const serviceId = servicio?.id;
                 const asientos = servicio?.asientos || [];
@@ -533,7 +533,7 @@ export default function ConfirmTransaction() {
                 }
               }
 
-              // 🔹 Todo OK → redirigir al éxito
+              // Todo OK → redirigir al éxito
               router.push("/respuesta-transaccion-v2");
             } catch (error) {
               console.error("Error confirmando asientos:", error);

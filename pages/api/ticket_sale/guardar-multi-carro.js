@@ -109,14 +109,25 @@ async function handleGuardarMultiCarro(req, res) {
     console.log("serviceRequest:", serviceRequest);
 
     const publicKey = process.env.PAGOPAR_PUBLIC_KEY;
-    console.log("publicKey", publicKey);
-
     const productId = crypto.randomUUID();
 
     const nombreCompleto =
       serviceRequest.datosComprador.nombre +
       " " +
       serviceRequest.datosComprador.apellido;
+
+    const rucCompleto = serviceRequest.datosComprador.rut || "";
+    let ruc = rucCompleto;
+    let documento = rucCompleto;
+
+    if (rucCompleto.includes("-")) {
+      const [numero, dv] = rucCompleto.split("-");
+      documento = numero;
+      ruc = `${numero}-${dv}`;
+    } else {
+      documento = rucCompleto;
+      ruc = rucCompleto;
+    }
 
     const comercio_token_privado = process.env.PAGOPAR_PRIVATE_KEY;
     const idPedido = productId;
@@ -137,7 +148,7 @@ async function handleGuardarMultiCarro(req, res) {
       idPedido,
       monto_total
     );
-    console.log(tokenTransaccion);
+    // console.log(tokenTransaccion);
 
     const fecha = new Date();
     fecha.setMinutes(fecha.getMinutes() + 15); // sumar 15 minutos
@@ -161,13 +172,13 @@ async function handleGuardarMultiCarro(req, res) {
     const params = {
       token: tokenTransaccion,
       comprador: {
-        ruc: "4247903-7",
+        ruc: ruc,
         email: serviceRequest.datosComprador.email,
         ciudad: 1,
         nombre: nombreCompleto,
-        telefono: "0972200046",
+        telefono: "",
         direccion: "",
-        documento: "4247903",
+        documento: documento,
         coordenadas: "",
         razon_social: "",
         tipo_documento: "CI",
@@ -198,6 +209,8 @@ async function handleGuardarMultiCarro(req, res) {
       descripcion_resumen: "",
       forma_pago: 9,
     };
+
+    // console.log("params a enviar:", params);
 
     try {
       const response = await axios.post(

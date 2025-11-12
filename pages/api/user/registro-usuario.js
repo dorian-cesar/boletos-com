@@ -36,7 +36,7 @@ export default async (req, res) => {
       rut,
       email: mail,
       password,
-      role: 'usuario',
+      role: "usuario",
     };
     const response = await axios.post(
       `${config.url_api}/users/register`,

@@ -606,7 +606,7 @@ export const ResumenViaje = (props) => {
         console.log("pagoData:", pagoData);
         if (pagoData) {
           const url = `https://www.pagopar.com/pagos/${pagoData}`;
-          localStorage.setItem("hash_order", JSON.stringify(pagoData));
+          localStorage.setItem("hash_order", pagoData);
           console.log("Redirigiendo a PagoPar:", url);
           window.location.href = url;
         } else {

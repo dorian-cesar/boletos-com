@@ -131,30 +131,34 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Method not allowed" });
 
   const { hash_order } = req.body;
+  // console.log("hash_order", hash_order);
 
   if (!hash_order) {
     return res.status(400).json({ error: "hash_order es requerido" });
   }
 
   try {
-    // 🔐 Generar token según documentación
+    // Generar token según documentación
     const token = crypto
       .createHash("sha1")
       .update(PAGOPAR_PRIVATE_KEY + "CONSULTA")
       .digest("hex");
 
-    // 📦 Cuerpo de la petición a la API de Pagopar
+    // Cuerpo de la petición a la API de Pagopar
     const payload = {
-      hash_order,
+      hash_pedido: hash_order,
       token,
       token_publico: PAGOPAR_PUBLIC_KEY,
     };
 
+    console.log("Payload estado pagopar", payload);
+
     const { data } = await axios.post(PAGOPAR_URL, payload, {
       headers: { "Content-Type": "application/json" },
     });
+    console.log("Respuesta Pagopar", data);
 
-    // 🧩 Validar respuesta
+    // Validar respuesta
     if (!data.respuesta || !data.resultado?.length) {
       return res.status(400).json({
         success: false,
@@ -165,7 +169,7 @@ export default async function handler(req, res) {
 
     const pedido = data.resultado[0];
 
-    // 🎯 Construcción de respuesta para el frontend
+    // Construcción de respuesta para el frontend
     const pagoExitoso = pedido.pagado === true;
     const pagoCancelado = pedido.cancelado === true;
 
@@ -173,15 +177,8 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         estado: "pagado",
-        mensaje: "Pago realizado con éxito ✅",
-        detalle: {
-          numero_pedido: pedido.numero_pedido,
-          numero_comprobante: pedido.numero_comprobante_interno,
-          monto: pedido.monto,
-          forma_pago: pedido.forma_pago,
-          fecha_pago: pedido.fecha_pago,
-          documento: pedido.documento,
-        },
+        mensaje: "Pago realizado con éxito",
+        detalle: data,
       });
     }
 
@@ -189,14 +186,8 @@ export default async function handler(req, res) {
       return res.status(200).json({
         success: true,
         estado: "cancelado",
-        mensaje: "El pago fue cancelado ❌",
-        detalle: {
-          numero_pedido: pedido.numero_pedido,
-          monto: pedido.monto,
-          forma_pago: pedido.forma_pago,
-          fecha_maxima_pago: pedido.fecha_maxima_pago,
-          ultimo_mensaje_error: pedido.ultimo_mensaje_error,
-        },
+        mensaje: "El pago fue cancelado",
+        detalle: data,
       });
     }
 
@@ -204,13 +195,8 @@ export default async function handler(req, res) {
     return res.status(200).json({
       success: true,
       estado: "pendiente",
-      mensaje: "El pago está pendiente ⏳",
-      detalle: {
-        numero_pedido: pedido.numero_pedido,
-        monto: pedido.monto,
-        forma_pago: pedido.forma_pago,
-        fecha_maxima_pago: pedido.fecha_maxima_pago,
-      },
+      mensaje: "El pago está pendiente",
+      detalle: data,
     });
   } catch (error) {
     console.error("Error consultando Pagopar:", error.message);

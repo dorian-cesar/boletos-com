@@ -89,11 +89,10 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
         const res = await axios.post("/api/user/registro-usuario", {
           ...registro,
         });
-        if (res.data.message === "Usuario registrado correctamente") {
+        if (res.data.success) {
           onChangeAlert({
             msg: "¡Registro completado con éxito! Ingrese con su correo electrónico y contraseña.",
             visible: true,
-            // type: "alert-success",
             type: "text-success",
           });
           changeMode();
@@ -105,28 +104,31 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
           const isDuplicateEmail =
             backendError.details &&
             backendError.details.includes("E11000 duplicate key error");
-          const baseMsg = isDuplicateEmail
-            ? (onChangeAlert({
-                msg: "El usuario ya está registrado. Ingrese con su correo electrónico y contraseña.",
-                visible: true,
-                // type: "alert-success",
-                type: "text-success",
-              }),
-              changeMode())
-            : backendError.error || "Error desconocido.";
-          const errorMsg = isDuplicateEmail
-            ? baseMsg
-            : `${baseMsg} Intente nuevamente.`;
-          setError({
-            status: true,
-            errorMsg,
-          });
+
+          const backendMessage =
+            backendError.message || backendError.error || "Error desconocido.";
+
+          if (isDuplicateEmail) {
+            onChangeAlert({
+              msg: "El usuario ya está registrado. Ingrese con su correo electrónico y contraseña.",
+              visible: true,
+              type: "text-success",
+            });
+            changeMode();
+          } else {
+            setError({
+              status: true,
+              errorMsg: backendMessage,
+            });
+          }
         } else {
           setError({
             status: true,
             errorMsg: "Ocurrió un error inesperado.",
           });
         }
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -142,16 +144,16 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
         });
         resolve(false);
       } else {
-        if (registro?.tipoDocumento == "R") {
-          let rut = new Rut(registro?.rut);
-          if (!rut?.isValid) {
-            setError({
-              status: true,
-              errorMsg: "Se requiere ingresar un rut válido",
-            });
-            return resolve(false);
-          }
-        }
+        // if (registro?.tipoDocumento == "R") {
+        //   let rut = new Rut(registro?.rut);
+        //   if (!rut?.isValid) {
+        //     setError({
+        //       status: true,
+        //       errorMsg: "Se requiere ingresar un rut válido",
+        //     });
+        //     return resolve(false);
+        //   }
+        // }
         if (registro?.mail != registro?.mail2) {
           setError({
             status: true,
@@ -184,8 +186,8 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
               <h4 className="titulo-azul">Registrate</h4>
             </div>
             <div className="d-flex justify-content-center text-center">
-              ¡Se parte de Pullman Bus! Ingresa los siguientes datos para crear
-              tu cuenta
+              ¡Se parte de Boletos Paraguay! Ingresa los siguientes datos para
+              crear tu cuenta
             </div>
             <div className="row mt-2 text-center">
               {error.status ? (
@@ -210,7 +212,7 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                 <div className="row">
                   <div className="col-4">
                     <label className="contenedor">
-                      RUT
+                      RUC
                       <input
                         type="checkbox"
                         value={"R"}
@@ -221,7 +223,7 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                       <span className="checkmark"></span>
                     </label>
                   </div>
-                  <div className="col-8">
+                  {/* <div className="col-8">
                     <label className="contenedor">
                       Pasaporte
                       <input
@@ -233,14 +235,14 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                       />
                       <span className="checkmark"></span>
                     </label>
-                  </div>
+                  </div> */}
                 </div>
                 <input
                   type="text"
                   placeholder={
                     registro?.tipoDocumento != "R"
                       ? "Ej. 111111111"
-                      : "Ej. 11111111-1"
+                      : "Ej. 1111111-1"
                   }
                   disabled={registro?.tipoDocumento != "" ? false : true}
                   className={"form-control form-control-modal"}
