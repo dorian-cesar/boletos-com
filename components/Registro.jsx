@@ -133,44 +133,59 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
     }
   };
 
+  function validarRucParaguay(ruc) {
+    if (!ruc || typeof ruc !== "string") return false;
+
+    // Limpiar el RUC (eliminar puntos, guiones, espacios)
+    const rucLimpio = ruc.trim().replace(/[\.\-\s]/g, "");
+
+    // Validar longitud - Paraguay acepta desde 6 hasta 9 dígitos
+    if (rucLimpio.length < 6 || rucLimpio.length > 9) return false;
+
+    // Validar que solo contenga números
+    if (!/^\d+$/.test(rucLimpio)) return false;
+
+    return true;
+  }
+
   const validarForm = () => {
     return new Promise((resolve, reject) => {
       const values = Object.values(registro);
       const camposVacios = values.filter((v) => v == "");
+
       if (camposVacios.length > 0) {
         setError({
           status: true,
           errorMsg: "Se requiere rellenar todos los campos.",
         });
-        resolve(false);
-      } else {
-        // if (registro?.tipoDocumento == "R") {
-        //   let rut = new Rut(registro?.rut);
-        //   if (!rut?.isValid) {
-        //     setError({
-        //       status: true,
-        //       errorMsg: "Se requiere ingresar un rut válido",
-        //     });
-        //     return resolve(false);
-        //   }
-        // }
-        if (registro?.mail != registro?.mail2) {
+        return resolve(false);
+      }
+      if (registro?.tipoDocumento === "R") {
+        const rucValido = validarRucParaguay(registro?.rut);
+        if (!rucValido) {
           setError({
             status: true,
-            errorMsg: "Los correos no coinciden. Por favor, verificar.",
+            errorMsg: "Ingrese un RUC paraguayo válido.",
           });
-          resolve(false);
-        } else if (registro?.password != registro?.password2) {
-          setError({
-            status: true,
-            errorMsg: "Las contraseñas no coinciden. Por favor, verificar.",
-          });
-          resolve(false);
-        } else {
-          setError({ status: false, errorMsg: "" });
-          resolve(true);
+          return resolve(false);
         }
       }
+      if (registro?.mail !== registro?.mail2) {
+        setError({
+          status: true,
+          errorMsg: "Los correos no coinciden. Por favor, verificar.",
+        });
+        return resolve(false);
+      }
+      if (registro?.password !== registro?.password2) {
+        setError({
+          status: true,
+          errorMsg: "Las contraseñas no coinciden. Por favor, verificar.",
+        });
+        return resolve(false);
+      }
+      setError({ status: false, errorMsg: "" });
+      resolve(true);
     });
   };
 
@@ -209,10 +224,10 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
             )}
             <div className="row mt-2">
               <div className="col-12 col-md-6">
-                <div className="row">
+                {/* <div className="row">
                   <div className="col-4">
                     <label className="contenedor">
-                      RUC
+                      RUT
                       <input
                         type="checkbox"
                         value={"R"}
@@ -223,7 +238,7 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                       <span className="checkmark"></span>
                     </label>
                   </div>
-                  {/* <div className="col-8">
+                  <div className="col-8">
                     <label className="contenedor">
                       Pasaporte
                       <input
@@ -235,7 +250,7 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                       />
                       <span className="checkmark"></span>
                     </label>
-                  </div> */}
+                  </div>
                 </div>
                 <input
                   type="text"
@@ -249,7 +264,23 @@ const Registro = ({ onChangeMode, onChangeAlert }) => {
                   name="rut"
                   value={registro?.rut}
                   onChange={onInputChange}
-                />
+                /> */}
+                <div className="row">
+                  <div className="col-12">
+                    <label htmlFor="rut" className="label-input-modal">
+                      RUC
+                    </label>
+                    <input
+                      type="text"
+                      id="rut"
+                      name="rut"
+                      className="form-control form-control-modal"
+                      placeholder="Ej. 1234567-8"
+                      value={registro?.rut}
+                      onChange={onInputChange}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="col-12 col-md-6">
                 <label className="label-input-modal">Nombre y Apellido</label>
