@@ -43,17 +43,17 @@ export default function Home(props: HomeProps) {
   const [passagers, setPassagers] = useState({});
   const [generatedTickets, setGeneratedTickets] = useState([]);
   const [buyerInfo, setbuyerInfo] = useState<any>({});
-  const [flowOrder, setflowOrder] = useState<any>({});
+  const [pedidoId, setPedidoId] = useState<any>({});
 
   const router = useRouter();
 
   useEffect(() => {
     try {
-      const data = localStorage.getItem("flowOrder");
-      const flowOrder = JSON.parse(data);
-      if (data && flowOrder) {
-        setflowOrder(flowOrder);
-        console.log("flowOrder", flowOrder);
+      const data = localStorage.getItem("pedido_id");
+      const pedidoId = JSON.parse(data);
+      if (data && pedidoId) {
+        setPedidoId(pedidoId);
+        console.log("pedidoId", pedidoId);
       }
     } catch (error) {}
   }, []);
@@ -213,12 +213,12 @@ export default function Home(props: HomeProps) {
 
     if (carro) {
       // const paymentMethod = carro.medioPago;
-      const paymentMethod = "Flow";
+      const paymentMethod = "Pagopar";
       const amount = totalPagar;
       const tickets = carro.asientos;
 
       const transactionInfo = {
-        transaction: flowOrder,
+        transaction: pedidoId,
         detail: carro_temp,
         paymentMethod: paymentMethod,
         amount,
@@ -301,10 +301,10 @@ export default function Home(props: HomeProps) {
     try {
       generarBoletos();
     } catch (error) {}
-  }, [flowOrder]);
+  }, [pedidoId]);
 
   const generarBoletos = async () => {
-    const token = localStorage.getItem("tokenTemp");
+    const token = localStorage.getItem("hash_order");
     try {
       console.log("Enviando boletos...");
       if (
@@ -323,7 +323,7 @@ export default function Home(props: HomeProps) {
         body: JSON.stringify({
           ticketData: carroCompras,
           email: buyerInfo.email,
-          authCode: flowOrder,
+          authCode: pedidoId,
           token: token,
         }),
       });
@@ -331,7 +331,7 @@ export default function Home(props: HomeProps) {
       console.log("Body para generar boletos:", {
         ticketData: carroCompras,
         email: buyerInfo.email,
-        authCode: flowOrder,
+        authCode: pedidoId,
         token: token,
       });
 

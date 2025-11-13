@@ -584,8 +584,6 @@ export const ResumenViaje = (props) => {
             hideProgressBar: false,
           });
           return;
-        } else {
-          // localStorage.setItem("flowOrder", data.flowOrder);
         }
 
         // setPayment({
@@ -603,10 +601,11 @@ export const ResumenViaje = (props) => {
         setIsLoading(false);
 
         const pagoData = data?.resultado?.[0]?.data;
-        console.log("pagoData:", pagoData);
+        const pedidoId = data?.resultado?.[0]?.pedido;
         if (pagoData) {
           const url = `https://www.pagopar.com/pagos/${pagoData}`;
           localStorage.setItem("hash_order", pagoData);
+          localStorage.setItem("pedido_id", pedidoId);
           console.log("Redirigiendo a PagoPar:", url);
           window.location.href = url;
         } else {
