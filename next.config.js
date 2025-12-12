@@ -1,42 +1,42 @@
 /** @type {import('next').NextConfig} */
 
-const path = require('path')
+const path = require("path");
 
 module.exports = {
   async rewrites() {
     return [
       {
-        source: '/devolucion',
-        destination: '/devolucion/Devolucion',
+        source: "/devolucion",
+        destination: "/devolucion/Devolucion",
       },
       {
-        source: '/cuponera',
-        destination: '/cuponera/Cuponera',
+        source: "/cuponera",
+        destination: "/cuponera/Cuponera",
       },
       {
-        source: '/cambioBoleto',
-        destination: '/ticket-change/CambioBoleto',
+        source: "/cambioBoleto",
+        destination: "/ticket-change/CambioBoleto",
       },
       {
-        source: '/viajesEspeciales',
-        destination: '/viajes-especiales/viajes-especiales',
+        source: "/viajesEspeciales",
+        destination: "/viajes-especiales/viajes-especiales",
       },
       {
-        source: '/confirmacionBoleto',
-        destination: '/ticket-confirmation/ConfirmacionBoleto',
+        source: "/confirmacionBoleto",
+        destination: "/ticket-confirmation/ConfirmacionBoleto",
       },
       {
-        source: '/teAyudamos',
-        destination: '/te-ayudamos/TeAyudamos',
+        source: "/teAyudamos",
+        destination: "/te-ayudamos/TeAyudamos",
       },
     ];
   },
   reactStrictMode: false,
   sassOptions: {
-    includePaths: [path.join(__dirname, 'scss')]
+    includePaths: [path.join(__dirname, "scss")],
   },
   images: {
-    domains: ['avatars.githubusercontent.com'],
+    domains: ["avatars.githubusercontent.com"],
   },
   env: {
     PROJECT_DIRNAME: __dirname,
@@ -55,8 +55,9 @@ module.exports = {
   serverRuntimeConfig: {
     site_url: "https://boletos-com.netlify.app",
     service_url: "",
-    url_api: "https://boletos.dev-wit.com/api",
-    service_password: process.env.NODE_ENV == "production"?"":"INT0000002",
-    clave: process.env.NODE_ENV == "production"?"":"xWL!96JRaWi2lT0jG"
+    // url_api: "https://boletos.dev-wit.com/api",
+    url_api: "http://172.26.10.209:3000/api",
+    service_password: process.env.NODE_ENV == "production" ? "" : "INT0000002",
+    clave: process.env.NODE_ENV == "production" ? "" : "xWL!96JRaWi2lT0jG",
   },
-}
+};
