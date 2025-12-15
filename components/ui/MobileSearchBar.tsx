@@ -9,7 +9,6 @@ import BusquedaServicio from "components/BusquedaServicio/BusquedaServicio";
 import { useDispatch, useSelector } from "react-redux";
 import styles from "./MobileSearchBar.module.css";
 
-
 import { limpiarListaCarritoCambioFecha } from "store/usuario/compra-slice";
 
 type City = {

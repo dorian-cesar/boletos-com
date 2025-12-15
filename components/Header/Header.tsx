@@ -197,15 +197,17 @@ export default function Header({
             <div className="col-6 col-sm-9 d-flex align-items-center ">
               <a href="/">
                 <img
-                  src="../img/icon/logos/Logo.svg"
-                  width={300}
+                  src="../img/icon/logos/logo-boletos.png"
+                  width={250}
                   height={100}
-                  className="img-fluid p-2"
+                  alt="Logo Boletos"
+                  className="img-fluid py-3"
                 />
               </a>
             </div>
             <div className="col-4 col-sm-2 d-flex justify-content-end">
-              {router.pathname !== "/respuesta-transaccion-v2" && router.pathname !== "/confirm-transaction" &&
+              {router.pathname !== "/respuesta-transaccion-v2" &&
+                router.pathname !== "/confirm-transaction" &&
                 (user == null ? (
                   <img
                     src={

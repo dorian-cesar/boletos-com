@@ -1,204 +1,204 @@
 .resumen-container {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 200px;
 }
 
 .resumen-container h3 {
-    color: var(--azul-100, #3365B4);
-    font-size: 20px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
+  color: var(--azul-100, #3365b4);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .contenedor-servicios .servicio-ida,
 .contenedor-servicios .servicio-vuelta {
-    /* padding: 8px; */
+  /* padding: 8px; */
 }
 
 .detalle-container {
-    margin-top: 16px;
+  margin-top: 16px;
 }
 
 .detalle-item ul {
-    list-style-type: none;
-    padding-left: 0;
-    color: #000;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    margin-bottom: 0;
+  list-style-type: none;
+  padding-left: 0;
+  color: #000;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 0;
 }
 
 .detalle-item ul li {
-    position: relative;
-    margin: 0;
-    padding-bottom: 1em;
-    padding-left: 20px;
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
+  position: relative;
+  margin: 0;
+  padding-bottom: 1em;
+  padding-left: 20px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
 }
 
-
 .detalle-item ul li:before {
-    content: '';
-    border: 0.1em dashed #FF6500;
-    position: absolute;
-    bottom: 0px;
-    top: 10px;
-    left: 5px;
+  content: "";
+  border: 0.1em dashed #ff6500;
+  position: absolute;
+  bottom: 0px;
+  top: 10px;
+  left: 5px;
 }
 
 .detalle-item ul li:after {
-    content: '';
-    width: 8px;
-    height: 8px;
-    background-color: #FF6500;
-    border-radius: 50%;
-    position: absolute;
-    left: 2px;
-    top: 7px;
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: #ff6500;
+  border-radius: 50%;
+  position: absolute;
+  left: 2px;
+  top: 7px;
 }
 
 .detalle-item ul li:last-child::before {
-    top: 1px;
-    bottom: 20px !important;
+  top: 1px;
+  bottom: 20px !important;
 }
 
 .resumen-servicio {
-    display: flex;
-    justify-content: space-between;
-    padding-block: 16px;
-    margin-bottom: 16px;
-    border-top: 1px dotted #000;
-    border-bottom: 1px dotted #000;
+  display: flex;
+  justify-content: space-between;
+  padding-block: 16px;
+  margin-bottom: 16px;
+  border-top: 1px dotted #000;
+  border-bottom: 1px dotted #000;
 }
 
 .total-container {
-    padding-inline: 8px;
+  padding-inline: 8px;
 }
 
 .contanedor-total-pagar {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 16px;
-    /* border-top: 1px dotted #000; */
-    border-bottom: 1px dotted #000;
-    margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  padding-bottom: 16px;
+  /* border-top: 1px dotted #000; */
+  border-bottom: 1px dotted #000;
+  margin-bottom: 16px;
 }
 
 .contanedor-total-pagar-descuento {
-    display: flex;
-    justify-content: center;
-    padding-block: 12px;
-    border-top: 1px dotted #000;
+  display: flex;
+  justify-content: center;
+  padding-block: 12px;
+  border-top: 1px dotted #000;
 }
 
-.contanedor-total-pagar-descuento span{
-    color: var(--naranjo-100, #000);
-    text-align: center;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 26px;
-    text-decoration: line-through;
+.contanedor-total-pagar-descuento span {
+  color: var(--naranjo-100, #000);
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px;
+  text-decoration: line-through;
 }
 
 .contanedor-puntaje {
-    display: flex;
-    justify-content: center;
-    padding-block: 12px;
-
+  display: flex;
+  justify-content: center;
+  padding-block: 12px;
 }
-.contanedor-puntaje span{
-    color: var(--naranjo-100, #000);
-    text-align: center;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 26px;
+.contanedor-puntaje span {
+  color: var(--naranjo-100, #000);
+  text-align: center;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px;
 }
-
-
 
 .contanedor-total-pagar span {
-    color: var(--naranjo-100, #FF6500);
-    text-align: center;
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 26px;
+  color: var(--naranjo-100, #ff6500);
+  text-align: center;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px;
 }
 
 .contenedor-checks * {
-    margin-block: 4px;
+  margin-block: 4px;
 }
 
 .contenedor-boton-pagar {
-    display: flex;
-    justify-content: center;
-    padding-block: 16px;
+  display: flex;
+  justify-content: center;
+  padding-block: 16px;
 }
 
 .contenedor-boton-pagar .boton-pagar {
-    width: 100%;
-    max-width: 300px;
-    padding: 8px 16px;
-    background-color: var(--naranjo-100, #FF6500);
-    color: var(--blanco-100, #FFFFFF);
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
-    border: none;
-    border-radius: 16px;
-    cursor: default;
-    transition: background-color 0.3s;
+  width: 100%;
+  max-width: 300px;
+  padding: 8px 16px;
+  background-color: var(--naranjo-100, #ff6500);
+  color: var(--blanco-100, #ffffff);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  border: none;
+  border-radius: 16px;
+  cursor: default;
+  transition: background-color 0.3s;
 }
 
 .contenedor-boton-pagar .boton-pagar:hover {
-    background: var(--naranjo-80, #FF8A00);
+  background: var(--naranjo-80, #ff8a00);
 }
 
 .utiliza-monedero-virtual img {
-    margin-inline-start: 5px;
+  margin-inline-start: 5px;
 }
 
 .utiliza-monedero-virtual .tooltip-text {
-    visibility: hidden;
-    background-color: #fff;
-    color: #000;
-    text-align: center;
-    border-radius: 6px;
-    border: 1px solid #000;
-    padding: 5px 0;
-    position: absolute;
-    z-index: 1;
+  visibility: hidden;
+  background-color: #fff;
+  color: #000;
+  text-align: center;
+  border-radius: 6px;
+  border: 1px solid #000;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
 }
 
-.utiliza-monedero-virtual img:hover+.tooltip-text {
-    visibility: visible;
+.utiliza-monedero-virtual img:hover + .tooltip-text {
+  visibility: visible;
 }
 
 .loader {
-    display: inline-grid;
-    margin: auto;
-    font-size: 50px;
+  display: inline-grid;
+  margin: auto;
+  font-size: 50px;
 }
 
-.loader:before, .loader:after {
-    content: url("../../../public/img/icon/logos/Logo.svg");
-    grid-area: 1/1;
+.loader:before,
+.loader:after {
+  content: url("../../../public/img/icon/logos/Logo.svg");
+  grid-area: 1/1;
 }
 
 .loader:after {
-    animation: l10 1s infinite;
+  animation: l10 1s infinite;
 }
 
 @keyframes l10 {
-    to {transform:scale(1.2);opacity:0}
+  to {
+    transform: scale(1.2);
+    opacity: 0;
+  }
 }

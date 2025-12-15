@@ -217,7 +217,7 @@ const Boleto = (props) => {
         <div className="d-flex flex-col col px-md-2 py-md-0 p-md-3">
           <div className="d-flex flex-row justify-content-between pt-2 p-md-2">
             <img
-              src="img/ui/service-components/service-logo.svg"
+              src="../img/icon/logos/logo-boletos.png"
               className="img-fluid p-1"
               width={150}
               height={25}
