@@ -105,19 +105,6 @@ const BusquedaServicio = (props) => {
     setIsLoading(true);
 
     try {
-      // const token = await captchaRef.current.executeAsync();
-
-      // const tokenVerify = await fetch('/api/token-verify', {
-      //   method: 'POST',
-      //   body: JSON.stringify({ token })
-      // });
-
-      // const tokenVerifyResponse = await tokenVerify.json();
-
-      // if( !tokenVerifyResponse.success ) {
-      //   return;
-      // }
-
       dispatch(liberarAsientos());
 
       const data = {
@@ -129,12 +116,8 @@ const BusquedaServicio = (props) => {
       };
 
       const encriptedData = encryptDataNoSave(data, "search");
-      // const encriptedData = encryptDataNoSave(data, process.env.NEXT_PUBLIC_SECRET_ENCRYPT_DATA);
 
-      router
-        .replace(`/comprar?search=${encriptedData}`)
-        .then(() => window.location.reload())
-        .catch((_) => setIsLoading(false));
+      router.replace(`/comprar?search=${encriptedData}`);
     } catch (error) {
       setIsLoading(false);
     }
