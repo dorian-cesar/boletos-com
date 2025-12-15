@@ -257,7 +257,7 @@ const BusquedaServicio = (props) => {
               <h1
                 className={`${styles["titulo-azul"]} text-center text-md-start mb-4 fw-bold display-6`}
               >
-                ¿Cuál es tu próximo destino?
+                ¿Cuál será su próximo destino?
               </h1>
             )}
             {mostrarPopup && (

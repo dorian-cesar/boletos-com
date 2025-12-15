@@ -14,11 +14,11 @@ const DatosPasajero = (props) => {
 
   function retornarDatosCompradorUsuario() {
     let asientoTemporal = { ...asiento };
-    asientoTemporal['nombre'] = usuario?.nombres;
-    asientoTemporal['apellido'] = usuario?.apellidoPaterno;
-    asientoTemporal['tipoDocumento'] = usuario?.tipoDocumento;
-    asientoTemporal['rut'] = usuario?.rut;
-    asientoTemporal['email'] = usuario?.mail;
+    asientoTemporal["nombre"] = usuario?.nombres;
+    asientoTemporal["apellido"] = usuario?.apellidoPaterno;
+    asientoTemporal["tipoDocumento"] = usuario?.tipoDocumento;
+    asientoTemporal["rut"] = usuario?.rut;
+    asientoTemporal["email"] = usuario?.mail;
     return asientoTemporal;
   }
 
@@ -33,16 +33,20 @@ const DatosPasajero = (props) => {
       dispatch(agregarInformacionAsiento(infoToDispatch));
     } else {
       const datosCompradorUsuario = retornarDatosCompradorUsuario();
-      dispatch(asignarDatosComprador(usuario !== null ? datosCompradorUsuario : asientoTemporal));
+      dispatch(
+        asignarDatosComprador(
+          usuario !== null ? datosCompradorUsuario : asientoTemporal
+        )
+      );
     }
   }, []);
 
   useEffect(() => {
-    if( usuario ) {
+    if (usuario) {
       const datosCompradorUsuario = retornarDatosCompradorUsuario();
       dispatch(asignarDatosComprador(datosCompradorUsuario));
     }
-  }, [usuario])
+  }, [usuario]);
 
   function setDataComprador({ name, value }) {
     try {
@@ -53,13 +57,13 @@ const DatosPasajero = (props) => {
         value = validarFormatoRut(name, value);
       }
 
-      if( asiento["tipoDocumento"] == "R" && name === 'rut' && value !== '' ) {
-        value = value.replace(/[^\dkK0-9.-]/g,'');
-        if( value.length > 12 ) return;
+      if (asiento["tipoDocumento"] == "R" && name === "rut" && value !== "") {
+        value = value.replace(/[^\dkK0-9.-]/g, "");
+        if (value.length > 12) return;
       }
 
-      if( name === 'tipoDocumento') {
-        carro_temp['rut'] = '';
+      if (name === "tipoDocumento") {
+        carro_temp["rut"] = "";
       }
 
       carro_temp[name] = value;
@@ -103,7 +107,7 @@ const DatosPasajero = (props) => {
                 name="nombre"
                 placeholder="Ej: Juan Andrés"
                 className={styles["input"]}
-                disabled={ usuario }
+                disabled={usuario}
                 onChange={(e) => setDataComprador(e.target)}
               />
             </div>
@@ -117,7 +121,7 @@ const DatosPasajero = (props) => {
                 name="apellido"
                 placeholder="Ej: Espinoza Arcos"
                 className={styles["input"]}
-                disabled={ usuario }
+                disabled={usuario}
                 onChange={(e) => setDataComprador(e.target)}
               />
             </div>
@@ -132,7 +136,7 @@ const DatosPasajero = (props) => {
                     checked={asiento["tipoDocumento"] == "R" ? "checked" : ""}
                     value="R"
                     name="tipoDocumento"
-                    disabled={ usuario }
+                    disabled={usuario}
                     onChange={(e) => setDataComprador(e.target)}
                   />
                   <span className="checkmark"></span>
@@ -146,7 +150,7 @@ const DatosPasajero = (props) => {
                     checked={asiento["tipoDocumento"] == "P" ? "checked" : ""}
                     value="P"
                     name="tipoDocumento"
-                    disabled={ usuario }
+                    disabled={usuario}
                     onChange={(e) => setDataComprador(e.target)}
                   />
                   <span className={"checkmark"}></span>
@@ -165,7 +169,7 @@ const DatosPasajero = (props) => {
                     ? "is-invalid"
                     : ""
                 } ${styles["input"]}`}
-                disabled={ usuario }
+                disabled={usuario}
                 onChange={(e) => setDataComprador(e.target)}
               />
             </div>
@@ -174,7 +178,7 @@ const DatosPasajero = (props) => {
             <div className={"row"}>
               <div className={"col"}>
                 <label className={styles["container-text"]}>
-                  <label className={styles["label"]}>E-mail</label>
+                  <label className={styles["label"]}>Correo electrónico</label>
                 </label>
               </div>
               <div className={"col"}></div>
@@ -186,7 +190,7 @@ const DatosPasajero = (props) => {
                 name="email"
                 placeholder="Ej: correo@correo.cl"
                 className={styles["input"]}
-                disabled={ usuario }
+                disabled={usuario}
                 onChange={(e) => setDataComprador(e.target)}
               />
             </div>
