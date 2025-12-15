@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import Rut from "rutjs";
-import { useRouter } from 'next/router';
+import { useRouter } from "next/router";
 
 import {
   GuardarCarroDTO,
@@ -131,7 +131,8 @@ const StagePago = (props) => {
 
   function armarResponseCanjear(datos) {
     let fechaServicioParse = formatearFecha(datos.fechaServicio);
-    let fechaServicioSalidarParse = formatearFecha(datos.fechaSalida)+datos.horaSalida.replace(':','');
+    let fechaServicioSalidarParse =
+      formatearFecha(datos.fechaSalida) + datos.horaSalida.replace(":", "");
     let canjearCuponera = {
       idSistema: 7,
       idIntegrador: 1000,
@@ -167,7 +168,7 @@ const StagePago = (props) => {
         let datosArmado;
         let pasajes = [
           ...carro.clientes_ida.map((clientesIdaMapped, clientesIdaIndex) => {
-            console.log("datos clientes", clientesIdaMapped);        
+            console.log("datos clientes", clientesIdaMapped);
             datosArmado = clientesIdaMapped;
           }),
         ];
@@ -175,17 +176,16 @@ const StagePago = (props) => {
         const { email, rut } = carro.datos;
 
         const { data } = await axios.post(
-          "/api/coupon/canjear-cuponera",canjeCuponera);
+          "/api/coupon/canjear-cuponera",
+          canjeCuponera
+        );
 
-    
         if (data.resultado.exito) {
           console.log("Tipo de data.voucher:", typeof data.voucher);
           console.log("Contenido de data.voucher:", data.voucher);
           const url = `/pages/respuesta-transaccion-canje/${data.voucher.toString()}`;
           router.push(url);
         }
-        
-
       } else {
         toast.warn(`Cuponera no es valida para uso`, {
           position: "top-right",
@@ -193,8 +193,7 @@ const StagePago = (props) => {
           hideProgressBar: false,
         });
       }
-    } catch ({ response }) { 
-    }
+    } catch ({ response }) {}
   }
 
   function obtenerCantidadAsientos(tipoClientes) {
@@ -306,7 +305,7 @@ const StagePago = (props) => {
                     <input type="checkbox" className="mr-2" />
                     <small>
                       Me gustaria recibir noticias, actualizaciones o
-                      información de Pullman Bus
+                      información de Boletos.com
                     </small>
                   </label>
                 </div>

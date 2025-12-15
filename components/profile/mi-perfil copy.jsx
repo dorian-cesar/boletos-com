@@ -1,6 +1,6 @@
 import axios from "axios";
 import DatePicker, { registerLocale } from "react-datepicker";
-import Layout from "../Layout"
+import Layout from "../Layout";
 import { useEffect, useState, forwardRef, useRef, useMemo } from "react";
 import { useLocalStorage } from "/hooks/useLocalStorage";
 import { useRouter } from "next/router";
@@ -10,29 +10,29 @@ import { decryptData } from "utils/encrypt-data.js";
 import LocalStorageEntities from "entities/LocalStorageEntities";
 
 const CustomInput = forwardRef(({ value, onClick }, ref) => (
-    <input
-      type="text"
-      className="fecha-input-modal form-control form-control-modal"
-      onClick={onClick}
-      ref={ref}
-      value={value}
-      onChange={()=>{}}
-    />
-  ));
+  <input
+    type="text"
+    className="fecha-input-modal form-control form-control-modal"
+    onClick={onClick}
+    ref={ref}
+    value={value}
+    onChange={() => {}}
+  />
+));
 
 const months = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
+  "Enero",
+  "Febrero",
+  "Marzo",
+  "Abril",
+  "Mayo",
+  "Junio",
+  "Julio",
+  "Agosto",
+  "Septiembre",
+  "Octubre",
+  "Noviembre",
+  "Diciembre",
 ];
 
 const actualizarFormFields = {
@@ -49,7 +49,7 @@ const actualizarFormFields = {
 
 const ActualizarDatos = () => {
   const { formState: data, onInputChange } = useForm(actualizarFormFields);
-  const [fechaNacimiento, setFechaNacimiento] = useState('');
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
   const router = useRouter();
   const { getItem } = useLocalStorage();
   const [user, setUser] = useState(null);
@@ -76,66 +76,82 @@ const ActualizarDatos = () => {
     data.correo = user?.correo;
     data.correo2 = user?.correo;
     data.rut = user?.rut;
-    if(!!user?.fechaNacimiento) {
-        let fecha = new Date(String(user?.fechaNacimiento).substring(0, String(user?.fechaNacimiento).length-5));
-        setFechaNacimiento(fecha);
+    if (!!user?.fechaNacimiento) {
+      let fecha = new Date(
+        String(user?.fechaNacimiento).substring(
+          0,
+          String(user?.fechaNacimiento).length - 5
+        )
+      );
+      setFechaNacimiento(fecha);
     }
-  }, [user])
+  }, [user]);
 
   useEffect(() => {
     data.fechaNacimiento = fechaNacimiento;
   }, [fechaNacimiento]);
-  
+
   const listaYears = useMemo(() => {
     let years = [];
-    for(let i = new Date().getFullYear(); i >= 1910; i--) {
+    for (let i = new Date().getFullYear(); i >= 1910; i--) {
       years.push(i);
     }
-    return years
-  }, [])
+    return years;
+  }, []);
 
   const actualizarDatos = async () => {
     const formStatus = await validarForm();
-    if(formStatus){
+    if (formStatus) {
       setIsLoading2(true);
       const res = await axios.post("../api/user/actualizar-datos-perfil", {
         ...data,
       });
-      if(res.data.status){
+      if (res.data.status) {
         setIsLoading2(false);
-        setAlerta({ visible: true, msg: res.data.message, type: "alert-success" });
+        setAlerta({
+          visible: true,
+          msg: res.data.message,
+          type: "alert-success",
+        });
         setTimeout(() => {
-          setAlerta({ visible: false, msg: '', type: '' });
-        }, 5000); 
+          setAlerta({ visible: false, msg: "", type: "" });
+        }, 5000);
       }
       setIsLoading2(false);
     }
-  }
+  };
 
   const validarForm = () => {
     return new Promise((resolve, reject) => {
       const values = Object.values(data);
-      const camposVacios = values.filter((v) => v == '');
-      if(camposVacios.length > 0){
-        setAlerta({ visible: true, msg: 'Se requiere rellenar todos los campos.', type:'alert-danger' });
+      const camposVacios = values.filter((v) => v == "");
+      if (camposVacios.length > 0) {
+        setAlerta({
+          visible: true,
+          msg: "Se requiere rellenar todos los campos.",
+          type: "alert-danger",
+        });
         resolve(false);
       } else {
-        if(data?.correo != data?.correo2){
-          setAlerta({ visible: true, msg: 'Los correos no coinciden. Por favor, verificar.', type:'alert-danger' });
+        if (data?.correo != data?.correo2) {
+          setAlerta({
+            visible: true,
+            msg: "Los correos no coinciden. Por favor, verificar.",
+            type: "alert-danger",
+          });
           resolve(false);
         } else {
-          setAlerta({ visible: false, msg: '', type:'' });
+          setAlerta({ visible: false, msg: "", type: "" });
           resolve(true);
         }
       }
-    })
-  }
-
+    });
+  };
 
   return (
     <Layout>
       <Head>
-        <title>Pullman Bus | Actualizar mis datos</title>
+        <title>Boletos.com | Actualizar mis datos</title>
       </Head>
       {isLoading ? (
         <div className="d-flex justify-content-center mt-2">
@@ -159,32 +175,36 @@ const ActualizarDatos = () => {
               <div className="col-12 col-md-8 bloque flex-column">
                 <div className="row mb-2">
                   <div className="d-flex justify-content-center mt-2">
-                    <img src="/img/icon-foto-naranjo.svg" width={120} color={'#eb7f33'}></img>
+                    <img
+                      src="/img/icon-foto-naranjo.svg"
+                      width={120}
+                      color={"#eb7f33"}
+                    ></img>
                   </div>
                 </div>
                 <h1 className="titulo-azul text-center">
-                  { user?.nombres } {user?.apellidoPaterno}
+                  {user?.nombres} {user?.apellidoPaterno}
                 </h1>
                 <div className="d-flex justify-content-center mt-2 mb-4">
                   <a href="/">Volver</a>
                 </div>
-                <h1 className="titulo-azul">
-                  Mi Perfil
-                </h1>
+                <h1 className="titulo-azul">Mi Perfil</h1>
                 {alerta?.visible ? (
-                    <div className={"alert " + alerta?.type} role="alert">
-                      {alerta?.msg}
-                    </div>
-                  ) : (
-                    ""
+                  <div className={"alert " + alerta?.type} role="alert">
+                    {alerta?.msg}
+                  </div>
+                ) : (
+                  ""
                 )}
                 {isLoading2 ? (
-                <div className="d-flex justify-content-center">
-                  <div className="spinner-border text-primary" role="status">
-                    <span className="visually-hidden"></span>
+                  <div className="d-flex justify-content-center">
+                    <div className="spinner-border text-primary" role="status">
+                      <span className="visually-hidden"></span>
+                    </div>
                   </div>
-                </div>
-                ):("")}
+                ) : (
+                  ""
+                )}
                 <div className="row mt-2">
                   <div className="col-6">
                     <label className="label-input-modal">Nombres</label>
@@ -192,32 +212,36 @@ const ActualizarDatos = () => {
                       type="text"
                       className={"form-control form-control-modal"}
                       name="nombres"
-                      value={ data?.nombres }
-                      onChange={ onInputChange }
+                      value={data?.nombres}
+                      onChange={onInputChange}
                     />
                   </div>
                 </div>
                 <div className="row mt-2">
-                    <div className="col-6">
-                        <label className="label-input-modal">Apellido Paterno</label>
-                        <input
-                        type="text"
-                        className={"form-control form-control-modal"}
-                        name="apellidoPaterno"
-                        value={ data?.apellidoPaterno }
-                        onChange={ onInputChange }
-                        />
-                    </div>
-                    <div className="col-6">
-                        <label className="label-input-modal">Apellido Materno</label>
-                        <input
-                        type="text"
-                        className={"form-control form-control-modal"}
-                        name="apellidoMaterno"
-                        value={ data?.apellidoMaterno }
-                        onChange={ onInputChange }
-                        />
-                    </div>
+                  <div className="col-6">
+                    <label className="label-input-modal">
+                      Apellido Paterno
+                    </label>
+                    <input
+                      type="text"
+                      className={"form-control form-control-modal"}
+                      name="apellidoPaterno"
+                      value={data?.apellidoPaterno}
+                      onChange={onInputChange}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <label className="label-input-modal">
+                      Apellido Materno
+                    </label>
+                    <input
+                      type="text"
+                      className={"form-control form-control-modal"}
+                      name="apellidoMaterno"
+                      value={data?.apellidoMaterno}
+                      onChange={onInputChange}
+                    />
+                  </div>
                 </div>
                 {/* <div className="row">
                     <div className="col-6">
@@ -235,7 +259,7 @@ const ActualizarDatos = () => {
                         <option value={"OTRO"}>Otro</option>
                         </select>
                     </div> */}
-                    {/* <div className="col-6">
+                {/* <div className="col-6">
                         <label className="label-input-modal">Fecha nacimiento</label>
                         <DatePicker
                         renderCustomHeader={({
@@ -317,17 +341,17 @@ const ActualizarDatos = () => {
                     </div>
                 </div> */}
                 <div className="row mt-4 d-flex justify-content-center">
-                    <div className="col-12 col-md-6">
-                        <div className="">
-                          <button
-                            type="button"
-                            className="btn"
-                            onClick={(e) => actualizarDatos()}
-                          >
-                            Actualizar datos
-                          </button>
-                        </div>
+                  <div className="col-12 col-md-6">
+                    <div className="">
+                      <button
+                        type="button"
+                        className="btn"
+                        onClick={(e) => actualizarDatos()}
+                      >
+                        Actualizar datos
+                      </button>
                     </div>
+                  </div>
                 </div>
               </div>
             </div>

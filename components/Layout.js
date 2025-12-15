@@ -48,14 +48,14 @@ export default function Layout({ children, isBuyStage = false }) {
     <>
       <Head>
         <meta charSet="UTF-8" />
-        <title>Pullman Bus</title>
+        <title>Boletos.com</title>
         <meta
           name="description"
-          content="Empresa de Transporte Pullman Bus S.A San Francisco de Borja 235, Estación Central, Santiago de Chile.  Transporte de Viajes Interurbanos, Viajes Especiales"
+          content="Empresa de Transporte Boletos.com S.A San Francisco de Borja 235, Estación Central, Santiago de Chile.  Transporte de Viajes Interurbanos, Viajes Especiales"
         />
         <meta
           name="keywords"
-          content="Pasajes en bus, Transporte Urbano, buses pullman, Pullman, Pulman, PullmanBus, Pullman Bus, bus, viajes, viaje, viajes interurbanos, viaje en bus"
+          content="Pasajes en bus, Transporte Urbano, buses pullman, Pullman, Pulman, PullmanBus, Boletos.com, bus, viajes, viaje, viajes interurbanos, viaje en bus"
         />
       </Head>
 

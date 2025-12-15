@@ -10,8 +10,8 @@ import Link from "next/link";
 
 const mappedStages = {
   preguntas: 1,
-  ayuda: 2
-}
+  ayuda: 2,
+};
 
 const TeAyudamos = (props) => {
   const [stage, setStage] = useState(0);
@@ -23,22 +23,23 @@ const TeAyudamos = (props) => {
 
   useEffect(() => {
     const queryParams = router.query;
-    if( queryParams ) {
+    if (queryParams) {
       setStage(mappedStages[queryParams.page] || 0);
     }
-  }, [])
+  }, []);
 
   return (
     <Layout>
       <Head>
-        <title>Pullman Bus | Te Ayudamos</title>
+        <title>Boletos.com | Te Ayudamos</title>
       </Head>
       {stage == 0 ? (
         <div className="pt-3 pb-5 bg-bus">
-          <h2 className="text-center text-secondary fw-bold mb-4 pt-5">Nuestros canales de atención</h2>
+          <h2 className="text-center text-secondary fw-bold mb-4 pt-5">
+            Nuestros canales de atención
+          </h2>
           <div className="container overflow-hidden">
             <div className="row g-2 g-md-0 justify-content-center gap-5 py-5">
-
               {/* <div className="card text-center col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
                 <div className="card-header bg-white border-0">
                   <img src="/img/icon/help/help-circle-outline.svg" height={ 48 } width={ 48 }/>
@@ -62,7 +63,11 @@ const TeAyudamos = (props) => {
 
               <div className="card text-center col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
                 <div className="card-header bg-white border-0">
-                  <img src="/img/icon/help/megaphone-outline.svg" height={ 48 } width={ 48 }/>
+                  <img
+                    src="/img/icon/help/megaphone-outline.svg"
+                    height={48}
+                    width={48}
+                  />
                   <h4 className="text-secondary fw-bold mb-0">Escríbenos</h4>
                 </div>
                 <div className="card-body">
@@ -74,7 +79,10 @@ const TeAyudamos = (props) => {
                 </div>
                 <div className="card-footer border-0">
                   <div className="d-grid">
-                    <button className="btn btn-primary rounded-4 fw-bold" onClick={() => cambiarVista(2)}>
+                    <button
+                      className="btn btn-primary rounded-4 fw-bold"
+                      onClick={() => cambiarVista(2)}
+                    >
                       Habla con nosotros
                     </button>
                   </div>
@@ -84,18 +92,30 @@ const TeAyudamos = (props) => {
               <div className="card col-12 col-md-5 bg-white shadow-sm border-0 p-3 rounded-4">
                 <div className="card-body">
                   <div>
-                    <h5 className="text-secondary fw-bold">Horario de atención al cliente:</h5>
-                    <span><b>Lunes a viernes:</b> 09:00AM - 18:00PM</span>
+                    <h5 className="text-secondary fw-bold">
+                      Horario de atención al cliente:
+                    </h5>
+                    <span>
+                      <b>Lunes a viernes:</b> 09:00AM - 18:00PM
+                    </span>
                   </div>
                   <div>
                     <h5 className="text-secondary fw-bold mt-4">
                       Atención via WhatsApp:
                     </h5>
-                    <p className="fs-6 mb-0">Sábados, domingos y festivos: 09:00AM - 18:00PM</p>
-                    <a className="text-black" href="https://wa.me/56996193091" target="_blank">
-                      <img src="/img/icon/help/what-up.svg"/>
+                    <p className="fs-6 mb-0">
+                      Sábados, domingos y festivos: 09:00AM - 18:00PM
+                    </p>
+                    <a
+                      className="text-black"
+                      href="https://wa.me/56996193091"
+                      target="_blank"
+                    >
+                      <img src="/img/icon/help/what-up.svg" />
                       <span className="mx-1">+569 96193091</span>
-                      <span>(sólo mensajes, <b>NO</b> llamados telefónicos)</span>
+                      <span>
+                        (sólo mensajes, <b>NO</b> llamados telefónicos)
+                      </span>
                     </a>
                   </div>
                 </div>

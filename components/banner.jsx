@@ -5,12 +5,19 @@ import "swiper/css";
 import "swiper/css/navigation";
 import Link from "next/link";
 
+// const imagenDeRespaldo = {
+//   key: "banner_01",
+//   // url: "/",
+//   // image: "https://pullman.cl/imagenes/fenix/banner/banner-1.jpg",
+//   // image: "/banner-paraguay.jpeg",
+//   image: "/banner-1.png",
+// };
+
 const imagenDeRespaldo = {
   key: "banner_01",
-  // url: "/",
-  // image: "https://pullman.cl/imagenes/fenix/banner/banner-1.jpg",
-  // image: "/banner-paraguay.jpeg",
-  image: "/banner-1.png",
+  url: "/",
+  image: "/banner.png",
+  posicion: 1,
 };
 
 const Banner = (props) => {

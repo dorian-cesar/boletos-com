@@ -4,7 +4,10 @@ import styles from "./ResumenViaje.module.css";
 import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
 import { format } from "@formkit/tempo";
-import { newIsValidPasajero, newIsValidComprador } from "../../../utils/user-pasajero";
+import {
+  newIsValidPasajero,
+  newIsValidComprador,
+} from "../../../utils/user-pasajero";
 import { toast } from "react-toastify";
 import {
   ListaCarritoDTO,
@@ -130,7 +133,7 @@ export const ResumenViaje = (props) => {
   async function sendToPayment() {
     try {
       let validator = isPaymentValid();
-      if( !validator.valid ) {
+      if (!validator.valid) {
         toast.error(validator.error, {
           position: "top-right",
           autoClose: 5000,
@@ -139,7 +142,7 @@ export const ResumenViaje = (props) => {
         return;
       }
       validator = newIsValidComprador(datosComprador);
-      if(!validator.valid){
+      if (!validator.valid) {
         toast.error(validator.error, {
           position: "top-right",
           autoClose: 5000,
@@ -148,7 +151,7 @@ export const ResumenViaje = (props) => {
         return;
       }
 
-      if(!terminos){
+      if (!terminos) {
         toast.error("Debe aceptar los términos y condiciones", {
           position: "top-right",
           autoClose: 5000,
@@ -193,7 +196,7 @@ export const ResumenViaje = (props) => {
         );
         data = response.data;
       } catch (error) {
-        console.log('ERROR CONFIRMAR BOLETO:::', error)
+        console.log("ERROR CONFIRMAR BOLETO:::", error);
         data = error.response.data;
       }
       if (data.status) {
@@ -325,7 +328,7 @@ export const ResumenViaje = (props) => {
               />
               <label className="form-check-label" htmlFor="flexCheckNews">
                 Me gustaría recibir noticias, actualizaciones o información de
-                Pullman Bus
+                Boletos.com
               </label>
             </div>
           </div>
@@ -338,8 +341,7 @@ export const ResumenViaje = (props) => {
               sendToPayment();
             }}
           >
-           Confirmar
-        
+            Confirmar
           </button>
           <form
             ref={payment_form}

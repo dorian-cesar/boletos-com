@@ -247,11 +247,8 @@ const BusquedaServicio = (props) => {
       <section
         className={
           isHomeComponent
-            ? "container pb-5 d-flex align-items-center justify-content-center"
+            ? "container d-flex justify-content-center"
             : "container py-1"
-        }
-        style={
-          isHomeComponent ? { minHeight: "100vh", paddingTop: "100px" } : {}
         }
       >
         <div className={isHomeComponent ? styles["seleccion-servicio"] : ""}>

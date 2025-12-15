@@ -19,9 +19,9 @@ import {
 } from "../../../dto/PasajesDTO";
 import Popup from "../../Popup/Popup";
 import ModalEntities from "../../../entities/ModalEntities";
-import LocalStorageEntities from 'entities/LocalStorageEntities';
+import LocalStorageEntities from "entities/LocalStorageEntities";
 import { useLocalStorage } from "/hooks/useLocalStorage";
-import { encryptDataNoTime, decryptData } from 'utils/encrypt-data.js'
+import { encryptDataNoTime, decryptData } from "utils/encrypt-data.js";
 
 import CryptoJS from "crypto-js";
 
@@ -75,30 +75,31 @@ export const ResumenViaje = (props) => {
   const obtenerInformacion = () => {
     {
       Object.entries(carroCompras).map(([key, value]) => {
-        if( value.ida.length > 0 ) {
+        if (value.ida.length > 0) {
           const fechaIdaFormateada = value.ida[0].fechaSalida.split("/");
           const fechaIda = new Date(
             `${fechaIdaFormateada[1]}/${fechaIdaFormateada[0]}/${fechaIdaFormateada[2]}`
           );
-  
+
           const idaNombre = `Salida, ${format(fechaIda, "ddd D MMM")}`;
           const keys = Object.keys(value);
-  
+
           let vueltaNombre = "";
           if (keys.length >= 2) {
-            const fechaVueltaFormateada = value.vuelta[0].fechaSalida.split("/");
+            const fechaVueltaFormateada =
+              value.vuelta[0].fechaSalida.split("/");
             const fechaVuelta = new Date(
               `${fechaVueltaFormateada[1]}/${fechaVueltaFormateada[0]}/${fechaVueltaFormateada[2]}`
             );
             vueltaNombre = `Vuelta, ${format(fechaVuelta, "ddd D MMM")}`;
           }
-  
+
           const idaList = value.ida || [];
           const vueltaList = value.vuelta || [];
-  
+
           let carro_temp = { ...resumen };
           const datos = [];
-  
+
           let carritoIda = {
             titulo: idaNombre,
             detalle: [],
@@ -107,7 +108,7 @@ export const ResumenViaje = (props) => {
             titulo: vueltaNombre,
             detalle: [],
           };
-  
+
           Object.entries(idaList).map(([key, value]) => {
             const datos = {
               origen: value.terminalOrigen,
@@ -117,17 +118,17 @@ export const ResumenViaje = (props) => {
               cantidadAsientos: 0,
               total: 0,
             };
-  
+
             value.asientos.forEach((element) => {
               datos.cantidadAsientos += 1;
               datos.total += element.valorAsiento;
             });
-  
+
             datos.total = clpFormat.format(datos.total);
-  
+
             carritoIda.detalle.push(datos);
           });
-  
+
           Object.entries(vueltaList).map(([key, value]) => {
             const datos = {
               origen: value.terminalOrigen,
@@ -137,14 +138,14 @@ export const ResumenViaje = (props) => {
               cantidadAsientos: 0,
               total: 0,
             };
-  
+
             value.asientos.forEach((element) => {
               datos.cantidadAsientos += 1;
               datos.total += element.valorAsiento;
             });
-  
+
             datos.total = clpFormat.format(datos.total);
-  
+
             carritoVuelta.detalle.push(datos);
           });
           datos.push(carritoIda);
@@ -169,7 +170,7 @@ export const ResumenViaje = (props) => {
       if (valorCobrar > 0) {
         finalizarCambioTBK();
       }
-    } catch ({ response }) { }
+    } catch ({ response }) {}
   }
 
   async function finalizarCambio() {
@@ -229,9 +230,9 @@ export const ResumenViaje = (props) => {
           .replace(".", "")
           .replace(".", ""),
         tipoDocumento: informacionAgrupada[0]?.asientos[0]?.tipoDocumento,
-        valorBoletoCambio: totalPagar
+        valorBoletoCambio: totalPagar,
       };
-      
+
       if (!isPaymentValid()) return;
       let data;
       try {
@@ -242,17 +243,18 @@ export const ResumenViaje = (props) => {
 
         data = {
           status: true,
-          object: response?.data?.object || response?.data
-        }
-
+          object: response?.data?.object || response?.data,
+        };
       } catch (error) {
         data = {
           status: false,
-          message: error?.response?.data?.object.resultado.mensaje || "Error al cambiar el boleto"
-        }
+          message:
+            error?.response?.data?.object.resultado.mensaje ||
+            "Error al cambiar el boleto",
+        };
       }
 
-      if ( data.status ) {
+      if (data.status) {
         dispatch(agregarCambio(data.object));
         const url = `/respuesta-transaccion-cambio/${data.object.voucher.boleto}`;
         router.push(url);
@@ -263,7 +265,7 @@ export const ResumenViaje = (props) => {
           hideProgressBar: false,
         });
       }
-    } catch (error) { }
+    } catch (error) {}
   }
 
   async function finalizarCambioTBK() {
@@ -332,17 +334,17 @@ export const ResumenViaje = (props) => {
           .replace(".", "")
           .replace(".", ""),
         tipoDocumento: informacionAgrupada[0]?.asientos[0]?.tipoDocumento,
-        valorBoletoCambio: totalPagar
+        valorBoletoCambio: totalPagar,
       };
 
-      encryptDataNoTime(cambiarBoleto, 'CHN_TKT');
+      encryptDataNoTime(cambiarBoleto, "CHN_TKT");
 
       if (!isPaymentValid()) return;
-      await pagarWebPay( cambiarBoleto ); 
+      await pagarWebPay(cambiarBoleto);
     } catch (error) {}
   }
 
-  async function pagarWebPay( canjeBoleto ) {
+  async function pagarWebPay(canjeBoleto) {
     let resumenCompra = {
       medioDePago: medioPago,
       montoTotal: valorCobrar,
@@ -350,11 +352,14 @@ export const ResumenViaje = (props) => {
       integrador: 1000,
       datosComprador: datosComprador,
       listaCarrito: [],
-      canjeBoleto
+      canjeBoleto,
     };
 
     try {
-      const request = CryptoJS.AES.encrypt(JSON.stringify(resumenCompra), secret);
+      const request = CryptoJS.AES.encrypt(
+        JSON.stringify(resumenCompra),
+        secret
+      );
 
       const response = await axios.post(
         "/api/ticket_sale/guardar-transaccion-cambio",
@@ -366,15 +371,15 @@ export const ResumenViaje = (props) => {
         url: response?.data.url,
         token: response?.data.token,
       });
-
     } catch (error) {
-
-      toast.error(error?.response?.data?.message || "Error al completar cambio de boleto", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-      });
-
+      toast.error(
+        error?.response?.data?.message || "Error al completar cambio de boleto",
+        {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+        }
+      );
     }
   }
 
@@ -535,7 +540,7 @@ export const ResumenViaje = (props) => {
               />
               <label className="form-check-label" htmlFor="flexCheckNews">
                 Me gustaría recibir noticias, actualizaciones o información de
-                Pullman Bus
+                Boletos.com
               </label>
             </div>
           </div>

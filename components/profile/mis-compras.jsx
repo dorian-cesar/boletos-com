@@ -1,4 +1,4 @@
-import VerBoletos from 'components/VerBoletos'
+import VerBoletos from "components/VerBoletos";
 import axios from "axios";
 import Layout from "components/Layout";
 import { useEffect, useState, useMemo } from "react";
@@ -28,7 +28,7 @@ const MisCompras = () => {
       {
         Header: "Total",
         accessor: "montoFormateado",
-      }
+      },
     ],
     []
   );
@@ -38,11 +38,14 @@ const MisCompras = () => {
   const { getItem } = useLocalStorage();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const tableInstance = useTable({ columns, data, initialState: { pageIndex: 0, pageSize: 5 } }, usePagination);
-  const { 
-    getTableProps, 
-    getTableBodyProps, 
-    headerGroups, 
+  const tableInstance = useTable(
+    { columns, data, initialState: { pageIndex: 0, pageSize: 5 } },
+    usePagination
+  );
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
     prepareRow,
     page,
     canPreviousPage,
@@ -52,38 +55,38 @@ const MisCompras = () => {
     gotoPage,
     nextPage,
     previousPage,
-    state: { pageIndex, pageSize }, } =
-    tableInstance;
+    state: { pageIndex, pageSize },
+  } = tableInstance;
 
   useEffect(() => {
     let checkUser = decryptData(LocalStorageEntities.user_auth);
-    if (!!checkUser){
-        setUser(checkUser);
-        setIsLoading(false);
+    if (!!checkUser) {
+      setUser(checkUser);
+      setIsLoading(false);
     } else {
-        router.push("/")
+      router.push("/");
     }
   }, []);
 
   useEffect(() => {
     const getTransacciones = async () => {
-        try {
-            const res = await axios.post("/api/user/obtener-transacciones", { email: user?.correo});
-            if(res.data.status){
-                setData(res.data?.object);
-            }
-        } catch (e){
-
+      try {
+        const res = await axios.post("/api/user/obtener-transacciones", {
+          email: user?.correo,
+        });
+        if (res.data.status) {
+          setData(res.data?.object);
         }
-    }
-    if(!!user) getTransacciones();
-  }, [user])
+      } catch (e) {}
+    };
+    if (!!user) getTransacciones();
+  }, [user]);
 
   return (
     <>
       <Layout>
         <Head>
-          <title>Pullman Bus | Mis compras</title>
+          <title>Boletos.com | Mis compras</title>
         </Head>
         {isLoading ? (
           <div className="d-flex justify-content-center mt-2">
@@ -111,64 +114,93 @@ const MisCompras = () => {
                   <div className="d-flex justify-content-center mt-2 mb-4">
                     <a href="/">Volver</a>
                   </div>
-                  { data?.length > 0 ? 
-                  <>
-                  <div className='table-responsive'>
-                  <table className="table table-striped align-middle table-borderless" {...getTableProps()}>
-                    <thead className="fondo-naranja">
-                    {headerGroups.map(headerGroup => (
-                        <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map(column => (
-                            <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                        ))}
-                        <th></th>
-                        </tr>
-                    ))}
-                    </thead>
-                    <tbody {...getTableBodyProps()}>
-                    {page.map((row, i) => {
-                        prepareRow(row)
-                        return (
-                        <tr {...row.getRowProps()}>
-                            {row.cells.map(cell => {
-                            return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                  {data?.length > 0 ? (
+                    <>
+                      <div className="table-responsive">
+                        <table
+                          className="table table-striped align-middle table-borderless"
+                          {...getTableProps()}
+                        >
+                          <thead className="fondo-naranja">
+                            {headerGroups.map((headerGroup) => (
+                              <tr {...headerGroup.getHeaderGroupProps()}>
+                                {headerGroup.headers.map((column) => (
+                                  <th {...column.getHeaderProps()}>
+                                    {column.render("Header")}
+                                  </th>
+                                ))}
+                                <th></th>
+                              </tr>
+                            ))}
+                          </thead>
+                          <tbody {...getTableBodyProps()}>
+                            {page.map((row, i) => {
+                              prepareRow(row);
+                              return (
+                                <tr {...row.getRowProps()}>
+                                  {row.cells.map((cell) => {
+                                    return (
+                                      <td {...cell.getCellProps()}>
+                                        {cell.render("Cell")}
+                                      </td>
+                                    );
+                                  })}
+                                  <td>
+                                    <button
+                                      type="button"
+                                      className="btn btn-table"
+                                      onClick={(e) =>
+                                        setDataSelected(row?.original)
+                                      }
+                                      data-bs-toggle="modal"
+                                      data-bs-target="#verBoletosModal"
+                                    >
+                                      Ver boletos
+                                    </button>
+                                  </td>
+                                </tr>
+                              );
                             })}
-                            <td>
-                                <button 
-                                    type="button" 
-                                    className="btn btn-table" 
-                                    onClick={(e) => setDataSelected(row?.original)}
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#verBoletosModal" >
-                                    Ver boletos
-                                </button>
-                            </td>
-                        </tr>
-                        )
-                    })}
-                    </tbody>
-                  </table>
-                  </div>
-                  <div className="pagination">
-                    <button onClick={() => gotoPage(0)} disabled={!canPreviousPage} className="btn btn-paginador">
-                    {'<<'}
-                    </button>{' '}
-                    <button onClick={() => previousPage()} disabled={!canPreviousPage} className="btn btn-paginador">
-                    {'<'}
-                    </button>{' '}
-                    <button onClick={() => nextPage()} disabled={!canNextPage} className="btn btn-paginador">
-                    {'>'}
-                    </button>{' '}
-                    <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage} className="btn btn-paginador">
-                    {'>>'}
-                    </button>{'  '}
-                  </div>
-                  </>
-                  :
-                  <h6 className="text-center">
-                    No se han efectuado compras aún.
-                  </h6>
-                  }
+                          </tbody>
+                        </table>
+                      </div>
+                      <div className="pagination">
+                        <button
+                          onClick={() => gotoPage(0)}
+                          disabled={!canPreviousPage}
+                          className="btn btn-paginador"
+                        >
+                          {"<<"}
+                        </button>{" "}
+                        <button
+                          onClick={() => previousPage()}
+                          disabled={!canPreviousPage}
+                          className="btn btn-paginador"
+                        >
+                          {"<"}
+                        </button>{" "}
+                        <button
+                          onClick={() => nextPage()}
+                          disabled={!canNextPage}
+                          className="btn btn-paginador"
+                        >
+                          {">"}
+                        </button>{" "}
+                        <button
+                          onClick={() => gotoPage(pageCount - 1)}
+                          disabled={!canNextPage}
+                          className="btn btn-paginador"
+                        >
+                          {">>"}
+                        </button>
+                        {"  "}
+                      </div>
+                    </>
+                  ) : (
+                    <h6 className="text-center">
+                      No se han efectuado compras aún.
+                    </h6>
+                  )}
                 </div>
               </div>
             </div>

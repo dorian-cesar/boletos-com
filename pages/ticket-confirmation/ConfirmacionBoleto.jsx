@@ -19,11 +19,11 @@ import StagePago from "../../components/ticket-confirmation/StagePago/StagePago"
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 
-import styles from './ConfirmacionBoleto.module.css';
+import styles from "./ConfirmacionBoleto.module.css";
 
 import CryptoJS from "crypto-js";
 
-import { generateToken } from 'utils/jwt-auth';
+import { generateToken } from "utils/jwt-auth";
 
 registerLocale("es", es);
 
@@ -31,8 +31,8 @@ const secret = process.env.NEXT_PUBLIC_SECRET_ENCRYPT_DATA;
 
 const stages = [
   {
-    name: 'Validación boleto',
-    kind: 'validacion'
+    name: "Validación boleto",
+    kind: "validacion",
   },
   {
     name: "Selección servicio",
@@ -51,9 +51,12 @@ const stages = [
 export default function Home(props) {
   async function validarBoleto() {
     try {
-      const { data } = await axios.post("/api/ticket_sale/validar-boleto-blanco", {
-        boleto,
-      });
+      const { data } = await axios.post(
+        "/api/ticket_sale/validar-boleto-blanco",
+        {
+          boleto,
+        }
+      );
       setBoletoValido(data);
       setStage(1);
     } catch ({ response }) {
@@ -96,69 +99,75 @@ export default function Home(props) {
       const stage_active = in_stage ?? stage;
       setLoadingParrilla(true);
 
-      
       const token = generateToken();
-            
+
       const request = CryptoJS.AES.encrypt(
-          JSON.stringify(new ObtenerParrillaServicioDTO(stage_active, origen, destino, startDate, endDate)),
-          secret
+        JSON.stringify(
+          new ObtenerParrillaServicioDTO(
+            stage_active,
+            origen,
+            destino,
+            startDate,
+            endDate
+          )
+        ),
+        secret
       );
 
       const response = await fetch(`/api/parrilla`, {
-          method: "POST",
-          body: JSON.stringify({ data: request.toString() }),
-          headers: {
-              Authorization: `Bearer ${ token }`
-          }
+        method: "POST",
+        body: JSON.stringify({ data: request.toString() }),
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       const parrilla = await response.json();
-      
-      setParrilla(parrilla.map((parrillaMapped, index) => {
-        return {
-          ...parrillaMapped,
-          id: index + 1
-        }
-      }));
+
+      setParrilla(
+        parrilla.map((parrillaMapped, index) => {
+          return {
+            ...parrillaMapped,
+            id: index + 1,
+          };
+        })
+      );
       setLoadingParrilla(false);
     } catch ({ message }) {
-      console.error(`Error al obtener parrilla [${message}]`)
+      console.error(`Error al obtener parrilla [${message}]`);
     }
-  };
+  }
 
-  const stages_active = endDate ? stages : stages.filter((i) => i.kind != "pasajes_2");
+  const stages_active = endDate
+    ? stages
+    : stages.filter((i) => i.kind != "pasajes_2");
 
   useEffect(() => {
     searchParrilla();
   }, []);
 
   useEffect(() => {
-    window.scrollTo({top: 0});
-  }, [stage])
+    window.scrollTo({ top: 0 });
+  }, [stage]);
 
   return (
     <Layout>
       <Head>
-        <title>Pullman Bus | Confirmación Boleto</title>
+        <title>Boletos.com | Confirmación Boleto</title>
       </Head>
       <div className={styles["home"]}>
         <div className="pullman-mas">
           <div className="container">
-          <div className= {`row py-4 ${styles["nav"]}`}>
-  
-                <span>Inicio  &gt; Confirmación de boleto en blanco</span>
-              
+            <div className={`row py-4 ${styles["nav"]}`}>
+              <span>Inicio &gt; Confirmación de boleto en blanco</span>
             </div>
           </div>
-
         </div>
         {stage == 0 ? (
           <div className={`mb-5 container ${styles["fondo-cambio"]}`}>
             <div className="container">
               <div className={styles["cambio-title"]}>
-                <h2>
-                  Confirmación de boleto en blanco
-                </h2>
+                <h2>Confirmación de boleto en blanco</h2>
               </div>
               <div className={styles["bloque"]}>
                 <div className={styles["bloque-texto"]}>
@@ -169,14 +178,16 @@ export default function Home(props) {
                 </div>
                 <div className={styles["container"]}>
                   <div className={`row search-row ${styles["search-row"]}`}>
-                    <div className={ styles["search-row-container"]}>
+                    <div className={styles["search-row-container"]}>
                       <div className={styles["grupo-campos"]}>
                         <label>Código de boleto en blanco</label>
                         <input
                           type="text"
                           name=""
                           value={boleto}
-                          onChange={(e) => setBoleto(e.target.value.toUpperCase())}
+                          onChange={(e) =>
+                            setBoleto(e.target.value.toUpperCase())
+                          }
                           className={styles["input"]}
                           placeholder="HACXXXXXX"
                         />
@@ -189,7 +200,8 @@ export default function Home(props) {
                                 ? styles["button-search-coupon"]
                                 : styles["button-search-coupon-disabled"]
                             }
-                            onClick={(boleto) && validarBoleto} >
+                            onClick={boleto && validarBoleto}
+                          >
                             <img src="../img/icon/cuponera/search-outline.svg" />
                             Buscar
                           </button>
@@ -201,7 +213,6 @@ export default function Home(props) {
               </div>
             </div>
           </div>
-
         ) : (
           ""
         )}
@@ -221,12 +232,13 @@ export default function Home(props) {
                 />
 
                 <div className="contenido-busqueda">
-                  {loadingParrilla ? <Loader /> : parrilla.length > 0 ?
-
+                  {loadingParrilla ? (
+                    <Loader />
+                  ) : parrilla.length > 0 ? (
                     <div className="pasajes-compra py-5">
                       <div className="">
                         {stages_active[stage].kind == "pasajes_1" ||
-                          stages_active[stage].kind == "pasajes_2" ? (
+                        stages_active[stage].kind == "pasajes_2" ? (
                           <StagePasajes
                             key={`stage-pasajes-${stages_active[stage].kind}`}
                             stage={stage}
@@ -259,14 +271,11 @@ export default function Home(props) {
                         )}
                       </div>
                     </div>
-
-
-                    :
+                  ) : (
                     <h5 className="p-2">
-                      Lo sentimos, no existen
-                      resultados para su búsqueda
+                      Lo sentimos, no existen resultados para su búsqueda
                     </h5>
-                  }
+                  )}
                 </div>
               </div>
             </div>
@@ -315,4 +324,4 @@ export const getServerSideProps = withIronSessionSsr(async function ({
     },
   };
 },
-  sessionOptions);
+sessionOptions);

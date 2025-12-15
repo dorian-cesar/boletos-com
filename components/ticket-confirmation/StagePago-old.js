@@ -205,7 +205,7 @@ const StagePago = (props) => {
       destino: datos.destino,
       idOrigen: datos.origen,
       idDestino: datos.destino,
-      rut: datos.pasajero.rut.replace(".","").replace(".",""),
+      rut: datos.pasajero.rut.replace(".", "").replace(".", ""),
       tipoDocumento: datos.pasajero.tipoRut,
     };
     setDatoCambiar(cambiarBoleto);
@@ -395,7 +395,7 @@ const StagePago = (props) => {
                     <input type="checkbox" className="mr-2" />
                     <small>
                       Me gustaria recibir noticias, actualizaciones o
-                      información de Pullman Bus
+                      información de Boletos.com
                     </small>
                   </label>
                 </div>

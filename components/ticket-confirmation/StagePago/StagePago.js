@@ -6,7 +6,7 @@ import Acordeon from "../../Acordeon/Acordeon";
 import ResumenServicio from "./ResumenServicio/ResumenServicio";
 import PuntoEmbarque from "./ResumenServicio/PuntoEmbarque/PuntoEmbarque";
 import DatosPasajero from "./ResumenServicio/DatosPasajero/DatosPasajero";
-import MediosPago from "./ResumenServicio/MediosPago/MediosPago"
+import MediosPago from "./ResumenServicio/MediosPago/MediosPago";
 
 import styles from "./StagePago.module.css";
 import { ResumenViaje } from "../ResumenViaje/ResumenViaje";
@@ -18,9 +18,18 @@ import LocalStorageEntities from "entities/LocalStorageEntities";
 import { decryptData } from "utils/encrypt-data";
 
 const StagePago = (props) => {
-  const { carro, nacionalidades, convenios, mediosDePago, setCarro, boletoValido } = props;
+  const {
+    carro,
+    nacionalidades,
+    convenios,
+    mediosDePago,
+    setCarro,
+    boletoValido,
+  } = props;
 
-  const informacionAgrupada = useSelector((state) => state.compra.informacionAgrupada);
+  const informacionAgrupada = useSelector(
+    (state) => state.compra.informacionAgrupada
+  );
   const datosComprador = useSelector((state) => state.compra.datosComprador);
 
   const dispatch = useDispatch();
@@ -38,18 +47,20 @@ const StagePago = (props) => {
   }, []);
 
   useEffect(() => {
-    if( usaDatosPasajeroPago ) {
+    if (usaDatosPasajeroPago) {
       dispatch(asignarDatosComprador(informacionAgrupada[0].asientos[0]));
     } else {
-      dispatch(asignarDatosComprador({
-        nombre: "",
-        apellido: "",
-        email: "",
-        rut: "",
-        tipoDocumento: "R",
-      }));
+      dispatch(
+        asignarDatosComprador({
+          nombre: "",
+          apellido: "",
+          email: "",
+          rut: "",
+          tipoDocumento: "R",
+        })
+      );
     }
-  }, [usaDatosPasajeroPago])
+  }, [usaDatosPasajeroPago]);
 
   async function getConvenio() {
     try {
@@ -215,23 +226,30 @@ const StagePago = (props) => {
   useEffect(() => {
     (async () => await getConvenio())();
   }, [convenioSelected]);
-  
+
   return (
     <main className={styles["main-content"]}>
-      <section className={ styles['info-list'] }>
+      <section className={styles["info-list"]}>
         <ResumenServicio />
-        <Acordeon title="Datos del comprador" open={ true }>
+        <Acordeon title="Datos del comprador" open={true}>
           <div className="form-check">
-            <input className="form-check-input" type="checkbox" value={ usaDatosPasajeroPago } id="flexCheckDefault" disabled={ usuario } onChange={ () => setUsaDatosPasajeroPago(!usaDatosPasajeroPago) }/>
+            <input
+              className="form-check-input"
+              type="checkbox"
+              value={usaDatosPasajeroPago}
+              id="flexCheckDefault"
+              disabled={usuario}
+              onChange={() => setUsaDatosPasajeroPago(!usaDatosPasajeroPago)}
+            />
             <label className="form-check-label" htmlFor="flexCheckDefault">
               Usar los datos del pasajero 1
             </label>
-          </div> 
-          <DatosPasajero asiento={ datosComprador } usuario={ usuario }/>
+          </div>
+          <DatosPasajero asiento={datosComprador} usuario={usuario} />
         </Acordeon>
       </section>
       <section className={styles["travel-summary"]}>
-        <ResumenViaje boletoValido={ boletoValido }/>
+        <ResumenViaje boletoValido={boletoValido} />
       </section>
     </main>
 
@@ -279,7 +297,7 @@ const StagePago = (props) => {
     //             }
     //         </div>
 
-            // <InformacionComprador setCarro={ setCarro } carro={ carro } validarFormatoRut={ validarFormatoRut }/>
+    // <InformacionComprador setCarro={ setCarro } carro={ carro } validarFormatoRut={ validarFormatoRut }/>
 
     //         <div className='d-flex'>
     //             <div className='col-12 col-md-12 m-1'>
@@ -394,7 +412,7 @@ const StagePago = (props) => {
     //                             </label>
     //                             <label className='d-flex align-items-baseline'>
     //                                 <input type='checkbox' className='mr-2'/>
-    //                                 <small>Me gustaria recibir noticias, actualizaciones o información de Pullman Bus</small>
+    //                                 <small>Me gustaria recibir noticias, actualizaciones o información de Boletos.com</small>
     //                             </label>
     //                         </div>
     //                     </div>

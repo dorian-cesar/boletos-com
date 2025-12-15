@@ -81,7 +81,7 @@ const Home = () => {
   return (
     <Layout>
       <Head>
-        <title>Pullman Bus | Mi Perfil</title>
+        <title>Boletos.com | Mi Perfil</title>
       </Head>
       <section className={styles["perfil-body"]}>
         <section className={`container ${styles["header-profile"]}`}>

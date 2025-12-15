@@ -40,7 +40,7 @@ export default function cuponera(props) {
   return (
     <Layout>
       <Head>
-        <title>Pullman Bus | Compra tu cuponera</title>
+        <title>Boletos.com | Compra tu cuponera</title>
       </Head>
       <div className={styles["home"]}>
         {stage == 0 ? (
@@ -168,17 +168,15 @@ export const getServerSideProps = withIronSessionSsr(async function ({
 
   let cuponeras = {
     data: {
-      object: []
-    }
+      object: [],
+    },
   };
 
   try {
     cuponeras = await axios.get(
       publicRuntimeConfig.site_url + "/api/coupon/obtener-cuponera-activas"
     );
-  } catch(error) { 
-
-  }
+  } catch (error) {}
 
   return {
     props: {

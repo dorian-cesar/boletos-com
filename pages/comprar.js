@@ -291,7 +291,7 @@ export default function Home(props) {
   return (
     <Layout isBuyStage={true}>
       <Head>
-        <title>Pullman Bus | Compra Boleto</title>
+        <title>Boletos.com | Compra Boleto</title>
       </Head>
       <MobileSearchBar
         startDate={startDate}

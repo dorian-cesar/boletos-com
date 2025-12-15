@@ -55,10 +55,20 @@ export default function Home(props) {
         <title>Boletos | Inicio</title>
       </Head>
       <div className="home">
-        <DynamicBusquedaServicioComponent
-          origenes={origenes}
-          dias={props.dias}
-        />
+        <div className="hero">
+          <img
+            src="/banner.png"
+            alt="Banner principal"
+            className="hero__image"
+          />
+          <div className="hero__search">
+            <DynamicBusquedaServicioComponent
+              origenes={origenes}
+              dias={props.dias}
+              isHomeComponent={true}
+            />
+          </div>
+        </div>
       </div>
       {/* <div className="home">
         <Banner/>

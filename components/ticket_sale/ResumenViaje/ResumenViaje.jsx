@@ -900,7 +900,7 @@ export const ResumenViaje = (props) => {
                 />
                 <label className="form-check-label" htmlFor="flexCheckNews">
                   Me gustaría recibir noticias, actualizaciones o información de
-                  Pullman Bus
+                  Boletos.com
                 </label>
               </div> */}
             </div>
