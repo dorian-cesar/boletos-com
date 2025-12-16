@@ -99,7 +99,7 @@ const BusquedaServicio = (props) => {
 
   const buscarBtnRef = useRef();
 
-  async function redireccionarBuscarServicio() {
+  function redireccionarBuscarServicio() {
     if (isLoading) return;
 
     setIsLoading(true);
@@ -117,7 +117,7 @@ const BusquedaServicio = (props) => {
 
       const encriptedData = encryptDataNoSave(data, "search");
 
-      router.replace(`/comprar?search=${encriptedData}`);
+      window.location.href = `/comprar?search=${encriptedData}`;
     } catch (error) {
       setIsLoading(false);
     }
@@ -379,10 +379,8 @@ const BusquedaServicio = (props) => {
                   selected={endDate}
                   onChange={(date) => {
                     setEndDate(date);
-                    if (date && buscarBtnRef.current) {
-                      setTimeout(() => {
-                        buscarBtnRef.current.click();
-                      }, 100);
+                    if (date && !isLoading) {
+                      redireccionarBuscarServicio();
                     }
                   }}
                   filterDate={isValidAfter}
