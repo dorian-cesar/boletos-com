@@ -191,7 +191,7 @@ export default function MobileSearchBar(props: MobileSearchBarProps) {
               </>
             ) : (
               <img
-                src="img\icon\logos\Logo.svg"
+                src="img\icon\logos\logo-boletos.png"
                 className="img-fluid"
                 alt="Logo Boletos.com"
               />
